@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.dto.request.UserRequest;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ResourceType;
+import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.repo.UserRepo;
 
 @Service
@@ -21,8 +23,10 @@ public class UserService {
 
     public User createUser(Jwt jwt, UserRequest userRequest) {
         String subject = jwt.getSubject();
-        if (userRepo.findByAuthSubject(subject).isPresent()) {
-            throw new RuntimeException("User already exists"); // FIXME
+
+        Optional<User> user = userRepo.findByAuthSubject(subject);
+        if (user.isPresent()) {
+            throw new AlreadyExistsException(ResourceType.USER, user.get().getId());
         }
         return userRepo.save(new User(subject, userRequest));
     }

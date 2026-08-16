@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.agtual.challengetracker.dto.request.UserRequest;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.repo.UserRepo;
 
 @DataJpaTest
@@ -54,7 +55,7 @@ public class UserServiceTest {
 
     @Test
     void testCreateUserThrowsExceptionIfUserAlreadyExists() {
-        assertThrows(RuntimeException.class, () -> userService.createUser(existingJwt, existingUserRequest));
+        assertThrows(AlreadyExistsException.class, () -> userService.createUser(existingJwt, existingUserRequest));
     }
 
     @Test
