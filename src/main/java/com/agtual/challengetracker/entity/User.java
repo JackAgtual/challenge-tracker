@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.entity;
 
+import com.agtual.challengetracker.dto.request.UserRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +20,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "auth_subject", unique = true)
+    private String authSubject;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -26,4 +31,11 @@ public class User {
 
     @Column(name = "last_name")
     private String lastName;
+
+    public User(String subject, UserRequest userRequest) {
+        this.authSubject = subject;
+        this.email = userRequest.email();
+        this.firstName = userRequest.firstName();
+        this.lastName = userRequest.lastName();
+    }
 }
