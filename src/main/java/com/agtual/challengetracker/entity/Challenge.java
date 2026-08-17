@@ -2,6 +2,8 @@ package com.agtual.challengetracker.entity;
 
 import java.time.LocalDate;
 
+import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,4 +37,10 @@ public class Challenge {
 
     @Column(name = "duration_days")
     private int durationDays;
+
+    public Challenge(CreateChallengeRequest createChallengeRequest, User user) {
+        this.owner = user;
+        this.name = createChallengeRequest.name();
+        this.durationDays = createChallengeRequest.durationDays();
+    }
 }
