@@ -9,6 +9,7 @@ import com.agtual.challengetracker.dto.request.UserRequest;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
+import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
 
 @Service
@@ -19,6 +20,14 @@ public class UserService {
 
     public Optional<User> getUser(Jwt jwt) {
         return userRepo.findByAuthSubject(jwt.getSubject());
+    }
+
+    public User getValidUser(Jwt jwt) {
+        Optional<User> user = getUser(jwt);
+        if (user.isEmpty()) {
+            throw new NotFoundException(ResourceType.USER, "authSubject", jwt.getSubject());
+        }
+        return user.get();
     }
 
     public User createUser(Jwt jwt, UserRequest userRequest) {
