@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.entity.Challenge;
@@ -20,5 +22,16 @@ public class ChallengeParticipantService {
         challengeOwner.setChallenge(challenge);
         challengeOwner.setInviteStatus(InviteStatus.ACCEPTED);
         return challengeParticipantRepo.save(challengeOwner);
+    }
+
+    public boolean allJoinedParticipantsAreReady(Challenge challenge) {
+        List<ChallengeParticipant> participants = challengeParticipantRepo.findByChallenge(challenge);
+        if (participants.isEmpty()) {
+            return false;
+        }
+
+        return participants.stream()
+                .filter(participant -> participant.getInviteStatus() == InviteStatus.ACCEPTED)
+                .allMatch(participant -> participant.isReady());
     }
 }
