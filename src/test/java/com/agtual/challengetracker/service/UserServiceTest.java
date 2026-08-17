@@ -18,7 +18,6 @@ import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
-import com.agtual.challengetracker.testsupport.TestUtils;
 
 @DataJpaTest
 @Import(UserService.class)
@@ -26,8 +25,8 @@ public class UserServiceTest {
 
     static String EXISTING_SUBJECT = "existingSubject";
     static String NEW_SUBJECT = "newSubject";
-    static Jwt existingJwt = TestUtils.buildJwt(EXISTING_SUBJECT);
-    static Jwt newJwt = TestUtils.buildJwt(NEW_SUBJECT);
+    static Jwt existingJwt = buildJwt(EXISTING_SUBJECT);
+    static Jwt newJwt = buildJwt(NEW_SUBJECT);
     static UserRequest existingUserRequest = new UserRequest("alicesmith@gmail.com", "Alice",
             "Smith");
     static UserRequest newUserRequest = new UserRequest("johndoe@gmail.com", "John", "Doe");
@@ -84,5 +83,9 @@ public class UserServiceTest {
         assertEquals(expected.getEmail(), actual.getEmail());
         assertEquals(expected.getFirstName(), actual.getFirstName());
         assertEquals(expected.getLastName(), actual.getLastName());
+    }
+
+    private static Jwt buildJwt(String subject) {
+        return Jwt.withTokenValue("fake-token").subject(subject).header("Bearer token", "1234").build();
     }
 }

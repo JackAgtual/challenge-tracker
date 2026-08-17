@@ -32,7 +32,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
     @Test
     void testCreateChallenge() {
-        Challenge challenge = challengeService.createChallenge(jwt, createChallengeRequest);
+        Challenge challenge = challengeService.createChallenge(savedUser, createChallengeRequest);
 
         assertEquals(createChallengeRequest.name(), challenge.getName());
         assertEquals(createChallengeRequest.durationDays(), challenge.getDurationDays());
@@ -49,12 +49,13 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
         challengeRepo.save(existingChallenge);
 
-        assertThrows(AlreadyExistsException.class, () -> challengeService.createChallenge(jwt, createChallengeRequest));
+        assertThrows(AlreadyExistsException.class,
+                () -> challengeService.createChallenge(savedUser, createChallengeRequest));
     }
 
     @Test
     void testCreateChallengeAddsOwnerAsChallengeParticipant() {
-        Challenge challenge = challengeService.createChallenge(jwt, createChallengeRequest);
+        Challenge challenge = challengeService.createChallenge(savedUser, createChallengeRequest);
         verify(challengeParticipantService).addOwnerToChallenge(savedUser, challenge);
     }
 

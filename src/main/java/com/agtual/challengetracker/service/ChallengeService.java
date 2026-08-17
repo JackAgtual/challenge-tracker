@@ -2,7 +2,6 @@ package com.agtual.challengetracker.service;
 
 import java.util.Optional;
 
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +16,12 @@ import com.agtual.challengetracker.repo.ChallengeRepo;
 @lombok.RequiredArgsConstructor
 public class ChallengeService {
 
-    private final UserService userService;
     private final ChallengeParticipantService challengeParticipantService;
     private final ChallengeRepo challengeRepo;
 
     @Transactional
-    public Challenge createChallenge(Jwt jwt, CreateChallengeRequest challengeRequest) {
+    public Challenge createChallenge(User user, CreateChallengeRequest challengeRequest) {
         // challenge owner must not have challenge of same name
-        User user = userService.getValidUser(jwt);
         Optional<Challenge> existingChallenge = challengeRepo.findByOwnerAndName(user, challengeRequest.name());
 
         if (existingChallenge.isPresent()) {
