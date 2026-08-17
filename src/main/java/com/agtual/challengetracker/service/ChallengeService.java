@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
@@ -20,6 +21,7 @@ public class ChallengeService {
     private final ChallengeParticipantService challengeParticipantService;
     private final ChallengeRepo challengeRepo;
 
+    @Transactional
     public Challenge createChallenge(Jwt jwt, CreateChallengeRequest challengeRequest) {
         // challenge owner must not have challenge of same name
         User user = userService.getValidUser(jwt);
