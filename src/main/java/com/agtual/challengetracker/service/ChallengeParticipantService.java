@@ -34,4 +34,8 @@ public class ChallengeParticipantService {
                 .filter(participant -> participant.getInviteStatus() == InviteStatus.ACCEPTED)
                 .allMatch(participant -> participant.isReady());
     }
+
+    public boolean isParticipant(User user, Challenge challenge) {
+        return challengeParticipantRepo.existsByChallengeAndParticipant(challenge, user);
+    }
 }

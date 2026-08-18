@@ -10,6 +10,7 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
+import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 
 @Service
@@ -31,6 +32,18 @@ public class ChallengeService {
         Challenge challenge = challengeRepo.save(new Challenge(challengeRequest, user));
 
         challengeParticipantService.addOwnerToChallenge(user, challenge);
+
+        return challenge;
+    }
+
+    public Challenge getChallenge(User user, Long challengeId) {
+        Challenge challenge = challengeRepo.findById(challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        if (!challengeParticipantService.isParticipant(user, challenge)) {
+            // Throw not found instead of unauthorized
+            throw new NotFoundException(ResourceType.CHALLENGE, challengeId);
+        }
 
         return challenge;
     }

@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,7 @@ import com.agtual.challengetracker.repo.ChallengeRepo;
 @Import(ChallengeParticipantService.class)
 public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
 
-    private Challenge savedChallenge;
+    private Challenge savedChallenge1;
 
     @Autowired
     ChallengeParticipantService challengeParticipantService;
@@ -36,17 +34,18 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
 
     @BeforeEach
     void beforeEach() {
-        Challenge challenge = new Challenge();
-        challenge.setOwner(savedUser);
-        challenge.setName("my challenge");
-        savedChallenge = challengeRepo.save(challenge);
+        Challenge challenge1 = new Challenge();
+        challenge1.setOwner(savedUser);
+        challenge1.setName("my challenge");
+        savedChallenge1 = challengeRepo.save(challenge1);
+
     }
 
     @Test
     void testAddOwnerToChallenge() {
-        ChallengeParticipant owner = challengeParticipantService.addOwnerToChallenge(savedUser, savedChallenge);
+        ChallengeParticipant owner = challengeParticipantService.addOwnerToChallenge(savedUser, savedChallenge1);
 
-        assertEquals(savedChallenge, owner.getChallenge());
+        assertEquals(savedChallenge1, owner.getChallenge());
         assertEquals(savedUser, owner.getParticipant());
         assertEquals(InviteStatus.ACCEPTED, owner.getInviteStatus());
         assertEquals(false, owner.isReady());
@@ -63,7 +62,7 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         saveParticipant(InviteStatus.DECLINED, false);
         saveParticipant(InviteStatus.PENDING, false);
 
-        assertTrue(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge));
+        assertTrue(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge1));
     }
 
     @Test
@@ -74,19 +73,34 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         saveParticipant(InviteStatus.DECLINED, false);
         saveParticipant(InviteStatus.PENDING, false);
 
-        assertFalse(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge));
+        assertFalse(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge1));
+    }
+
+    @Test
+    void testIsParticipant() {
+        User user1NotInChallenge = saveRandomUser();
+        User user2InChallenge = saveRandomUser();
+        addUserToChallenge(user2InChallenge, savedChallenge1);
+
+        assertFalse(challengeParticipantService.isParticipant(user1NotInChallenge, savedChallenge1));
+        assertTrue(challengeParticipantService.isParticipant(user2InChallenge, savedChallenge1));
     }
 
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
-        User user = new User();
-        user.setEmail("user-" + UUID.randomUUID() + "@gmail.com");
-        User userEntity = userRepo.save(user);
+        User userEntity = saveRandomUser();
 
         ChallengeParticipant participant = new ChallengeParticipant();
         participant.setParticipant(userEntity);
-        participant.setChallenge(savedChallenge);
+        participant.setChallenge(savedChallenge1);
         participant.setReady(ready);
         participant.setInviteStatus(inviteStatus);
+        challengeParticipantRepo.save(participant);
+    }
+
+    private void addUserToChallenge(User user, Challenge challenge) {
+        ChallengeParticipant participant = new ChallengeParticipant();
+        participant.setParticipant(user);
+        participant.setChallenge(challenge);
         challengeParticipantRepo.save(participant);
     }
 }

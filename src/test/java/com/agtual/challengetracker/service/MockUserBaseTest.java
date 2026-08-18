@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.service;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,9 +16,13 @@ public abstract class MockUserBaseTest {
 
     @BeforeEach
     void saveUserToRepo() {
-        User user = new User();
-        user.setEmail("bob@gmail.com");
-        savedUser = userRepo.save(user);
+        savedUser = saveRandomUser();
     }
 
+    protected User saveRandomUser() {
+        User user = new User();
+        user.setEmail("user-" + UUID.randomUUID() + "@gmail.com");
+        User userEntity = userRepo.save(user);
+        return userEntity;
+    }
 }

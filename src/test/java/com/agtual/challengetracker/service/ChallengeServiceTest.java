@@ -3,6 +3,7 @@ package com.agtual.challengetracker.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
+import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 
 @DataJpaTest
@@ -59,4 +62,63 @@ public class ChallengeServiceTest extends MockUserBaseTest {
         verify(challengeParticipantService).addOwnerToChallenge(savedUser, challenge);
     }
 
+    @Test
+    void testGetChallenge() {
+        Challenge challengeToSave = new Challenge();
+        challengeToSave.setOwner(savedUser);
+        challengeToSave.setName("my challenge");
+        Challenge savedChallenge = challengeRepo.save(challengeToSave);
+
+        when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+
+        Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+
+        assertEquals(savedChallenge, challengeRes);
+    }
+
+    @Test
+    void testGetChallengeForWhenUserIsNotChallengeOwner() {
+        // This test is likely unnecessary because I'm mocking
+        // challengeParticipantService
+        User challengeOwner = saveRandomUser();
+        Challenge challengeToSave = new Challenge();
+        challengeToSave.setOwner(challengeOwner);
+        challengeToSave.setName("my challenge");
+        Challenge savedChallenge = challengeRepo.save(challengeToSave);
+
+        when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+
+        // savedUser is not the challenge owner
+        Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+
+        assertEquals(savedChallenge, challengeRes);
+    }
+
+    @Test
+    void testGetChallengeNotFound() {
+        Challenge challengeToSave = new Challenge();
+        challengeToSave.setOwner(savedUser);
+        challengeToSave.setName("my challenge");
+        Challenge savedChallenge = challengeRepo.save(challengeToSave);
+
+        // should not fail due to participant check (even though this check should not
+        // be run for this condition)
+        when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+        Long invalidChallengeId = 9999L;
+
+        assertThrows(NotFoundException.class, () -> challengeService.getChallenge(savedUser, invalidChallengeId));
+    }
+
+    @Test
+    void testGetChallengeUserIsNotParticipant() {
+        Challenge challengeToSave = new Challenge();
+        challengeToSave.setOwner(savedUser);
+        challengeToSave.setName("my challenge");
+        Challenge savedChallenge = challengeRepo.save(challengeToSave);
+
+        when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> challengeService.getChallenge(savedUser, savedChallenge.getId()));
+
+    }
 }
