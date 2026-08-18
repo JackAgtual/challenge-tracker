@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +37,7 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
 
     @BeforeEach
     void beforeEach() {
-        Challenge challenge1 = new Challenge();
-        challenge1.setOwner(savedUser);
-        challenge1.setName("my challenge");
-        savedChallenge1 = challengeRepo.save(challenge1);
-
+        savedChallenge1 = saveChallengeWithOwner(savedUser);
     }
 
     @Test
@@ -86,6 +85,59 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         assertTrue(challengeParticipantService.isParticipant(user2InChallenge, savedChallenge1));
     }
 
+    @Test
+    void testGetAllChallengesForUser() {
+        User otherUser = saveRandomUser();
+
+        Challenge challenge1 = saveChallengeWithOwner(otherUser);
+        Challenge challenge2 = saveChallengeWithOwner(savedUser);
+        Challenge challenge3 = saveChallengeWithOwner(savedUser);
+        Challenge challenge4 = saveChallengeWithOwner(savedUser);
+        Challenge challenge5 = saveChallengeWithOwner(savedUser);
+
+        // user is owner of challenge
+        ChallengeParticipant participant1 = new ChallengeParticipant();
+        participant1.setChallenge(challenge1);
+        participant1.setParticipant(savedUser);
+        participant1.setInviteStatus(InviteStatus.ACCEPTED);
+        participant1 = challengeParticipantRepo.save(participant1);
+
+        // user accepted invite to challenge
+        ChallengeParticipant participant2 = new ChallengeParticipant();
+        participant2.setChallenge(challenge2);
+        participant2.setParticipant(savedUser);
+        participant2.setInviteStatus(InviteStatus.ACCEPTED);
+        participant2 = challengeParticipantRepo.save(participant2);
+
+        // user has not responded to challenge invite
+        // will still be included in response
+        ChallengeParticipant participant3 = new ChallengeParticipant();
+        participant3.setChallenge(challenge3);
+        participant3.setParticipant(savedUser);
+        participant3.setInviteStatus(InviteStatus.PENDING);
+        participant3 = challengeParticipantRepo.save(participant3);
+
+        // user declined invite to challenge, should not be included in response
+        ChallengeParticipant participant4 = new ChallengeParticipant();
+        participant4.setChallenge(challenge4);
+        participant4.setParticipant(savedUser);
+        participant4.setInviteStatus(InviteStatus.DECLINED);
+        participant4 = challengeParticipantRepo.save(participant4);
+
+        // participant is a different user, should not be included in response
+        ChallengeParticipant participant5 = new ChallengeParticipant();
+        participant5.setChallenge(challenge5);
+        participant5.setParticipant(otherUser);
+        participant5.setInviteStatus(InviteStatus.DECLINED);
+        participant5 = challengeParticipantRepo.save(participant5);
+
+        List<ChallengeParticipant> participations = challengeParticipantService
+                .getAllChallengeParticipationsForUser(savedUser);
+        assertEquals(5, challengeParticipantRepo.count());
+        assertEquals(3, participations.size());
+        assertTrue(participations.containsAll(List.of(participant1, participant2, participant3)));
+    }
+
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
         User userEntity = saveRandomUser();
 
@@ -102,5 +154,12 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         participant.setParticipant(user);
         participant.setChallenge(challenge);
         challengeParticipantRepo.save(participant);
+    }
+
+    private Challenge saveChallengeWithOwner(User owner) {
+        Challenge challenge = new Challenge();
+        challenge.setOwner(owner);
+        challenge.setName(UUID.randomUUID().toString());
+        return challengeRepo.save(challenge);
     }
 }

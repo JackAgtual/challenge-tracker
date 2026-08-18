@@ -38,4 +38,10 @@ public class ChallengeParticipantService {
     public boolean isParticipant(User user, Challenge challenge) {
         return challengeParticipantRepo.existsByChallengeAndParticipant(challenge, user);
     }
+
+    public List<ChallengeParticipant> getAllChallengeParticipationsForUser(User user) {
+        return challengeParticipantRepo.findByParticipant(user).stream()
+                .filter(p -> p.getInviteStatus() != InviteStatus.DECLINED)
+                .toList();
+    }
 }
