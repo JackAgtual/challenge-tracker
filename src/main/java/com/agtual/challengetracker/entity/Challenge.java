@@ -3,6 +3,7 @@ package com.agtual.challengetracker.entity;
 import java.time.LocalDate;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
+import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,11 +37,16 @@ public class Challenge {
     private LocalDate startDate;
 
     @Column(name = "duration_days")
-    private int durationDays;
+    private Integer durationDays;
 
     public Challenge(CreateChallengeRequest createChallengeRequest, User user) {
         this.owner = user;
         this.name = createChallengeRequest.name();
         this.durationDays = createChallengeRequest.durationDays();
+    }
+
+    public void update(ModifyChallengeRequest modifyChallengeRequest) {
+        this.name = modifyChallengeRequest.name();
+        this.durationDays = modifyChallengeRequest.durationDays();
     }
 }

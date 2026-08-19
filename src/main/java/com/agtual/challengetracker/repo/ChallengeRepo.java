@@ -10,4 +10,6 @@ import com.agtual.challengetracker.entity.User;
 public interface ChallengeRepo extends JpaRepository<Challenge, Long> {
 
     Optional<Challenge> findByOwnerAndName(User owner, String name);
+
+    Optional<Challenge> findByOwnerAndId(User owner, Long id);
 }

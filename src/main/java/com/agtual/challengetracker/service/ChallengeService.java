@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
+import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
@@ -46,6 +47,23 @@ public class ChallengeService {
         }
 
         return challenge;
+    }
+
+    /**
+     * Will update challenge that belongs to a user
+     * Will set all values in modifyChallengeRequest even if null
+     * 
+     * @param user
+     * @param challengeId
+     * @param modifyChallengeRequest
+     * @return
+     */
+    public Challenge modifyChallenge(User user, Long challengeId, ModifyChallengeRequest modifyChallengeRequest) {
+        Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        challenge.update(modifyChallengeRequest);
+        return challengeRepo.save(challenge);
     }
 
 }
