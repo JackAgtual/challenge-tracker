@@ -56,4 +56,8 @@ public class Challenge {
         this.name = modifyChallengeRequest.name();
         this.durationDays = modifyChallengeRequest.durationDays();
     }
+
+    public boolean isReadyToStart() {
+        return durationDays != null && name != null && status == ChallengeStatus.PENDING;
+    }
 }

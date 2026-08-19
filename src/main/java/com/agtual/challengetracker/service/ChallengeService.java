@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -67,11 +68,28 @@ public class ChallengeService {
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 
         if (challenge.getStatus() != ChallengeStatus.PENDING) {
-            throw new ForbiddenException(ResourceType.CHALLENGE, challenge.getId());
+            throw new ForbiddenException(ResourceType.CHALLENGE, challenge.getId(),
+                    "Can only modify challenge during PENDING status");
         }
 
         challenge.update(modifyChallengeRequest);
         return challengeRepo.save(challenge);
     }
 
+    public Challenge startChallenge(User user, Long challengeId) {
+        Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        if (!challenge.isReadyToStart()) {
+            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Challenge start conditions not met.");
+        }
+
+        if (!challengeParticipantService.allJoinedParticipantsAreReady(challenge)) {
+            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Not all challenge participants ready.");
+        }
+
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setStartDate(LocalDate.now());
+        return challengeRepo.save(challenge);
+    }
 }

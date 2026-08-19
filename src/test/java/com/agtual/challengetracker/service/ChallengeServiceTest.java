@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -81,104 +83,155 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             Challenge challengeToSave = new Challenge();
             challengeToSave.setOwner(savedUser);
             challengeToSave.setName("my challenge");
+            challengeToSave.setDurationDays(30);
             savedChallenge = challengeRepo.save(challengeToSave);
         }
 
-        @Test
-        void testGetChallenge() {
-            when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+        @Nested
+        class GetChallenge {
 
-            Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+            @Test
+            void testGetChallenge() {
+                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
 
-            assertEquals(savedChallenge, challengeRes);
+                Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+
+                assertEquals(savedChallenge, challengeRes);
+            }
+
+            @Test
+            void testGetChallengeForWhenUserIsNotChallengeOwner() {
+                // This test is likely unnecessary because I'm mocking
+                // challengeParticipantService
+                User challengeOwner = saveRandomUser();
+                Challenge challengeToSave = new Challenge();
+                challengeToSave.setOwner(challengeOwner);
+                challengeToSave.setName("my challenge");
+                Challenge savedChallenge = challengeRepo.save(challengeToSave);
+
+                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+
+                // savedUser is not the challenge owner
+                Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+
+                assertEquals(savedChallenge, challengeRes);
+            }
+
+            @Test
+            void testGetChallengeNotFound() {
+                // should not fail due to participant check (even though this check should not
+                // be run for this condition)
+                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+                Long invalidChallengeId = 9999L;
+
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.getChallenge(savedUser, invalidChallengeId));
+            }
+
+            @Test
+            void testGetChallengeUserIsNotParticipant() {
+                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(false);
+
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.getChallenge(savedUser, savedChallenge.getId()));
+            }
         }
 
-        @Test
-        void testGetChallengeForWhenUserIsNotChallengeOwner() {
-            // This test is likely unnecessary because I'm mocking
-            // challengeParticipantService
-            User challengeOwner = saveRandomUser();
-            Challenge challengeToSave = new Challenge();
-            challengeToSave.setOwner(challengeOwner);
-            challengeToSave.setName("my challenge");
-            Challenge savedChallenge = challengeRepo.save(challengeToSave);
+        @Nested
+        class ModifyChallenge {
 
-            when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+            @Test
+            void testModifyChallenge() {
+                ModifyChallengeRequest mod1 = new ModifyChallengeRequest("challenge mod", null);
+                Challenge modifiedChallenge1 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
+                        mod1);
+                assertEquals(savedChallenge.getId(), modifiedChallenge1.getId());
+                assertEquals(savedChallenge.getOwner(), modifiedChallenge1.getOwner());
+                assertEquals(savedChallenge.getStartDate(), modifiedChallenge1.getStartDate());
+                assertEquals("challenge mod", modifiedChallenge1.getName());
+                assertNull(modifiedChallenge1.getDurationDays());
 
-            // savedUser is not the challenge owner
-            Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
+                ModifyChallengeRequest mod2 = new ModifyChallengeRequest("name change", 30);
+                Challenge modifiedChallenge2 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
+                        mod2);
+                assertEquals(savedChallenge.getId(), modifiedChallenge2.getId());
+                assertEquals(savedChallenge.getOwner(), modifiedChallenge2.getOwner());
+                assertEquals(savedChallenge.getStartDate(), modifiedChallenge2.getStartDate());
+                assertEquals("name change", modifiedChallenge1.getName());
+                assertEquals(30, modifiedChallenge2.getDurationDays());
 
-            assertEquals(savedChallenge, challengeRes);
+                ModifyChallengeRequest mod3 = new ModifyChallengeRequest("final name", 45);
+                Challenge modifiedChallenge3 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
+                        mod3);
+                assertEquals(savedChallenge.getId(), modifiedChallenge3.getId());
+                assertEquals(savedChallenge.getOwner(), modifiedChallenge3.getOwner());
+                assertEquals(savedChallenge.getStartDate(), modifiedChallenge3.getStartDate());
+                assertEquals("final name", modifiedChallenge1.getName());
+                assertEquals(45, modifiedChallenge3.getDurationDays());
+            }
+
+            @Test
+            void testModifyChallengeNotAllowedForNonOwner() {
+                User nonOwner = saveRandomUser();
+
+                ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
+                assertThrows(NotFoundException.class, () -> challengeService.modifyChallenge(nonOwner,
+                        savedChallenge.getId(), mod));
+            }
+
+            @Test
+            void testModifyChallengeNotAllowedForInProgressOrCompleteChallenge() {
+                ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
+
+                savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+                challengeRepo.save(savedChallenge);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
+
+                savedChallenge.setStatus(ChallengeStatus.COMPLETE);
+                challengeRepo.save(savedChallenge);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
+            }
         }
 
-        @Test
-        void testGetChallengeNotFound() {
-            // should not fail due to participant check (even though this check should not
-            // be run for this condition)
-            when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
-            Long invalidChallengeId = 9999L;
+        @Nested
+        class StartChallenge {
 
-            assertThrows(NotFoundException.class, () -> challengeService.getChallenge(savedUser, invalidChallengeId));
-        }
+            @BeforeEach
+            void beforeEach() {
+                when(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(true);
+            }
 
-        @Test
-        void testGetChallengeUserIsNotParticipant() {
-            when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(false);
+            @Test
+            void testStartChallenge() {
+                Challenge startedChallenge = challengeService.startChallenge(savedUser, savedChallenge.getId());
 
-            assertThrows(NotFoundException.class,
-                    () -> challengeService.getChallenge(savedUser, savedChallenge.getId()));
-        }
+                assertEquals(ChallengeStatus.IN_PROGRESS, startedChallenge.getStatus());
+                assertEquals(LocalDate.now(), startedChallenge.getStartDate());
+                assertEquals(startedChallenge, challengeRepo.findById(startedChallenge.getId()).get());
+            }
 
-        @Test
-        void testModifyChallenge() {
-            ModifyChallengeRequest mod1 = new ModifyChallengeRequest("challenge mod", null);
-            Challenge modifiedChallenge1 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod1);
-            assertEquals(savedChallenge.getId(), modifiedChallenge1.getId());
-            assertEquals(savedChallenge.getOwner(), modifiedChallenge1.getOwner());
-            assertEquals(savedChallenge.getStartDate(), modifiedChallenge1.getStartDate());
-            assertEquals("challenge mod", modifiedChallenge1.getName());
-            assertNull(modifiedChallenge1.getDurationDays());
+            @Test
+            void testStartChallengeFromNonOwner() {
+                User nonOwner = saveRandomUser();
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.startChallenge(nonOwner, savedChallenge.getId()));
+            }
 
-            ModifyChallengeRequest mod2 = new ModifyChallengeRequest("name change", 30);
-            Challenge modifiedChallenge2 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod2);
-            assertEquals(savedChallenge.getId(), modifiedChallenge2.getId());
-            assertEquals(savedChallenge.getOwner(), modifiedChallenge2.getOwner());
-            assertEquals(savedChallenge.getStartDate(), modifiedChallenge2.getStartDate());
-            assertEquals("name change", modifiedChallenge1.getName());
-            assertEquals(30, modifiedChallenge2.getDurationDays());
+            @Test
+            void testStartChallengeParticipantsNotReady() {
+                when(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(false);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
+            }
 
-            ModifyChallengeRequest mod3 = new ModifyChallengeRequest("final name", 45);
-            Challenge modifiedChallenge3 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod3);
-            assertEquals(savedChallenge.getId(), modifiedChallenge3.getId());
-            assertEquals(savedChallenge.getOwner(), modifiedChallenge3.getOwner());
-            assertEquals(savedChallenge.getStartDate(), modifiedChallenge3.getStartDate());
-            assertEquals("final name", modifiedChallenge1.getName());
-            assertEquals(45, modifiedChallenge3.getDurationDays());
-        }
-
-        @Test
-        void testModifyChallengeNotAllowedForNonOwner() {
-            User nonOwner = saveRandomUser();
-
-            ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
-            assertThrows(NotFoundException.class, () -> challengeService.modifyChallenge(nonOwner,
-                    savedChallenge.getId(), mod));
-        }
-
-        @Test
-        void testModifyChallengeNotAllowedForInProgressOrCompleteChallenge() {
-            ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
-
-            savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
-            challengeRepo.save(savedChallenge);
-            assertThrows(ForbiddenException.class,
-                    () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
-
-            savedChallenge.setStatus(ChallengeStatus.COMPLETE);
-            challengeRepo.save(savedChallenge);
-            assertThrows(ForbiddenException.class,
-                    () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
-
+            @Test
+            void testStartChallengeChallengeNotReady() {
+                savedChallenge.setDurationDays(null);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
+            }
         }
     }
 
