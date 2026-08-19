@@ -18,7 +18,9 @@ import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 
@@ -45,6 +47,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             assertEquals(createChallengeRequest.name(), challenge.getName());
             assertEquals(createChallengeRequest.durationDays(), challenge.getDurationDays());
+            assertEquals(ChallengeStatus.PENDING, challenge.getStatus());
 
             Challenge challengeFromRepo = challengeRepo.findById(challenge.getId()).get();
             assertEquals(challenge, challengeFromRepo);
@@ -160,6 +163,22 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
             assertThrows(NotFoundException.class, () -> challengeService.modifyChallenge(nonOwner,
                     savedChallenge.getId(), mod));
+        }
+
+        @Test
+        void testModifyChallengeNotAllowedForInProgressOrCompleteChallenge() {
+            ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
+
+            savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+            challengeRepo.save(savedChallenge);
+            assertThrows(ForbiddenException.class,
+                    () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
+
+            savedChallenge.setStatus(ChallengeStatus.COMPLETE);
+            challengeRepo.save(savedChallenge);
+            assertThrows(ForbiddenException.class,
+                    () -> challengeService.modifyChallenge(savedUser, savedChallenge.getId(), mod));
+
         }
     }
 

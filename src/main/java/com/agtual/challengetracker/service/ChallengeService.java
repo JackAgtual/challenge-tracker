@@ -9,8 +9,10 @@ import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 
@@ -52,6 +54,8 @@ public class ChallengeService {
     /**
      * Will update challenge that belongs to a user
      * Will set all values in modifyChallengeRequest even if null
+     * Only allowed to modify challenges in pending state (not in progress or
+     * complete)
      * 
      * @param user
      * @param challengeId
@@ -61,6 +65,10 @@ public class ChallengeService {
     public Challenge modifyChallenge(User user, Long challengeId, ModifyChallengeRequest modifyChallengeRequest) {
         Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        if (challenge.getStatus() != ChallengeStatus.PENDING) {
+            throw new ForbiddenException(ResourceType.CHALLENGE, challenge.getId());
+        }
 
         challenge.update(modifyChallengeRequest);
         return challengeRepo.save(challenge);

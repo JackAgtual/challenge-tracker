@@ -4,9 +4,12 @@ import java.time.LocalDate;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,6 +41,10 @@ public class Challenge {
 
     @Column(name = "duration_days")
     private Integer durationDays;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "challenge_status")
+    private ChallengeStatus status = ChallengeStatus.PENDING;
 
     public Challenge(CreateChallengeRequest createChallengeRequest, User user) {
         this.owner = user;
