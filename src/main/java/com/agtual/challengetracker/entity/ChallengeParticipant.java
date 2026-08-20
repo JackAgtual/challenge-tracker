@@ -13,9 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "challenge_participants")
+@Table(name = "challenge_participants", uniqueConstraints = @UniqueConstraint(columnNames = { "participant_id",
+        "challenge_id" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
@@ -34,9 +36,9 @@ public class ChallengeParticipant {
     private Challenge challenge;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "invite_status")
+    @Column(name = "invite_status", nullable = false)
     private InviteStatus inviteStatus = InviteStatus.PENDING;
 
-    @Column(name = "ready")
+    @Column(name = "ready", nullable = false)
     private boolean ready = false;
 }

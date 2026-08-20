@@ -13,7 +13,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.agtual.challengetracker.dto.request.UserRequest;
+import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
@@ -27,9 +27,9 @@ public class UserServiceTest {
     static String NEW_SUBJECT = "newSubject";
     static Jwt existingJwt = buildJwt(EXISTING_SUBJECT);
     static Jwt newJwt = buildJwt(NEW_SUBJECT);
-    static UserRequest existingUserRequest = new UserRequest("alicesmith@gmail.com", "Alice",
+    static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com", "Alice",
             "Smith");
-    static UserRequest newUserRequest = new UserRequest("johndoe@gmail.com", "John", "Doe");
+    static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com", "John", "Doe");
 
     @Autowired
     UserRepo userRepo;

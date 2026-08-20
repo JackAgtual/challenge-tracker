@@ -9,9 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "goal_definitions")
+@Table(name = "goal_definitions", uniqueConstraints = @UniqueConstraint(columnNames = { "challenge_participant_id",
+        "name" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor

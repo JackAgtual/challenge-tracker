@@ -22,6 +22,9 @@ public abstract class MockUserBaseTest {
     protected User saveRandomUser() {
         User user = new User();
         user.setEmail("user-" + UUID.randomUUID() + "@gmail.com");
+        user.setAuthSubject("auth|" + UUID.randomUUID().toString());
+        user.setFirstName("John");
+        user.setLastName("Doe");
         User userEntity = userRepo.save(user);
         return userEntity;
     }

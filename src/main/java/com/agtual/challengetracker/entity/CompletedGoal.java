@@ -11,9 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "completed_goals")
+@Table(name = "completed_goals", uniqueConstraints = @UniqueConstraint(columnNames = { "goal_definition_id",
+        "completed_date" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
@@ -25,7 +27,7 @@ public class CompletedGoal {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_definition_id", nullable = false)
-    private ChallengeParticipant participant;
+    private GoalDefinition goalDefinition;
 
     @Column(name = "completed_date", nullable = false)
     private LocalDate completedDate;

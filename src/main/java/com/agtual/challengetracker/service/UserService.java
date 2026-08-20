@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import com.agtual.challengetracker.dto.request.UserRequest;
+import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
@@ -30,7 +30,7 @@ public class UserService {
         return user.get();
     }
 
-    public User createUser(Jwt jwt, UserRequest userRequest) {
+    public User createUser(Jwt jwt, CreateUserRequest userRequest) {
         String subject = jwt.getSubject();
 
         Optional<User> user = userRepo.findByAuthSubject(subject);
