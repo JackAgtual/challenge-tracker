@@ -52,4 +52,11 @@ public class ChallengeParticipantService {
                 challengeId).orElseThrow(
                         () -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "challengeId=" + challengeId));
     }
+
+    public ChallengeParticipant setReady(User user, Long challengeId, boolean ready) {
+        ChallengeParticipant participant = getChallengeParticipationForUserAndChallengeId(user, challengeId);
+        participant.setReady(ready);
+        return challengeParticipantRepo.save(participant);
+    }
+
 }

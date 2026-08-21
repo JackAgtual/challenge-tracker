@@ -134,8 +134,7 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
 
     @Test
     void testGetFromChallengeIdAndParticipant() {
-        ChallengeParticipant participant = challengeParticipantRepo
-                .save(TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1));
+        ChallengeParticipant participant = saveParticipant(savedUser);
 
         ChallengeParticipant participantRes = challengeParticipantService
                 .getChallengeParticipationForUserAndChallengeId(savedUser, savedChallenge1.getId());
@@ -144,8 +143,7 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
 
     @Test
     void testGetFromChallengeIdAndParticipantNotFound() {
-        challengeParticipantRepo
-                .save(TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1));
+        saveParticipant(savedUser);
 
         assertThrows(NotFoundException.class,
                 () -> challengeParticipantService.getChallengeParticipationForUserAndChallengeId(savedUser, 99999L));
@@ -154,7 +152,23 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
         assertThrows(NotFoundException.class,
                 () -> challengeParticipantService.getChallengeParticipationForUserAndChallengeId(nonParticipant,
                         savedChallenge1.getId()));
+    }
 
+    @Test
+    void testSetReady() {
+        saveParticipant(savedUser);
+
+        ChallengeParticipant resReady = challengeParticipantService.setReady(savedUser, savedChallenge1.getId(), true);
+        assertEquals(1, challengeParticipantRepo.count());
+        assertEquals(true, resReady.isReady());
+        assertEquals(resReady, challengeParticipantRepo.findById(resReady.getId()).get());
+
+        // toggle response to not ready
+        ChallengeParticipant resNotReady = challengeParticipantService.setReady(savedUser, savedChallenge1.getId(),
+                false);
+        assertEquals(1, challengeParticipantRepo.count());
+        assertEquals(false, resNotReady.isReady());
+        assertEquals(resNotReady, challengeParticipantRepo.findById(resNotReady.getId()).get());
     }
 
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
@@ -164,6 +178,11 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
         participant.setReady(ready);
         participant.setInviteStatus(inviteStatus);
         challengeParticipantRepo.save(participant);
+    }
+
+    private ChallengeParticipant saveParticipant(User user) {
+        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1);
+        return challengeParticipantRepo.save(participant);
     }
 
     private void addUserToChallenge(User user, Challenge challenge) {
