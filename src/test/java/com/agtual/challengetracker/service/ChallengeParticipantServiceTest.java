@@ -26,7 +26,7 @@ import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 @DataJpaTest
 @Import(ChallengeParticipantService.class)
-public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
+public class ChallengeParticipantServiceTest extends MockUserBaseTest {
 
     private Challenge savedChallenge1;
 

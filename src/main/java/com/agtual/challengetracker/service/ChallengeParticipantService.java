@@ -1,7 +1,6 @@
 package com.agtual.challengetracker.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -49,11 +48,8 @@ public class ChallengeParticipantService {
     }
 
     public ChallengeParticipant getChallengeParticipationForUserAndChallengeId(User user, Long challengeId) {
-        Optional<ChallengeParticipant> participant = challengeParticipantRepo.findByParticipantAndChallengeId(user,
-                challengeId);
-        if (participant.isEmpty()) {
-            throw new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "challengeId=" + challengeId);
-        }
-        return participant.get();
+        return challengeParticipantRepo.findByParticipantAndChallengeId(user,
+                challengeId).orElseThrow(
+                        () -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "challengeId=" + challengeId));
     }
 }
