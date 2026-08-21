@@ -19,6 +19,8 @@ import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
+import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 @DataJpaTest
 @Import(ChallengeParticipantService.class)
@@ -96,38 +98,28 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         Challenge challenge5 = saveChallengeWithOwner(savedUser);
 
         // user is owner of challenge
-        ChallengeParticipant participant1 = new ChallengeParticipant();
-        participant1.setChallenge(challenge1);
-        participant1.setParticipant(savedUser);
+        ChallengeParticipant participant1 = TestEntityFactory.validChallengeParticipant(savedUser, challenge1);
         participant1.setInviteStatus(InviteStatus.ACCEPTED);
         participant1 = challengeParticipantRepo.save(participant1);
 
         // user accepted invite to challenge
-        ChallengeParticipant participant2 = new ChallengeParticipant();
-        participant2.setChallenge(challenge2);
-        participant2.setParticipant(savedUser);
+        ChallengeParticipant participant2 = TestEntityFactory.validChallengeParticipant(savedUser, challenge2);
         participant2.setInviteStatus(InviteStatus.ACCEPTED);
         participant2 = challengeParticipantRepo.save(participant2);
 
         // user has not responded to challenge invite
         // will still be included in response
-        ChallengeParticipant participant3 = new ChallengeParticipant();
-        participant3.setChallenge(challenge3);
-        participant3.setParticipant(savedUser);
+        ChallengeParticipant participant3 = TestEntityFactory.validChallengeParticipant(savedUser, challenge3);
         participant3.setInviteStatus(InviteStatus.PENDING);
         participant3 = challengeParticipantRepo.save(participant3);
 
         // user declined invite to challenge, should not be included in response
-        ChallengeParticipant participant4 = new ChallengeParticipant();
-        participant4.setChallenge(challenge4);
-        participant4.setParticipant(savedUser);
+        ChallengeParticipant participant4 = TestEntityFactory.validChallengeParticipant(savedUser, challenge4);
         participant4.setInviteStatus(InviteStatus.DECLINED);
         participant4 = challengeParticipantRepo.save(participant4);
 
         // participant is a different user, should not be included in response
-        ChallengeParticipant participant5 = new ChallengeParticipant();
-        participant5.setChallenge(challenge5);
-        participant5.setParticipant(otherUser);
+        ChallengeParticipant participant5 = TestEntityFactory.validChallengeParticipant(otherUser, challenge5);
         participant5.setInviteStatus(InviteStatus.DECLINED);
         participant5 = challengeParticipantRepo.save(participant5);
 
@@ -141,25 +133,19 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
         User userEntity = saveRandomUser();
 
-        ChallengeParticipant participant = new ChallengeParticipant();
-        participant.setParticipant(userEntity);
-        participant.setChallenge(savedChallenge1);
+        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(userEntity, savedChallenge1);
         participant.setReady(ready);
         participant.setInviteStatus(inviteStatus);
         challengeParticipantRepo.save(participant);
     }
 
     private void addUserToChallenge(User user, Challenge challenge) {
-        ChallengeParticipant participant = new ChallengeParticipant();
-        participant.setParticipant(user);
-        participant.setChallenge(challenge);
+        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(user, challenge);
         challengeParticipantRepo.save(participant);
     }
 
     private Challenge saveChallengeWithOwner(User owner) {
-        Challenge challenge = new Challenge();
-        challenge.setOwner(owner);
-        challenge.setName(UUID.randomUUID().toString());
+        Challenge challenge = TestEntityFactory.validChallenge(owner, UUID.randomUUID().toString());
         return challengeRepo.save(challenge);
     }
 }

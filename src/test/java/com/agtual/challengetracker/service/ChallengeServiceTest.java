@@ -25,6 +25,8 @@ import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeRepo;
+import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 @DataJpaTest
 @Import(ChallengeService.class)
@@ -57,9 +59,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
         @Test
         void testCreateChallengeThrowsExceptionIfUserAlreadyOwnsChallengeWithSameName() {
-            Challenge existingChallenge = new Challenge();
-            existingChallenge.setName(createChallengeRequest.name());
-            existingChallenge.setOwner(savedUser);
+            Challenge existingChallenge = TestEntityFactory.validChallenge(savedUser, createChallengeRequest.name());
 
             challengeRepo.save(existingChallenge);
 
@@ -80,9 +80,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
         @BeforeEach
         void beforeEach() {
-            Challenge challengeToSave = new Challenge();
-            challengeToSave.setOwner(savedUser);
-            challengeToSave.setName("my challenge");
+            Challenge challengeToSave = TestEntityFactory.validChallenge(savedUser, "my challenge");
             challengeToSave.setDurationDays(30);
             savedChallenge = challengeRepo.save(challengeToSave);
         }
@@ -104,9 +102,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
                 // This test is likely unnecessary because I'm mocking
                 // challengeParticipantService
                 User challengeOwner = saveRandomUser();
-                Challenge challengeToSave = new Challenge();
-                challengeToSave.setOwner(challengeOwner);
-                challengeToSave.setName("my challenge");
+                Challenge challengeToSave = TestEntityFactory.validChallenge(challengeOwner, "my_challenge");
                 Challenge savedChallenge = challengeRepo.save(challengeToSave);
 
                 when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
