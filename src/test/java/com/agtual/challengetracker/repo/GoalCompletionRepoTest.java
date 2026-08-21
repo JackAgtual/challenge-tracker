@@ -17,7 +17,7 @@ import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 @DataJpaTest
-public class CompletedGoalRepoTest extends MockUserBaseTest {
+public class GoalCompletionRepoTest extends MockUserBaseTest {
     @Autowired
     GoalDefinitionRepo goalDefinitionRepo;
 
@@ -28,11 +28,12 @@ public class CompletedGoalRepoTest extends MockUserBaseTest {
     ChallengeRepo challengeRepo;
 
     @Autowired
-    CompletedGoalRepo completedGoalRepo;
+    GoalCompletionRepo completedGoalRepo;
 
     @Test
     void testGoalCompletionsCantExistForSameGoalAndSameDate() {
-        Challenge challenge = challengeRepo.saveAndFlush(TestEntityFactory.validChallenge(savedUser, "my challenge"));
+        Challenge challenge = challengeRepo
+                .saveAndFlush(TestEntityFactory.validChallenge(savedUser, "my challenge"));
         ChallengeParticipant participant = challengeParticipantRepo
                 .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
 
@@ -43,23 +44,23 @@ public class CompletedGoalRepoTest extends MockUserBaseTest {
 
         // different goal completions can exist for same date
         LocalDate day1 = LocalDate.of(2026, 6, 15);
-        completedGoalRepo.saveAndFlush(TestEntityFactory.validCompletedGoal(drinkWater,
+        completedGoalRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(drinkWater,
                 day1));
-        completedGoalRepo.saveAndFlush(TestEntityFactory.validCompletedGoal(read,
+        completedGoalRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(read,
                 day1));
         assertEquals(2, completedGoalRepo.count());
 
         // same goal completions can exist for different date
         LocalDate day2 = LocalDate.of(2026, 6, 16);
-        completedGoalRepo.saveAndFlush(TestEntityFactory.validCompletedGoal(drinkWater,
+        completedGoalRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(drinkWater,
                 day2));
-        completedGoalRepo.saveAndFlush(TestEntityFactory.validCompletedGoal(read,
+        completedGoalRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(read,
                 day2));
         assertEquals(4, completedGoalRepo.count());
 
         // can't have a repeat goal completion on same date
         assertThrows(DataIntegrityViolationException.class,
-                () -> completedGoalRepo.saveAndFlush(TestEntityFactory.validCompletedGoal(read,
+                () -> completedGoalRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(read,
                         day2)));
     }
 }

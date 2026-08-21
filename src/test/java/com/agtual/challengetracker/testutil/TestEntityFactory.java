@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
-import com.agtual.challengetracker.entity.CompletedGoal;
+import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 
@@ -40,8 +40,8 @@ public class TestEntityFactory {
         return goalDefinition;
     }
 
-    public static CompletedGoal validCompletedGoal(GoalDefinition goalDefinition, LocalDate date) {
-        CompletedGoal completedGoal = new CompletedGoal();
+    public static GoalCompletion validGoalCompletion(GoalDefinition goalDefinition, LocalDate date) {
+        GoalCompletion completedGoal = new GoalCompletion();
         completedGoal.setGoalDefinition(goalDefinition);
         completedGoal.setCompletedDate(date);
         return completedGoal;

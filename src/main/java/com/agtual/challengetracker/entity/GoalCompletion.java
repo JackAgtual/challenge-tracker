@@ -14,12 +14,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "completed_goals", uniqueConstraints = @UniqueConstraint(columnNames = { "goal_definition_id",
+@Table(name = "goal_completions", uniqueConstraints = @UniqueConstraint(columnNames = { "goal_definition_id",
         "completed_date" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
-public class CompletedGoal {
+public class GoalCompletion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
