@@ -18,4 +18,6 @@ public interface ChallengeParticipantRepo extends JpaRepository<ChallengePartici
     List<ChallengeParticipant> findByChallenge(Challenge challenge);
 
     List<ChallengeParticipant> findByParticipant(User participant);
+
+    Optional<ChallengeParticipant> findByParticipantAndChallengeId(User participant, Long id);
 }

@@ -2,6 +2,7 @@ package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.InviteStatus;
+import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
@@ -128,6 +130,31 @@ public class ChallengeParticipantsServiceTest extends MockUserBaseTest {
         assertEquals(5, challengeParticipantRepo.count());
         assertEquals(3, participations.size());
         assertTrue(participations.containsAll(List.of(participant1, participant2, participant3)));
+    }
+
+    @Test
+    void testGetFromChallengeIdAndParticipant() {
+        ChallengeParticipant participant = challengeParticipantRepo
+                .save(TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1));
+
+        ChallengeParticipant participantRes = challengeParticipantService
+                .getChallengeParticipationForUserAndChallengeId(savedUser, savedChallenge1.getId());
+        assertEquals(participant, participantRes);
+    }
+
+    @Test
+    void testGetFromChallengeIdAndParticipantNotFound() {
+        challengeParticipantRepo
+                .save(TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1));
+
+        assertThrows(NotFoundException.class,
+                () -> challengeParticipantService.getChallengeParticipationForUserAndChallengeId(savedUser, 99999L));
+
+        User nonParticipant = saveRandomUser();
+        assertThrows(NotFoundException.class,
+                () -> challengeParticipantService.getChallengeParticipationForUserAndChallengeId(nonParticipant,
+                        savedChallenge1.getId()));
+
     }
 
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {

@@ -4,7 +4,8 @@ package com.agtual.challengetracker.enums;
 @lombok.Getter
 public enum ResourceType {
     USER("User"),
-    CHALLENGE("Challenge");
+    CHALLENGE("Challenge"),
+    CHALLENGE_PARTICIPANT("Challenge participant");
 
     private final String displayName;
 }
