@@ -17,7 +17,9 @@ import org.springframework.context.annotation.Import;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
@@ -171,6 +173,29 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
         assertEquals(resNotReady, challengeParticipantRepo.findById(resNotReady.getId()).get());
     }
 
+    @Test
+    void testCantSetReadyWhenChallengeIsInProgress() {
+        Challenge inProgressChallenge = saveChallengeWithOwner(savedUser, ChallengeStatus.IN_PROGRESS);
+        saveParticipant(savedUser, inProgressChallenge);
+
+        assertThrows(ForbiddenException.class,
+                () -> challengeParticipantService.setReady(savedUser, inProgressChallenge.getId(), false));
+        assertThrows(ForbiddenException.class,
+                () -> challengeParticipantService.setReady(savedUser, inProgressChallenge.getId(), true));
+    }
+
+    @Test
+    void testCantSetReadyWhenChallengeIsComplete() {
+        Challenge completedChallenge = saveChallengeWithOwner(savedUser, ChallengeStatus.COMPLETE);
+        saveParticipant(savedUser, completedChallenge);
+
+        assertThrows(ForbiddenException.class,
+                () -> challengeParticipantService.setReady(savedUser, completedChallenge.getId(), false));
+        assertThrows(ForbiddenException.class,
+                () -> challengeParticipantService.setReady(savedUser, completedChallenge.getId(), true));
+
+    }
+
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
         User userEntity = saveRandomUser();
 
@@ -181,7 +206,11 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
     }
 
     private ChallengeParticipant saveParticipant(User user) {
-        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(savedUser, savedChallenge1);
+        return saveParticipant(user, savedChallenge1);
+    }
+
+    private ChallengeParticipant saveParticipant(User user, Challenge challenge) {
+        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(savedUser, challenge);
         return challengeParticipantRepo.save(participant);
     }
 
@@ -191,7 +220,13 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
     }
 
     private Challenge saveChallengeWithOwner(User owner) {
+        return saveChallengeWithOwner(owner, ChallengeStatus.PENDING);
+    }
+
+    private Challenge saveChallengeWithOwner(User owner, ChallengeStatus challengeStatus) {
         Challenge challenge = TestEntityFactory.validChallenge(owner, UUID.randomUUID().toString());
+        challenge.setStatus(challengeStatus);
         return challengeRepo.save(challenge);
     }
+
 }

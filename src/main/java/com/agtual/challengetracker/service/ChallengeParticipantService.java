@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.enums.ResourceType;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 
@@ -56,6 +58,11 @@ public class ChallengeParticipantService {
     public ChallengeParticipant setReady(User user, Long challengeId, boolean ready) {
         ChallengeParticipant participant = getChallengeParticipationForUserAndChallengeId(user, challengeId);
         participant.setReady(ready);
+
+        if (participant.getChallenge().getStatus() != ChallengeStatus.PENDING) {
+            throw new ForbiddenException("Can only change ready state when challenge is pending");
+        }
+
         return challengeParticipantRepo.save(participant);
     }
 
