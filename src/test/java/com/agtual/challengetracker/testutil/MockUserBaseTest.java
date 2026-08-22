@@ -18,6 +18,6 @@ public abstract class MockUserBaseTest {
     }
 
     protected User saveRandomUser() {
-        return userRepo.save(TestEntityFactory.validUser());
+        return userRepo.saveAndFlush(TestEntityFactory.validUser());
     }
 }

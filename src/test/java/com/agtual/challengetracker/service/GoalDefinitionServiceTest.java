@@ -16,6 +16,7 @@ import com.agtual.challengetracker.dto.request.CreateGoalRequest;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
@@ -83,4 +84,29 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
         assertThrows(NotFoundException.class,
                 () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
     }
+
+    @Test
+    void testGetGoal() {
+        GoalDefinition goal = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, goalName));
+
+        GoalDefinition res = goalDefinitionService.getGoal(savedUser, goal.getId());
+
+        assertEquals(goal, res);
+    }
+
+    @Test
+    void testGetGoalInvalidGoal() {
+        GoalDefinition goal = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, goalName));
+        assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(savedUser, goal.getId() + 1));
+    }
+
+    @Test
+    void testGetGoalInvalidUser() {
+        User userWhoDoesntOwnGoal = saveRandomUser();
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
+        assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(userWhoDoesntOwnGoal, goal.getId()));
+
+    }
+
 }
