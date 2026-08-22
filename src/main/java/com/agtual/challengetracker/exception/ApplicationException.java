@@ -23,4 +23,7 @@ public abstract class ApplicationException extends RuntimeException {
         super(resourceType.getDisplayName() + " " + errorType + ": " + field + "=" + value);
     }
 
+    protected ApplicationException(String errorType, String msg) {
+        super(errorType + ": " + msg);
+    }
 }

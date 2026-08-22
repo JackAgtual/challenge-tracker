@@ -17,7 +17,9 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
@@ -55,10 +57,12 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
 
     @BeforeEach
     void beforeEach() {
-        Challenge challenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "75 hard"));
+        Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
+        pendingChallenge.setStatus(ChallengeStatus.PENDING);
+        Challenge challenge = challengeRepo.saveAndFlush(pendingChallenge);
 
         participant = challengeParticipantRepo
-                .save(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+                .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
 
     }
 
@@ -87,7 +91,8 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
 
     @Test
     void testGetGoal() {
-        GoalDefinition goal = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, goalName));
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
 
         GoalDefinition res = goalDefinitionService.getGoal(savedUser, goal.getId());
 
@@ -96,7 +101,8 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
 
     @Test
     void testGetGoalInvalidGoal() {
-        GoalDefinition goal = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, goalName));
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
         assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(savedUser, goal.getId() + 1));
     }
 
@@ -106,7 +112,38 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
         GoalDefinition goal = goalDefinitionRepo
                 .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
         assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(userWhoDoesntOwnGoal, goal.getId()));
+    }
 
+    @Test
+    void testCantCreateGoalWhenChallengeIsInProgress() {
+        Challenge inProgressChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        inProgressChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        Challenge challenge = challengeRepo.saveAndFlush(inProgressChallenge);
+        participant = challengeParticipantRepo
+                .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+
+        long challengeId = 333L;
+        when(challengeParticipantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
+
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
+    }
+
+    @Test
+    void testCantCreateGoalWhenChallengeIsComplete() {
+        Challenge completedChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        completedChallenge.setStatus(ChallengeStatus.COMPLETE);
+        Challenge challenge = challengeRepo.saveAndFlush(completedChallenge);
+        participant = challengeParticipantRepo
+                .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+
+        long challengeId = 333L;
+        when(challengeParticipantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
+
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
     }
 
 }

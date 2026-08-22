@@ -26,6 +26,7 @@ import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
@@ -74,16 +75,11 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
     @BeforeEach
     void beforeEach() {
-        Challenge challenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "75 hard"));
+        Challenge validChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
+        validChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        Challenge challenge = challengeRepo.save(validChallenge);
 
-        ChallengeParticipant participant = challengeParticipantRepo
-                .save(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
-
-        goal1 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "drink water"));
-        goal2 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "run 1 mile"));
-
-        when(goalDefinitionService.getGoal(savedUser, goal1.getId())).thenReturn(goal1);
-        when(goalDefinitionService.getGoal(savedUser, goal2.getId())).thenReturn(goal2);
+        createGoalsFromChallenge(challenge);
     }
 
     @Test
@@ -131,6 +127,28 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
                 () -> goalCompletionService.completeGoal(savedUser, goal2.getId(), completedDate));
     }
 
+    @Test
+    void testCantCompleteGoalIfChallengeIsPending() {
+        Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        pendingChallenge.setStatus(ChallengeStatus.PENDING);
+        Challenge challenge = challengeRepo.save(pendingChallenge);
+        createGoalsFromChallenge(challenge);
+
+        assertThrows(ForbiddenException.class,
+                () -> goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate));
+    }
+
+    @Test
+    void testCantCompleteGoalIfChallengeIsComplete() {
+        Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        pendingChallenge.setStatus(ChallengeStatus.COMPLETE);
+        Challenge challenge = challengeRepo.save(pendingChallenge);
+        createGoalsFromChallenge(challenge);
+
+        assertThrows(ForbiddenException.class,
+                () -> goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate));
+    }
+
     @Nested
     class UncompleteGoal {
         GoalCompletion goalCompletion1;
@@ -172,6 +190,17 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
                     () -> goalCompletionService.uncompleteGoal(savedUser, 999999L));
 
         }
+    }
+
+    private void createGoalsFromChallenge(Challenge challenge) {
+        ChallengeParticipant participant = challengeParticipantRepo
+                .save(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+
+        goal1 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "drink water"));
+        goal2 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "run 1 mile"));
+
+        when(goalDefinitionService.getGoal(savedUser, goal1.getId())).thenReturn(goal1);
+        when(goalDefinitionService.getGoal(savedUser, goal2.getId())).thenReturn(goal2);
     }
 
 }

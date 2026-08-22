@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
@@ -29,6 +30,10 @@ public class GoalCompletionService {
         }
 
         GoalDefinition goal = goalDefinitionService.getGoal(user, goalDefinitionId);
+
+        if (goal.getParticipant().getChallenge().getStatus() != ChallengeStatus.IN_PROGRESS) {
+            throw new ForbiddenException("Challenge must be in progres to complete goals");
+        }
 
         Optional<GoalCompletion> goalCompletionDuplicate = goalCompletionRepo
                 .findByGoalDefinitionAndCompletedDate(goal, date);

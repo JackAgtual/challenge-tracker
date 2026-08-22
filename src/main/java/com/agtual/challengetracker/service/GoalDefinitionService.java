@@ -6,7 +6,9 @@ import com.agtual.challengetracker.dto.request.CreateGoalRequest;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
+import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
 
@@ -20,6 +22,10 @@ public class GoalDefinitionService {
     public GoalDefinition createGoal(User user, Long challengeId, CreateGoalRequest createGoalRequest) {
         ChallengeParticipant participant = challengeParticipantService
                 .getChallengeParticipationForUserAndChallengeId(user, challengeId);
+
+        if (participant.getChallenge().getStatus() != ChallengeStatus.PENDING) {
+            throw new ForbiddenException("Can only create goal when challenge is pending");
+        }
 
         GoalDefinition goalDefinition = new GoalDefinition();
         goalDefinition.setParticipant(participant);
