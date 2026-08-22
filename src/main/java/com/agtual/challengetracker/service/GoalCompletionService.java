@@ -11,6 +11,7 @@ import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
+import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.GoalCompletionRepo;
 
 @Service
@@ -41,5 +42,16 @@ public class GoalCompletionService {
         completion.setGoalDefinition(goal);
         completion.setCompletedDate(date);
         return goalCompletionRepo.save(completion);
+    }
+
+    public void uncompleteGoal(User user, Long goalCompletionId) {
+        GoalCompletion goalToDelete = goalCompletionRepo.findById(goalCompletionId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId));
+
+        if (goalToDelete.getGoalDefinition().getParticipant().getParticipant() != user) {
+            // Throw not found for authorization error
+            throw new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId);
+        }
+        goalCompletionRepo.deleteById(goalCompletionId);
     }
 }

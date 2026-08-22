@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -129,4 +130,48 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
         assertThrows(NotFoundException.class,
                 () -> goalCompletionService.completeGoal(savedUser, goal2.getId(), completedDate));
     }
+
+    @Nested
+    class UncompleteGoal {
+        GoalCompletion goalCompletion1;
+        GoalCompletion goalCompletion2;
+
+        @MockitoBean
+        Clock clock; // needed for application context
+
+        @BeforeEach
+        void beforeEach() {
+            goalCompletion1 = goalCompletionRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(goal1,
+                    completedDate));
+            goalCompletion2 = goalCompletionRepo.saveAndFlush(TestEntityFactory.validGoalCompletion(goal2,
+                    completedDate));
+        }
+
+        @Test
+        void testUncompleteGoal() {
+            goalCompletionService.uncompleteGoal(savedUser, goalCompletion1.getId());
+            assertEquals(1, goalCompletionRepo.count());
+
+            // test another uncomplete
+            goalCompletionService.uncompleteGoal(savedUser, goalCompletion2.getId());
+            assertEquals(0, goalCompletionRepo.count());
+        }
+
+        @Test
+        void testCantUncompleteOtherUsersGoal() {
+            User otherUser = saveRandomUser();
+
+            assertThrows(NotFoundException.class,
+                    () -> goalCompletionService.uncompleteGoal(otherUser,
+                            goalCompletion1.getId()));
+        }
+
+        @Test
+        void testCantUncompleteInvalidGoal() {
+            assertThrows(NotFoundException.class,
+                    () -> goalCompletionService.uncompleteGoal(savedUser, 999999L));
+
+        }
+    }
+
 }
