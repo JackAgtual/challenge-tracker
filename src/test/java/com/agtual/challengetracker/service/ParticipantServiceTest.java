@@ -17,16 +17,15 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
-import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
-import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
+import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
@@ -62,7 +61,6 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         assertEquals(savedChallenge1, owner.getChallenge());
         assertEquals(savedUser, owner.getUser());
-        assertEquals(InviteStatus.ACCEPTED, owner.getInviteStatus());
         assertEquals(false, owner.isReady());
 
         Participant participantInRepo = participantRepo.findById(owner.getId()).get();
@@ -71,22 +69,20 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
     @Test
     void testAllJoinedParticipantsAreReadyWhenAllAreReady() {
-        saveParticipant(InviteStatus.ACCEPTED, true);
-        saveParticipant(InviteStatus.ACCEPTED, true);
-        saveParticipant(InviteStatus.ACCEPTED, true);
-        saveParticipant(InviteStatus.DECLINED, false);
-        saveParticipant(InviteStatus.PENDING, false);
+        saveParticipant(true);
+        saveParticipant(true);
+        saveParticipant(true);
 
         assertTrue(participantService.allJoinedParticipantsAreReady(savedChallenge1));
     }
 
     @Test
     void testAllJoinedParticipantsAreReadyWhenNotAllAreReady() {
-        saveParticipant(InviteStatus.ACCEPTED, true);
-        saveParticipant(InviteStatus.ACCEPTED, false);
-        saveParticipant(InviteStatus.ACCEPTED, true);
-        saveParticipant(InviteStatus.DECLINED, false);
-        saveParticipant(InviteStatus.PENDING, false);
+        saveParticipant(true);
+        saveParticipant(false);
+        saveParticipant(true);
+        saveParticipant(false);
+        saveParticipant(false);
 
         assertFalse(participantService.allJoinedParticipantsAreReady(savedChallenge1));
     }
@@ -102,45 +98,38 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     @Test
-    void testGetAllChallengesForUser() {
-        User otherUser = saveRandomUser();
+    void testGetAllChallengeParticipationsForUser() {
+        User otherUser1 = saveRandomUser();
+        User otherUser2 = saveRandomUser();
 
-        Challenge challenge1 = saveChallengeWithOwner(otherUser);
-        Challenge challenge2 = saveChallengeWithOwner(savedUser);
+        // challenge owner should not affect if user is participant
+        // test with multiple challenge owneres
+        Challenge challenge1 = saveChallengeWithOwner(otherUser1);
+        Challenge challenge2 = saveChallengeWithOwner(otherUser1);
         Challenge challenge3 = saveChallengeWithOwner(savedUser);
         Challenge challenge4 = saveChallengeWithOwner(savedUser);
-        Challenge challenge5 = saveChallengeWithOwner(savedUser);
+        Challenge challenge5 = saveChallengeWithOwner(otherUser2);
 
-        // user is owner of challenge
         Participant participant1 = TestEntityFactory.validParticipant(savedUser, challenge1);
-        participant1.setInviteStatus(InviteStatus.ACCEPTED);
         participant1 = participantRepo.save(participant1);
 
-        // user accepted invite to challenge
         Participant participant2 = TestEntityFactory.validParticipant(savedUser, challenge2);
-        participant2.setInviteStatus(InviteStatus.ACCEPTED);
         participant2 = participantRepo.save(participant2);
 
-        // user has not responded to challenge invite
-        // will still be included in response
         Participant participant3 = TestEntityFactory.validParticipant(savedUser, challenge3);
-        participant3.setInviteStatus(InviteStatus.PENDING);
         participant3 = participantRepo.save(participant3);
 
-        // user declined invite to challenge, should not be included in response
         Participant participant4 = TestEntityFactory.validParticipant(savedUser, challenge4);
-        participant4.setInviteStatus(InviteStatus.DECLINED);
         participant4 = participantRepo.save(participant4);
 
         // participant is a different user, should not be included in response
-        Participant participant5 = TestEntityFactory.validParticipant(otherUser, challenge5);
-        participant5.setInviteStatus(InviteStatus.DECLINED);
+        Participant participant5 = TestEntityFactory.validParticipant(otherUser1, challenge5);
         participant5 = participantRepo.save(participant5);
 
         List<Participant> participations = participantService
                 .getAllChallengeParticipationsForUser(savedUser);
         assertEquals(5, participantRepo.count());
-        assertEquals(3, participations.size());
+        assertEquals(4, participations.size());
         assertTrue(participations.containsAll(List.of(participant1, participant2, participant3)));
     }
 
@@ -328,12 +317,11 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         }
     }
 
-    private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
+    private void saveParticipant(boolean ready) {
         User userEntity = saveRandomUser();
 
         Participant participant = TestEntityFactory.validParticipant(userEntity, savedChallenge1);
         participant.setReady(ready);
-        participant.setInviteStatus(inviteStatus);
         participantRepo.save(participant);
     }
 

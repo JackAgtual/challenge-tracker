@@ -24,7 +24,6 @@ public class ParticipantService {
         Participant challengeOwner = new Participant();
         challengeOwner.setUser(user);
         challengeOwner.setChallenge(challenge);
-        challengeOwner.setInviteStatus(InviteStatus.ACCEPTED);
         return participantRepo.save(challengeOwner);
     }
 
@@ -35,7 +34,6 @@ public class ParticipantService {
         }
 
         return participants.stream()
-                .filter(participant -> participant.getInviteStatus() == InviteStatus.ACCEPTED)
                 .allMatch(participant -> participant.isReady());
     }
 
@@ -44,9 +42,7 @@ public class ParticipantService {
     }
 
     public List<Participant> getAllChallengeParticipationsForUser(User user) {
-        return participantRepo.findByUser(user).stream()
-                .filter(p -> p.getInviteStatus() != InviteStatus.DECLINED)
-                .toList();
+        return participantRepo.findByUser(user);
     }
 
     public Participant getChallengeParticipationForUserAndChallengeId(User user, Long challengeId) {
