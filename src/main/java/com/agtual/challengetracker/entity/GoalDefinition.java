@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -35,5 +36,5 @@ public class GoalDefinition {
     private String name;
 
     @OneToMany(mappedBy = "goalDefinition", cascade = CascadeType.ALL)
-    private List<GoalCompletion> goalCompletions;
+    private List<GoalCompletion> goalCompletions = new ArrayList<>();
 }

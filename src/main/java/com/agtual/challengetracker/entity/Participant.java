@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.agtual.challengetracker.enums.InviteStatus;
@@ -47,5 +48,5 @@ public class Participant {
     private boolean ready = false;
 
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
-    private List<GoalDefinition> goalDefinitions;
+    private List<GoalDefinition> goalDefinitions = new ArrayList<>();
 }
