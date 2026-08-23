@@ -225,6 +225,20 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             @Test
             void testStartChallengeChallengeNotReady() {
                 savedChallenge.setDurationDays(null);
+                challengeRepo.save(savedChallenge);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
+            }
+
+            @Test
+            void testCantStartChallengeThatIsntPending() {
+                savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+                challengeRepo.save(savedChallenge);
+                assertThrows(ForbiddenException.class,
+                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
+
+                savedChallenge.setStatus(ChallengeStatus.COMPLETE);
+                challengeRepo.save(savedChallenge);
                 assertThrows(ForbiddenException.class,
                         () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
             }
