@@ -66,4 +66,22 @@ public class ChallengeParticipantService {
         return challengeParticipantRepo.save(participant);
     }
 
+    public void removeParticipantFromChallenge(User challengeOwner, Long challengeParticipantId) {
+        ChallengeParticipant participant = challengeParticipantRepo
+                .findById(challengeParticipantId)
+                .orElseThrow(
+                        () -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, challengeParticipantId));
+
+        Challenge challenge = participant.getChallenge();
+        if (!challenge.getOwner().getId().equals(challengeOwner.getId())) {
+            throw new NotFoundException(ResourceType.CHALLENGE, "participant id", challengeParticipantId);
+        }
+
+        // challenge must be pending
+        if (challenge.getStatus() != ChallengeStatus.PENDING) {
+            throw new ForbiddenException("Can only remove challenge participant when challenge status is pending");
+        }
+
+        challengeParticipantRepo.delete(participant);
+    }
 }

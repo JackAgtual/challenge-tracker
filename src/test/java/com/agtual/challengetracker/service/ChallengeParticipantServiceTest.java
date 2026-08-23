@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
@@ -23,6 +26,7 @@ import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
+import com.agtual.challengetracker.repo.GoalDefinitionRepo;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
@@ -40,6 +44,12 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
 
     @Autowired
     ChallengeRepo challengeRepo;
+
+    @Autowired
+    GoalDefinitionRepo goalDefinitionRepo;
+
+    @Autowired
+    TestEntityManager em;
 
     @BeforeEach
     void beforeEach() {
@@ -193,7 +203,80 @@ public class ChallengeParticipantServiceTest extends MockUserBaseTest {
                 () -> challengeParticipantService.setReady(savedUser, completedChallenge.getId(), false));
         assertThrows(ForbiddenException.class,
                 () -> challengeParticipantService.setReady(savedUser, completedChallenge.getId(), true));
+    }
 
+    @Nested
+    class RemovingParticipant {
+
+        @Test
+        void testRemoveParticipantFromChallenge() {
+            Challenge challenge = saveChallengeWithOwner(savedUser);
+
+            User nonChallengeOwner = saveRandomUser();
+
+            ChallengeParticipant challengeOwner = challengeParticipantRepo
+                    .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+            ChallengeParticipant participantToRemove = challengeParticipantRepo
+                    .saveAndFlush(TestEntityFactory.validChallengeParticipant(nonChallengeOwner, challenge));
+
+            assertEquals(2, challengeParticipantRepo.count());
+            assertTrue(challengeParticipantRepo.findById(challengeOwner.getId()).isPresent());
+            assertTrue(challengeParticipantRepo.findById(participantToRemove.getId()).isPresent());
+
+            // create goal definitions for participant and owner
+            // assume goal completions don't exist because challenge hasn't started yet
+            goalDefinitionRepo.saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "drink water"));
+            goalDefinitionRepo.saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "run 1 mile"));
+            GoalDefinition bikeOwner = goalDefinitionRepo
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "bike"));
+            GoalDefinition proteinOwner = goalDefinitionRepo
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "eat protein"));
+
+            // test-ism needed to clear hibernate cache
+            em.flush();
+            em.clear();
+
+            // remove challenge participant
+            challengeParticipantService.removeParticipantFromChallenge(savedUser, participantToRemove.getId());
+
+            // assert challenge participant repo is changed
+            assertEquals(1, challengeParticipantRepo.count());
+            assertTrue(challengeParticipantRepo.findById(participantToRemove.getId()).isEmpty());
+            assertTrue(challengeParticipantRepo.findById(challengeOwner.getId()).isPresent());
+
+            // assert goal definitions and goal completions are empty
+            assertEquals(2, goalDefinitionRepo.count());
+            assertTrue(goalDefinitionRepo.findById(bikeOwner.getId()).isPresent());
+            assertTrue(goalDefinitionRepo.findById(proteinOwner.getId()).isPresent());
+        }
+
+        @Test
+        void testCantRemoveParticipantIfChallengeInProgress() {
+            Challenge challenge = saveChallengeWithOwner(savedUser, ChallengeStatus.IN_PROGRESS);
+
+            User nonChallengeOwner = saveRandomUser();
+
+            assertRemovingParticipantFromChallengeThrowsError(nonChallengeOwner, challenge);
+        }
+
+        @Test
+        void testCantRemoveParticipantIfChallengeComplete() {
+            Challenge challenge = saveChallengeWithOwner(savedUser, ChallengeStatus.COMPLETE);
+
+            User nonChallengeOwner = saveRandomUser();
+
+            assertRemovingParticipantFromChallengeThrowsError(nonChallengeOwner, challenge);
+        }
+
+        private void assertRemovingParticipantFromChallengeThrowsError(User nonChallengeOwner, Challenge challenge) {
+            challengeParticipantRepo
+                    .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+            ChallengeParticipant participantToRemove = challengeParticipantRepo
+                    .saveAndFlush(TestEntityFactory.validChallengeParticipant(nonChallengeOwner, challenge));
+
+            assertThrows(ForbiddenException.class, () -> challengeParticipantService
+                    .removeParticipantFromChallenge(savedUser, participantToRemove.getId()));
+        }
     }
 
     private void saveParticipant(InviteStatus inviteStatus, boolean ready) {
