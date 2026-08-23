@@ -66,17 +66,32 @@ public class ChallengeParticipantService {
         return challengeParticipantRepo.save(participant);
     }
 
-    public void removeParticipantFromChallenge(User challengeOwner, Long challengeParticipantId) {
+    public void ownerRemovesParticipantFromChallenge(User challengeOwner, Long challengeParticipantId) {
         ChallengeParticipant participant = challengeParticipantRepo
                 .findById(challengeParticipantId)
-                .orElseThrow(
-                        () -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, challengeParticipantId));
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, challengeParticipantId));
 
         Challenge challenge = participant.getChallenge();
         if (!challenge.getOwner().getId().equals(challengeOwner.getId())) {
             throw new NotFoundException(ResourceType.CHALLENGE, "participant id", challengeParticipantId);
         }
 
+        removeParticipantFromChallenge(participant, challenge);
+    }
+
+    public void leaveChallenge(User user, Long challengeId) {
+        ChallengeParticipant participant = challengeParticipantRepo.findByParticipantAndChallengeId(user, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "?"));
+
+        Challenge challenge = participant.getChallenge();
+        if (challenge.getOwner().getId().equals(user.getId())) {
+            throw new ForbiddenException("Challenge owner can't leave challenge");
+        }
+
+        removeParticipantFromChallenge(participant, challenge);
+    }
+
+    private void removeParticipantFromChallenge(ChallengeParticipant participant, Challenge challenge) {
         // challenge must be pending
         if (challenge.getStatus() != ChallengeStatus.PENDING) {
             throw new ForbiddenException("Can only remove challenge participant when challenge status is pending");
@@ -84,4 +99,5 @@ public class ChallengeParticipantService {
 
         challengeParticipantRepo.delete(participant);
     }
+
 }
