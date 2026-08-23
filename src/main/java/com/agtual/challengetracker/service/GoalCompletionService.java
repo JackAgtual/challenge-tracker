@@ -53,7 +53,7 @@ public class GoalCompletionService {
         GoalCompletion goalToDelete = goalCompletionRepo.findById(goalCompletionId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId));
 
-        if (goalToDelete.getGoalDefinition().getParticipant().getParticipant() != user) {
+        if (goalToDelete.getGoalDefinition().getParticipant().getUser() != user) {
             // Throw not found for authorization error
             throw new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId);
         }

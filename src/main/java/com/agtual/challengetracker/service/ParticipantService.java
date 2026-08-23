@@ -5,31 +5,31 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
-import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
+import com.agtual.challengetracker.repo.ParticipantRepo;
 
 @Service
 @lombok.RequiredArgsConstructor
-public class ChallengeParticipantService {
+public class ParticipantService {
 
-    private final ChallengeParticipantRepo challengeParticipantRepo;
+    private final ParticipantRepo participantRepo;
 
-    public ChallengeParticipant addOwnerToChallenge(User user, Challenge challenge) {
-        ChallengeParticipant challengeOwner = new ChallengeParticipant();
-        challengeOwner.setParticipant(user);
+    public Participant addOwnerToChallenge(User user, Challenge challenge) {
+        Participant challengeOwner = new Participant();
+        challengeOwner.setUser(user);
         challengeOwner.setChallenge(challenge);
         challengeOwner.setInviteStatus(InviteStatus.ACCEPTED);
-        return challengeParticipantRepo.save(challengeOwner);
+        return participantRepo.save(challengeOwner);
     }
 
     public boolean allJoinedParticipantsAreReady(Challenge challenge) {
-        List<ChallengeParticipant> participants = challengeParticipantRepo.findByChallenge(challenge);
+        List<Participant> participants = participantRepo.findByChallenge(challenge);
         if (participants.isEmpty()) {
             return false;
         }
@@ -40,48 +40,48 @@ public class ChallengeParticipantService {
     }
 
     public boolean isParticipant(User user, Challenge challenge) {
-        return challengeParticipantRepo.existsByChallengeAndParticipant(challenge, user);
+        return participantRepo.existsByChallengeAndUser(challenge, user);
     }
 
-    public List<ChallengeParticipant> getAllChallengeParticipationsForUser(User user) {
-        return challengeParticipantRepo.findByParticipant(user).stream()
+    public List<Participant> getAllChallengeParticipationsForUser(User user) {
+        return participantRepo.findByUser(user).stream()
                 .filter(p -> p.getInviteStatus() != InviteStatus.DECLINED)
                 .toList();
     }
 
-    public ChallengeParticipant getChallengeParticipationForUserAndChallengeId(User user, Long challengeId) {
-        return challengeParticipantRepo.findByParticipantAndChallengeId(user,
+    public Participant getChallengeParticipationForUserAndChallengeId(User user, Long challengeId) {
+        return participantRepo.findByUserAndChallengeId(user,
                 challengeId).orElseThrow(
-                        () -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "challengeId=" + challengeId));
+                        () -> new NotFoundException(ResourceType.PARTICIPANT, "challengeId=" + challengeId));
     }
 
-    public ChallengeParticipant setReady(User user, Long challengeId, boolean ready) {
-        ChallengeParticipant participant = getChallengeParticipationForUserAndChallengeId(user, challengeId);
+    public Participant setReady(User user, Long challengeId, boolean ready) {
+        Participant participant = getChallengeParticipationForUserAndChallengeId(user, challengeId);
         participant.setReady(ready);
 
         if (participant.getChallenge().getStatus() != ChallengeStatus.PENDING) {
             throw new ForbiddenException("Can only change ready state when challenge is pending");
         }
 
-        return challengeParticipantRepo.save(participant);
+        return participantRepo.save(participant);
     }
 
-    public void ownerRemovesParticipantFromChallenge(User challengeOwner, Long challengeParticipantId) {
-        ChallengeParticipant participant = challengeParticipantRepo
-                .findById(challengeParticipantId)
-                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, challengeParticipantId));
+    public void ownerRemovesParticipantFromChallenge(User challengeOwner, Long participantId) {
+        Participant participant = participantRepo
+                .findById(participantId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, participantId));
 
         Challenge challenge = participant.getChallenge();
         if (!challenge.getOwner().getId().equals(challengeOwner.getId())) {
-            throw new NotFoundException(ResourceType.CHALLENGE, "participant id", challengeParticipantId);
+            throw new NotFoundException(ResourceType.CHALLENGE, "participant id", participantId);
         }
 
         removeParticipantFromChallenge(participant, challenge);
     }
 
     public void leaveChallenge(User user, Long challengeId) {
-        ChallengeParticipant participant = challengeParticipantRepo.findByParticipantAndChallengeId(user, challengeId)
-                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE_PARTICIPANT, "?"));
+        Participant participant = participantRepo.findByUserAndChallengeId(user, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, "?"));
 
         Challenge challenge = participant.getChallenge();
         if (challenge.getOwner().getId().equals(user.getId())) {
@@ -91,13 +91,13 @@ public class ChallengeParticipantService {
         removeParticipantFromChallenge(participant, challenge);
     }
 
-    private void removeParticipantFromChallenge(ChallengeParticipant participant, Challenge challenge) {
+    private void removeParticipantFromChallenge(Participant participant, Challenge challenge) {
         // challenge must be pending
         if (challenge.getStatus() != ChallengeStatus.PENDING) {
             throw new ForbiddenException("Can only remove challenge participant when challenge status is pending");
         }
 
-        challengeParticipantRepo.delete(participant);
+        participantRepo.delete(participant);
     }
 
 }

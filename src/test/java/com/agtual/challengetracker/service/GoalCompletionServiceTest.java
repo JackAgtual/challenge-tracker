@@ -22,14 +22,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
-import com.agtual.challengetracker.repo.ChallengeParticipantRepo;
+import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.repo.GoalCompletionRepo;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
@@ -53,7 +53,7 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
     ChallengeRepo challengeRepo;
 
     @Autowired
-    ChallengeParticipantRepo challengeParticipantRepo;
+    ParticipantRepo participantRepo;
 
     @Autowired
     GoalCompletionService goalCompletionService;
@@ -193,8 +193,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
     }
 
     private void createGoalsFromChallenge(Challenge challenge) {
-        ChallengeParticipant participant = challengeParticipantRepo
-                .save(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+        Participant participant = participantRepo
+                .save(TestEntityFactory.validParticipant(savedUser, challenge));
 
         goal1 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "drink water"));
         goal2 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "run 1 mile"));

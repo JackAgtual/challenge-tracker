@@ -9,7 +9,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
@@ -20,16 +20,16 @@ public class GoalDefinitionRepoTest extends MockUserBaseTest {
     GoalDefinitionRepo goalDefinitionRepo;
 
     @Autowired
-    ChallengeParticipantRepo challengeParticipantRepo;
+    ParticipantRepo participantRepo;
 
     @Autowired
     ChallengeRepo challengeRepo;
 
     @Test
-    void testChallengeParticipantGoaldDefinitionsMustBeUnique() {
+    void testParticipantGoaldDefinitionsMustBeUnique() {
         Challenge challenge = challengeRepo.saveAndFlush(TestEntityFactory.validChallenge(savedUser, "my challenge"));
-        ChallengeParticipant participant = challengeParticipantRepo
-                .saveAndFlush(TestEntityFactory.validChallengeParticipant(savedUser, challenge));
+        Participant participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
 
         String goalName = "goal";
         goalDefinitionRepo.saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));

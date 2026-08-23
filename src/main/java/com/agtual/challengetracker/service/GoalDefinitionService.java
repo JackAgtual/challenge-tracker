@@ -3,7 +3,7 @@ package com.agtual.challengetracker.service;
 import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.dto.request.CreateGoalRequest;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
@@ -17,10 +17,10 @@ import com.agtual.challengetracker.repo.GoalDefinitionRepo;
 public class GoalDefinitionService {
 
     private final GoalDefinitionRepo goalDefinitionRepo;
-    private final ChallengeParticipantService challengeParticipantService;
+    private final ParticipantService participantService;
 
     public GoalDefinition createGoal(User user, Long challengeId, CreateGoalRequest createGoalRequest) {
-        ChallengeParticipant participant = challengeParticipantService
+        Participant participant = participantService
                 .getChallengeParticipationForUserAndChallengeId(user, challengeId);
 
         if (participant.getChallenge().getStatus() != ChallengeStatus.PENDING) {
@@ -37,7 +37,7 @@ public class GoalDefinitionService {
         GoalDefinition goal = goalDefinitionRepo.findById(goalId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_DEFINITION, goalId));
 
-        if (goal.getParticipant().getParticipant() != user) {
+        if (goal.getParticipant().getUser() != user) {
             // Throw not found for authorization error
             throw new NotFoundException(ResourceType.GOAL_DEFINITION, goalId);
         }

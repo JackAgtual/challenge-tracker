@@ -5,7 +5,7 @@ package com.agtual.challengetracker.enums;
 public enum ResourceType {
     USER("User"),
     CHALLENGE("Challenge"),
-    CHALLENGE_PARTICIPANT("Challenge participant"),
+    PARTICIPANT("Participant"),
     GOAL_DEFINITION("Goal definition"),
     GOAL_COMPLETION("Goal completion");
 

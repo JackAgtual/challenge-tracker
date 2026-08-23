@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "goal_definitions", uniqueConstraints = @UniqueConstraint(columnNames = { "challenge_participant_id",
+@Table(name = "goal_definitions", uniqueConstraints = @UniqueConstraint(columnNames = { "participant_id",
         "name" }))
 @lombok.Getter
 @lombok.Setter
@@ -28,8 +28,8 @@ public class GoalDefinition {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_participant_id", nullable = false)
-    private ChallengeParticipant participant;
+    @JoinColumn(name = "participant_id", nullable = false)
+    private Participant participant;
 
     @Column(name = "name", nullable = false)
     private String name;

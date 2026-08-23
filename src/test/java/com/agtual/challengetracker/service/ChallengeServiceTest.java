@@ -39,7 +39,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
     ChallengeRepo challengeRepo;
 
     @MockitoBean
-    ChallengeParticipantService challengeParticipantService;
+    ParticipantService participantService;
 
     @Nested
     class CreateChallenge {
@@ -68,9 +68,9 @@ public class ChallengeServiceTest extends MockUserBaseTest {
         }
 
         @Test
-        void testCreateChallengeAddsOwnerAsChallengeParticipant() {
+        void testCreateChallengeAddsOwnerAsParticipant() {
             Challenge challenge = challengeService.createChallenge(savedUser, createChallengeRequest);
-            verify(challengeParticipantService).addOwnerToChallenge(savedUser, challenge);
+            verify(participantService).addOwnerToChallenge(savedUser, challenge);
         }
     }
 
@@ -90,7 +90,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testGetChallenge() {
-                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+                when(participantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
 
                 Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
 
@@ -99,13 +99,12 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testGetChallengeForWhenUserIsNotChallengeOwner() {
-                // This test is likely unnecessary because I'm mocking
-                // challengeParticipantService
+                // This test is likely unnecessary because I'm mocking participantService
                 User challengeOwner = saveRandomUser();
                 Challenge challengeToSave = TestEntityFactory.validChallenge(challengeOwner, "my_challenge");
                 Challenge savedChallenge = challengeRepo.save(challengeToSave);
 
-                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+                when(participantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
 
                 // savedUser is not the challenge owner
                 Challenge challengeRes = challengeService.getChallenge(savedUser, savedChallenge.getId());
@@ -117,7 +116,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             void testGetChallengeNotFound() {
                 // should not fail due to participant check (even though this check should not
                 // be run for this condition)
-                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
+                when(participantService.isParticipant(savedUser, savedChallenge)).thenReturn(true);
                 Long invalidChallengeId = 9999L;
 
                 assertThrows(NotFoundException.class,
@@ -126,7 +125,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testGetChallengeUserIsNotParticipant() {
-                when(challengeParticipantService.isParticipant(savedUser, savedChallenge)).thenReturn(false);
+                when(participantService.isParticipant(savedUser, savedChallenge)).thenReturn(false);
 
                 assertThrows(NotFoundException.class,
                         () -> challengeService.getChallenge(savedUser, savedChallenge.getId()));
@@ -196,7 +195,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @BeforeEach
             void beforeEach() {
-                when(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(true);
+                when(participantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(true);
             }
 
             @Test
@@ -216,8 +215,8 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             }
 
             @Test
-            void testStartChallengeParticipantsNotReady() {
-                when(challengeParticipantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(false);
+            void testStartParticipantsNotReady() {
+                when(participantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(false);
                 assertThrows(ForbiddenException.class,
                         () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
             }

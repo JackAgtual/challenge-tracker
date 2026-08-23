@@ -21,7 +21,7 @@ import com.agtual.challengetracker.repo.ChallengeRepo;
 @lombok.RequiredArgsConstructor
 public class ChallengeService {
 
-    private final ChallengeParticipantService challengeParticipantService;
+    private final ParticipantService participantService;
     private final ChallengeRepo challengeRepo;
 
     @Transactional
@@ -35,7 +35,7 @@ public class ChallengeService {
 
         Challenge challenge = challengeRepo.save(new Challenge(challengeRequest, user));
 
-        challengeParticipantService.addOwnerToChallenge(user, challenge);
+        participantService.addOwnerToChallenge(user, challenge);
 
         return challenge;
     }
@@ -44,7 +44,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepo.findById(challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 
-        if (!challengeParticipantService.isParticipant(user, challenge)) {
+        if (!participantService.isParticipant(user, challenge)) {
             // Throw not found instead of unauthorized
             throw new NotFoundException(ResourceType.CHALLENGE, challengeId);
         }
@@ -84,7 +84,7 @@ public class ChallengeService {
             throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Challenge start conditions not met.");
         }
 
-        if (!challengeParticipantService.allJoinedParticipantsAreReady(challenge)) {
+        if (!participantService.allJoinedParticipantsAreReady(challenge)) {
             throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Not all challenge participants ready.");
         }
 

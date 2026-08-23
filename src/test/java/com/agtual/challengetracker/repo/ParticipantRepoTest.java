@@ -8,32 +8,32 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 @DataJpaTest
-public class ChallengeParticipantRepoTest extends MockUserBaseTest {
+public class ParticipantRepoTest extends MockUserBaseTest {
 
     @Autowired
     ChallengeRepo challengeRepo;
 
     @Autowired
-    ChallengeParticipantRepo challengeParticipantRepo;
+    ParticipantRepo participantRepo;
 
     @Test
     void testSameParticipantCanOnlyParticipateInChallengeOnce() {
         Challenge challenge = TestEntityFactory.validChallenge(savedUser, "my challenge");
         challengeRepo.saveAndFlush(challenge);
 
-        ChallengeParticipant participant = TestEntityFactory.validChallengeParticipant(savedUser, challenge);
+        Participant participant = TestEntityFactory.validParticipant(savedUser, challenge);
         participant.setReady(true);
 
-        challengeParticipantRepo.saveAndFlush(participant);
+        participantRepo.saveAndFlush(participant);
 
-        ChallengeParticipant sameParticipant = TestEntityFactory.validChallengeParticipant(savedUser, challenge);
+        Participant sameParticipant = TestEntityFactory.validParticipant(savedUser, challenge);
 
-        assertThrows(DataIntegrityViolationException.class, () -> challengeParticipantRepo.saveAndFlush(
+        assertThrows(DataIntegrityViolationException.class, () -> participantRepo.saveAndFlush(
                 sameParticipant));
     }
 

@@ -20,20 +20,20 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "challenge_participants", uniqueConstraints = @UniqueConstraint(columnNames = { "participant_id",
+@Table(name = "participants", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id",
         "challenge_id" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
-public class ChallengeParticipant {
+public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participant_id", nullable = false)
-    private User participant;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id", nullable = false)

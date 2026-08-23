@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.ChallengeParticipant;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
@@ -26,14 +26,14 @@ public class TestEntityFactory {
         return challenge;
     }
 
-    public static ChallengeParticipant validChallengeParticipant(User user, Challenge challenge) {
-        ChallengeParticipant challengeParticipant = new ChallengeParticipant();
-        challengeParticipant.setParticipant(user);
-        challengeParticipant.setChallenge(challenge);
-        return challengeParticipant;
+    public static Participant validParticipant(User user, Challenge challenge) {
+        Participant participant = new Participant();
+        participant.setUser(user);
+        participant.setChallenge(challenge);
+        return participant;
     }
 
-    public static GoalDefinition validGoalDefinition(ChallengeParticipant participant, String name) {
+    public static GoalDefinition validGoalDefinition(Participant participant, String name) {
         GoalDefinition goalDefinition = new GoalDefinition();
         goalDefinition.setParticipant(participant);
         goalDefinition.setName(name);
