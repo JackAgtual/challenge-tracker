@@ -4,9 +4,10 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Invite;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 
 public class TestEntityFactory {
@@ -45,5 +46,14 @@ public class TestEntityFactory {
         completedGoal.setGoalDefinition(goalDefinition);
         completedGoal.setCompletedDate(date);
         return completedGoal;
+    }
+
+    public static Invite validInvite(Challenge challenge, User inviteSender, String invitedUserEmail) {
+        Invite invite = new Invite();
+        invite.setChallenge(challenge);
+        invite.setInviteSender(inviteSender);
+        invite.setInvitedUserEmail(invitedUserEmail);
+        invite.setToken(UUID.randomUUID());
+        return invite;
     }
 }

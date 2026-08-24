@@ -130,6 +130,27 @@ public class ChallengeServiceTest extends MockUserBaseTest {
                 assertThrows(NotFoundException.class,
                         () -> challengeService.getChallenge(savedUser, savedChallenge.getId()));
             }
+
+            @Test
+            void testGetChallengeFromOwner() {
+                Challenge challenge = challengeService.getChallengeFromOwner(savedChallenge.getId(), savedUser);
+                assertEquals(savedChallenge, challenge);
+            }
+
+            @Test
+            void testGetChallengeFromOwnerWrongOwner() {
+                User nonOwner = saveRandomUser();
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.getChallengeFromOwner(savedChallenge.getId(), nonOwner));
+            }
+
+            @Test
+            void testGetChallenteFromOwnerInvalidChallenge() {
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.getChallengeFromOwner(99999L, savedUser));
+
+            }
+
         }
 
         @Nested

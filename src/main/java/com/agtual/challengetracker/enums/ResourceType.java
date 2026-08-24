@@ -7,7 +7,8 @@ public enum ResourceType {
     CHALLENGE("Challenge"),
     PARTICIPANT("Participant"),
     GOAL_DEFINITION("Goal definition"),
-    GOAL_COMPLETION("Goal completion");
+    GOAL_COMPLETION("Goal completion"),
+    INVITE("Invite");
 
     private final String displayName;
 }

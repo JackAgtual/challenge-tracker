@@ -52,6 +52,11 @@ public class ChallengeService {
         return challenge;
     }
 
+    public Challenge getChallengeFromOwner(Long challengeId, User challengeOwner) {
+        return challengeRepo.findByOwnerAndId(challengeOwner, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+    }
+
     /**
      * Will update challenge that belongs to a user
      * Will set all values in modifyChallengeRequest even if null
