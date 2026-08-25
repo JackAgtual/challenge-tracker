@@ -56,8 +56,8 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     @Test
-    void testAddOwnerToChallenge() {
-        Participant owner = participantService.addOwnerToChallenge(savedUser, savedChallenge1);
+    void testAddUserToChallenge() {
+        Participant owner = participantService.addUserToChallenge(savedUser, savedChallenge1);
 
         assertEquals(savedChallenge1, owner.getChallenge());
         assertEquals(savedUser, owner.getUser());
@@ -65,6 +65,17 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         Participant participantInRepo = participantRepo.findById(owner.getId()).get();
         assertEquals(owner, participantInRepo);
+    }
+
+    @Test
+    void testAddUserToChallengeParticipantAlreadyExists() {
+        Participant validParticipant = TestEntityFactory.validParticipant(savedUser, savedChallenge1);
+        Participant savedParticipant = participantRepo.save(validParticipant);
+
+        assertThrows(ForbiddenException.class, () -> participantService.addUserToChallenge(savedUser, savedChallenge1));
+
+        assertEquals(1, participantRepo.count());
+        assertEquals(savedParticipant, participantRepo.findAll().get(0));
     }
 
     @Test

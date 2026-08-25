@@ -35,7 +35,7 @@ public class ChallengeService {
 
         Challenge challenge = challengeRepo.save(new Challenge(challengeRequest, user));
 
-        participantService.addOwnerToChallenge(user, challenge);
+        participantService.addUserToChallenge(user, challenge);
 
         return challenge;
     }

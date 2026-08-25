@@ -1,6 +1,7 @@
 package com.agtual.challengetracker.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,6 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
-import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
@@ -20,11 +20,18 @@ public class ParticipantService {
 
     private final ParticipantRepo participantRepo;
 
-    public Participant addOwnerToChallenge(User user, Challenge challenge) {
-        Participant challengeOwner = new Participant();
-        challengeOwner.setUser(user);
-        challengeOwner.setChallenge(challenge);
-        return participantRepo.save(challengeOwner);
+    public Participant addUserToChallenge(User user, Challenge challenge) {
+        Optional<Participant> existingParticipant = participantRepo.findByUserAndChallenge(user, challenge);
+        if (existingParticipant.isPresent()) {
+            throw new ForbiddenException(ResourceType.PARTICIPANT, existingParticipant.get().getId(),
+                    "Participant already exists in challenge");
+        }
+
+        Participant participant = new Participant();
+        participant.setUser(user);
+        participant.setChallenge(challenge);
+
+        return participantRepo.save(participant);
     }
 
     public boolean allJoinedParticipantsAreReady(Challenge challenge) {

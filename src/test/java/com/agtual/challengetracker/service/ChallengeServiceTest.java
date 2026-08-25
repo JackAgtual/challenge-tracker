@@ -70,7 +70,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
         @Test
         void testCreateChallengeAddsOwnerAsParticipant() {
             Challenge challenge = challengeService.createChallenge(savedUser, createChallengeRequest);
-            verify(participantService).addOwnerToChallenge(savedUser, challenge);
+            verify(participantService).addUserToChallenge(savedUser, challenge);
         }
     }
 
