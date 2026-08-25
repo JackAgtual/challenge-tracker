@@ -62,6 +62,19 @@ public class ChallengeTest {
         assertEquals(ChallengeStatus.PENDING, challenge.getStatus());
     }
 
+    @Test
+    void testIsConfigurable() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.PENDING);
+        assertTrue(challenge.isConfigurable());
+
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        assertFalse(challenge.isConfigurable());
+
+        challenge.setStatus(ChallengeStatus.COMPLETE);
+        assertFalse(challenge.isConfigurable());
+    }
+
     private Challenge createReadyChallenge() {
         Challenge challenge = new Challenge();
         challenge.setStatus(ChallengeStatus.PENDING);

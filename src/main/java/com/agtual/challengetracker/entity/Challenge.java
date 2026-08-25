@@ -61,4 +61,8 @@ public class Challenge {
     public boolean isReadyToStart() {
         return durationDays != null && name != null && status == ChallengeStatus.PENDING;
     }
+
+    public boolean isConfigurable() {
+        return status == ChallengeStatus.PENDING;
+    }
 }
