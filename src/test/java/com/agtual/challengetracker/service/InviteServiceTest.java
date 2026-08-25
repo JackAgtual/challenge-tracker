@@ -1,7 +1,6 @@
 package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -54,9 +53,7 @@ public class InviteServiceTest extends MockUserBaseTest {
         assertEquals(challenge, invite.getChallenge());
         assertEquals(savedUser, invite.getInviteSender());
         assertEquals(userToInvite, invite.getInvitedUser());
-        assertEquals(userToInvite.getEmail(), invite.getInvitedUserEmail());
         assertEquals(InviteStatus.PENDING, invite.getStatus());
-        assertNotNull(invite.getToken());
 
         assertEquals(invite, inviteRepo.findById(invite.getId()).get());
     }
@@ -65,7 +62,7 @@ public class InviteServiceTest extends MockUserBaseTest {
     void testCantSendMultipleInvitesToUser() {
         User alreadyInvitedUser = saveRandomUser();
 
-        inviteRepo.save(TestEntityFactory.validInvite(challenge, alreadyInvitedUser, alreadyInvitedUser.getEmail()));
+        inviteRepo.save(TestEntityFactory.validInvite(challenge, alreadyInvitedUser, alreadyInvitedUser));
 
         assertThrows(ForbiddenException.class,
                 () -> inviteService.inviteToChallenge(savedUser, challenge.getId(), alreadyInvitedUser));

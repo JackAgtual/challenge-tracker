@@ -1,7 +1,6 @@
 package com.agtual.challengetracker.service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,7 @@ public class InviteService {
         invite.setChallenge(challenge);
         invite.setInviteSender(challengeOwner);
         invite.setInvitedUser(userToInvite);
-        invite.setInvitedUserEmail(userToInvite.getEmail());
         invite.setStatus(InviteStatus.PENDING);
-        invite.setToken(UUID.randomUUID());
 
         return inviteRepo.save(invite);
 

@@ -1,7 +1,5 @@
 package com.agtual.challengetracker.entity;
 
-import java.util.UUID;
-
 import com.agtual.challengetracker.enums.InviteStatus;
 
 import jakarta.persistence.Column;
@@ -19,7 +17,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "invites", uniqueConstraints = @UniqueConstraint(columnNames = { "challenge_id",
-        "invited_user_email" }))
+        "invited_user_id" }))
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
@@ -37,17 +35,10 @@ public class Invite {
     private User inviteSender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invited_user_id")
+    @JoinColumn(name = "invited_user_id", nullable = false)
     private User invitedUser;
-
-    // Needed if invitedUser does not have an account
-    @Column(name = "invited_user_email", nullable = false)
-    private String invitedUserEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private InviteStatus status = InviteStatus.PENDING;
-
-    @Column(name = "token", nullable = false)
-    private UUID token;
 }

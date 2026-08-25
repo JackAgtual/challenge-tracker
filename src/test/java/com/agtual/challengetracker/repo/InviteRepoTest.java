@@ -27,9 +27,9 @@ public class InviteRepoTest extends MockUserBaseTest {
 
         User userToInvite = saveRandomUser();
 
-        inviteRepo.save(TestEntityFactory.validInvite(challenge, savedUser, userToInvite.getEmail()));
+        inviteRepo.save(TestEntityFactory.validInvite(challenge, savedUser, userToInvite));
 
         assertThrows(DataIntegrityViolationException.class,
-                () -> inviteRepo.save(TestEntityFactory.validInvite(challenge, savedUser, userToInvite.getEmail())));
+                () -> inviteRepo.save(TestEntityFactory.validInvite(challenge, savedUser, userToInvite)));
     }
 }

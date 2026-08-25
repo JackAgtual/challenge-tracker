@@ -48,12 +48,11 @@ public class TestEntityFactory {
         return completedGoal;
     }
 
-    public static Invite validInvite(Challenge challenge, User inviteSender, String invitedUserEmail) {
+    public static Invite validInvite(Challenge challenge, User inviteSender, User userToInvite) {
         Invite invite = new Invite();
         invite.setChallenge(challenge);
         invite.setInviteSender(inviteSender);
-        invite.setInvitedUserEmail(invitedUserEmail);
-        invite.setToken(UUID.randomUUID());
+        invite.setInvitedUser(userToInvite);
         return invite;
     }
 }
