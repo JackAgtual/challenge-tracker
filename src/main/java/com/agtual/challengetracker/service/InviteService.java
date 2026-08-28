@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class InviteService {
     private final ChallengeService challengeService;
     private final ParticipantService participantService;
     private final InviteRepo inviteRepo;
+
+    public List<Invite> getPendingInvites(User invitedUser) {
+        return inviteRepo.findByInvitedUserAndStatus(invitedUser, InviteStatus.PENDING);
+    }
 
     public Invite inviteToChallenge(User challengeOwner, Long challengeId, User userToInvite) {
         Challenge challenge = challengeService.getChallengeFromOwner(challengeId, challengeOwner);

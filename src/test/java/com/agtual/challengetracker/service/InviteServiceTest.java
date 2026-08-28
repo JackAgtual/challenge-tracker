@@ -2,8 +2,11 @@ package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -185,4 +188,34 @@ public class InviteServiceTest extends MockUserBaseTest {
                 () -> inviteService.declineInvite(userToInvite, inviteWithCompleteChallenge.getId()));
     }
 
+    @Test
+    void testGetPendingInvites() {
+        Challenge c1 = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "c1"));
+        Challenge c2 = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "c2"));
+        Challenge c3 = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "c3"));
+        Challenge c4 = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "c4"));
+
+        User user1 = saveRandomUser();
+        User user2 = saveRandomUser();
+
+        Invite invite1 = inviteRepo.save(TestEntityFactory.validInvite(c1, savedUser, user1));
+        Invite invite2 = inviteRepo.save(TestEntityFactory.validInvite(c1, savedUser, user2));
+        Invite invite3 = inviteRepo.save(TestEntityFactory.validInvite(c2, savedUser, user1));
+        Invite invite4 = inviteRepo.save(TestEntityFactory.validInvite(c2, savedUser, user2));
+        Invite preInvite3 = TestEntityFactory.validInvite(c3, savedUser, user1);
+        preInvite3.setStatus(InviteStatus.ACCEPTED);
+        inviteRepo.save(preInvite3);
+        Invite preInvite6 = TestEntityFactory.validInvite(c4, savedUser, user1);
+        preInvite6.setStatus(InviteStatus.DECLINED);
+        inviteRepo.save(preInvite6);
+
+        List<Invite> user1PendingInvites = inviteService.getPendingInvites(user1);
+        assertEquals(2, user1PendingInvites.size());
+        assertTrue(user1PendingInvites.containsAll(List.of(invite1, invite3)));
+
+        List<Invite> user2PendingInvites = inviteService.getPendingInvites(user2);
+        assertEquals(2, user2PendingInvites.size());
+        assertTrue(user2PendingInvites.containsAll(List.of(invite2, invite4)));
+
+    }
 }
