@@ -1,6 +1,7 @@
 package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -216,6 +217,28 @@ public class InviteServiceTest extends MockUserBaseTest {
         List<Invite> user2PendingInvites = inviteService.getPendingInvites(user2);
         assertEquals(2, user2PendingInvites.size());
         assertTrue(user2PendingInvites.containsAll(List.of(invite2, invite4)));
+    }
 
+    @Test
+    void testGetNonAcceptedInvitesForChallenge() {
+        User pendingUser1 = saveRandomUser();
+        User pendingUser2 = saveRandomUser();
+        User delinedUser = saveRandomUser();
+        User acceptedUser = saveRandomUser();
+
+        Invite pendingInvite1 = inviteRepo
+                .save(TestEntityFactory.validInvite(challenge, savedUser, pendingUser1, InviteStatus.PENDING));
+        Invite pendingInvite2 = inviteRepo
+                .save(TestEntityFactory.validInvite(challenge, savedUser, pendingUser2, InviteStatus.PENDING));
+        Invite declinedInvite = inviteRepo
+                .save(TestEntityFactory.validInvite(challenge, savedUser, delinedUser, InviteStatus.DECLINED));
+        Invite acceptedInvite = inviteRepo
+                .save(TestEntityFactory.validInvite(challenge, savedUser, acceptedUser, InviteStatus.ACCEPTED));
+
+        List<Invite> nonAccepted = inviteService.getNonAcceptedInvitesForChallenge(challenge.getId());
+
+        assertEquals(3, nonAccepted.size());
+        assertTrue(nonAccepted.containsAll(List.of(pendingInvite1, pendingInvite2, declinedInvite)));
+        assertFalse(nonAccepted.contains(acceptedInvite));
     }
 }

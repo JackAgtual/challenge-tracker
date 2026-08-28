@@ -9,6 +9,7 @@ import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.Invite;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.InviteStatus;
 
 public class TestEntityFactory {
     public static User validUser() {
@@ -54,6 +55,15 @@ public class TestEntityFactory {
         invite.setChallenge(challenge);
         invite.setInviteSender(inviteSender);
         invite.setInvitedUser(userToInvite);
+        return invite;
+    }
+
+    public static Invite validInvite(Challenge challenge, User inviteSender, User userToInvite, InviteStatus status) {
+        Invite invite = new Invite();
+        invite.setChallenge(challenge);
+        invite.setInviteSender(inviteSender);
+        invite.setInvitedUser(userToInvite);
+        invite.setStatus(status);
         return invite;
     }
 }

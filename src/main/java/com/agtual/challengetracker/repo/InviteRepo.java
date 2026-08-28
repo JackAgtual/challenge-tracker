@@ -16,4 +16,6 @@ public interface InviteRepo extends JpaRepository<Invite, Long> {
     Optional<Invite> findByIdAndInvitedUser(Long id, User invitedUser);
 
     List<Invite> findByInvitedUserAndStatus(User invitedUser, InviteStatus status);
+
+    List<Invite> findByChallengeIdAndStatusNot(Long challengeId, InviteStatus statusNot);
 }

@@ -27,6 +27,10 @@ public class InviteService {
         return inviteRepo.findByInvitedUserAndStatus(invitedUser, InviteStatus.PENDING);
     }
 
+    public List<Invite> getNonAcceptedInvitesForChallenge(Long challengeId) {
+        return inviteRepo.findByChallengeIdAndStatusNot(challengeId, InviteStatus.ACCEPTED);
+    }
+
     public Invite inviteToChallenge(User challengeOwner, Long challengeId, User userToInvite) {
         Challenge challenge = challengeService.getChallengeFromOwner(challengeId, challengeOwner);
 
