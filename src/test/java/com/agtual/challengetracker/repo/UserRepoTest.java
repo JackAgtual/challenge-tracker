@@ -19,8 +19,8 @@ public class UserRepoTest {
     void testUniqueConstraints() {
         String authSubject = "auth|1234";
         String email = "bob@gmail.com";
-        User user1 = craeteValidUser(authSubject, email);
-        User user2 = craeteValidUser(authSubject, email);
+        User user1 = createValidUser(authSubject, email, "user1");
+        User user2 = createValidUser(authSubject, email, "user2");
 
         repo.saveAndFlush(user1);
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user2));
@@ -29,8 +29,8 @@ public class UserRepoTest {
     @Test
     void testUsersCantHaveSameEmail() {
         String email = "bob@gmail.com";
-        User user1 = craeteValidUser("auth|1234", email);
-        User user2 = craeteValidUser("auth|9876", email);
+        User user1 = createValidUser("auth|1234", email, "user1");
+        User user2 = createValidUser("auth|9876", email, "user2");
 
         repo.saveAndFlush(user1);
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user2));
@@ -39,8 +39,8 @@ public class UserRepoTest {
     @Test
     void testusersCantHaveSameAuthSubject() {
         String authSubject = "auth|1234";
-        User user1 = craeteValidUser(authSubject, "bob@gmail.com");
-        User user2 = craeteValidUser(authSubject, "steve@gmail.com");
+        User user1 = createValidUser(authSubject, "bob@gmail.com", "user1");
+        User user2 = createValidUser(authSubject, "steve@gmail.com", "user2");
 
         repo.saveAndFlush(user1);
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user2));
@@ -86,12 +86,13 @@ public class UserRepoTest {
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user));
     }
 
-    private User craeteValidUser(String authSubject, String email) {
+    private User createValidUser(String authSubject, String email, String username) {
         User user = new User();
         user.setAuthSubject(authSubject);
         user.setEmail(email);
         user.setFirstName("John");
         user.setLastName("Doe");
+        user.setUsername(username);
         return user;
     }
 }

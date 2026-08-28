@@ -30,6 +30,11 @@ public class UserService {
         return user.get();
     }
 
+    public User getValidUser(String username) {
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException(ResourceType.USER, "username", username));
+    }
+
     public User createUser(Jwt jwt, CreateUserRequest userRequest) {
         String subject = jwt.getSubject();
 

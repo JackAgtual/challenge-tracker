@@ -8,4 +8,6 @@ import com.agtual.challengetracker.entity.User;
 
 public interface UserRepo extends JpaRepository<User, Long> {
     Optional<User> findByAuthSubject(String authSubject);
+
+    Optional<User> findByUsername(String username);
 }

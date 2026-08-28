@@ -27,9 +27,9 @@ public class UserServiceTest {
     static String NEW_SUBJECT = "newSubject";
     static Jwt existingJwt = buildJwt(EXISTING_SUBJECT);
     static Jwt newJwt = buildJwt(NEW_SUBJECT);
-    static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com", "Alice",
-            "Smith");
-    static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com", "John", "Doe");
+    static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com", "Alice", "Smith",
+            "asmith");
+    static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com", "John", "Doe", "jonjon1");
 
     @Autowired
     UserRepo userRepo;
@@ -76,6 +76,17 @@ public class UserServiceTest {
     void testGetValidUserThrowsExceptionForInvalidUser() {
         // User defined by newJwt does not exist
         assertThrows(NotFoundException.class, () -> userService.getValidUser(newJwt));
+    }
+
+    @Test
+    void testGetValidUserByUsername() {
+        User res = userService.getValidUser(existingUser.getUsername());
+        assertEquals(existingUser, res);
+    }
+
+    @Test
+    void testGetValidUserByUsernameNotFound() {
+        assertThrows(NotFoundException.class, () -> userService.getValidUser("usernameDoesntExist"));
     }
 
     private static void assertUserEquality(User expected, User actual) {

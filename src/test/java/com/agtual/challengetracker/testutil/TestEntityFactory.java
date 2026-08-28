@@ -14,9 +14,10 @@ public class TestEntityFactory {
     public static User validUser() {
         User user = new User();
         user.setEmail("user-" + UUID.randomUUID() + "@gmail.com");
-        user.setAuthSubject("auth|" + UUID.randomUUID().toString());
+        user.setAuthSubject("auth|" + UUID.randomUUID());
         user.setFirstName("John");
         user.setLastName("Doe");
+        user.setUsername(UUID.randomUUID().toString());
         return user;
     }
 

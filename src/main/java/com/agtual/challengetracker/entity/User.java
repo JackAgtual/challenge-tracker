@@ -33,10 +33,14 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
     public User(String subject, CreateUserRequest userRequest) {
         this.authSubject = subject;
         this.email = userRequest.email();
         this.firstName = userRequest.firstName();
         this.lastName = userRequest.lastName();
+        this.username = userRequest.username();
     }
 }
