@@ -30,121 +30,121 @@ import com.agtual.challengetracker.testutil.TestEntityFactory;
 @DataJpaTest
 @Import(GoalDefinitionService.class)
 public class GoalDefinitionServiceTest extends MockUserBaseTest {
-        static CreateGoalRequest createGoalRequest;
-        static String goalName = "drink water";
+    static CreateGoalRequest createGoalRequest;
+    static String goalName = "drink water";
 
-        @MockitoBean
-        ParticipantService participantService;
+    @MockitoBean
+    ParticipantService participantService;
 
-        @Autowired
-        GoalDefinitionService goalDefinitionService;
+    @Autowired
+    GoalDefinitionService goalDefinitionService;
 
-        @Autowired
-        GoalDefinitionRepo goalDefinitionRepo;
+    @Autowired
+    GoalDefinitionRepo goalDefinitionRepo;
 
-        @Autowired
-        ChallengeRepo challengeRepo;
+    @Autowired
+    ChallengeRepo challengeRepo;
 
-        @Autowired
-        ParticipantRepo participantRepo;
+    @Autowired
+    ParticipantRepo participantRepo;
 
-        Participant participant;
+    Participant participant;
 
-        @BeforeAll
-        static void beforeAll() {
-                createGoalRequest = new CreateGoalRequest(goalName);
-        }
+    @BeforeAll
+    static void beforeAll() {
+        createGoalRequest = new CreateGoalRequest(goalName);
+    }
 
-        @BeforeEach
-        void beforeEach() {
-                Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
-                pendingChallenge.setStatus(ChallengeStatus.PENDING);
-                Challenge challenge = challengeRepo.saveAndFlush(pendingChallenge);
+    @BeforeEach
+    void beforeEach() {
+        Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
+        pendingChallenge.setStatus(ChallengeStatus.PENDING);
+        Challenge challenge = challengeRepo.saveAndFlush(pendingChallenge);
 
-                participant = participantRepo
-                                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
+        participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
 
-        }
+    }
 
-        @Test
-        void testCreateGoal() {
-                long challengeId = 333L;
-                when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
-                                .thenReturn(participant);
+    @Test
+    void testCreateGoal() {
+        long challengeId = 333L;
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
 
-                GoalDefinition goal = goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest);
+        GoalDefinition goal = goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest);
 
-                assertEquals(1, goalDefinitionRepo.count());
-                assertEquals(goalName, goal.getName());
-                assertEquals(participant, goal.getParticipant());
-        }
+        assertEquals(1, goalDefinitionRepo.count());
+        assertEquals(goalName, goal.getName());
+        assertEquals(participant, goal.getParticipant());
+    }
 
-        @Test
-        void testCreateGoalParticipantNotFound() {
-                Long challengeId = 12L;
-                when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
-                                .thenThrow(new NotFoundException(ResourceType.PARTICIPANT, challengeId));
+    @Test
+    void testCreateGoalParticipantNotFound() {
+        Long challengeId = 12L;
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenThrow(new NotFoundException(ResourceType.PARTICIPANT, challengeId));
 
-                assertThrows(NotFoundException.class,
-                                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
-        }
+        assertThrows(NotFoundException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
+    }
 
-        @Test
-        void testGetGoal() {
-                GoalDefinition goal = goalDefinitionRepo
-                                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
+    @Test
+    void testGetGoal() {
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
 
-                GoalDefinition res = goalDefinitionService.getGoal(savedUser, goal.getId());
+        GoalDefinition res = goalDefinitionService.getGoal(savedUser, goal.getId());
 
-                assertEquals(goal, res);
-        }
+        assertEquals(goal, res);
+    }
 
-        @Test
-        void testGetGoalInvalidGoal() {
-                GoalDefinition goal = goalDefinitionRepo
-                                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
-                assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(savedUser, goal.getId() + 1));
-        }
+    @Test
+    void testGetGoalInvalidGoal() {
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
+        assertThrows(NotFoundException.class, () -> goalDefinitionService.getGoal(savedUser, goal.getId() + 1));
+    }
 
-        @Test
-        void testGetGoalInvalidUser() {
-                User userWhoDoesntOwnGoal = saveRandomUser();
-                GoalDefinition goal = goalDefinitionRepo
-                                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
-                assertThrows(NotFoundException.class,
-                                () -> goalDefinitionService.getGoal(userWhoDoesntOwnGoal, goal.getId()));
-        }
+    @Test
+    void testGetGoalInvalidUser() {
+        User userWhoDoesntOwnGoal = saveRandomUser();
+        GoalDefinition goal = goalDefinitionRepo
+                .saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName));
+        assertThrows(NotFoundException.class,
+                () -> goalDefinitionService.getGoal(userWhoDoesntOwnGoal, goal.getId()));
+    }
 
-        @Test
-        void testCantCreateGoalWhenChallengeIsInProgress() {
-                Challenge inProgressChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
-                inProgressChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
-                Challenge challenge = challengeRepo.saveAndFlush(inProgressChallenge);
-                participant = participantRepo
-                                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
+    @Test
+    void testCantCreateGoalWhenChallengeIsInProgress() {
+        Challenge inProgressChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        inProgressChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        Challenge challenge = challengeRepo.saveAndFlush(inProgressChallenge);
+        participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
 
-                long challengeId = 333L;
-                when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
-                                .thenReturn(participant);
+        long challengeId = 333L;
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
 
-                assertThrows(ForbiddenException.class,
-                                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
-        }
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
+    }
 
-        @Test
-        void testCantCreateGoalWhenChallengeIsComplete() {
-                Challenge completedChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
-                completedChallenge.setStatus(ChallengeStatus.COMPLETE);
-                Challenge challenge = challengeRepo.saveAndFlush(completedChallenge);
-                participant = participantRepo
-                                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
+    @Test
+    void testCantCreateGoalWhenChallengeIsComplete() {
+        Challenge completedChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard 2");
+        completedChallenge.setStatus(ChallengeStatus.COMPLETE);
+        Challenge challenge = challengeRepo.saveAndFlush(completedChallenge);
+        participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
 
-                long challengeId = 333L;
-                when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
-                                .thenReturn(participant);
+        long challengeId = 333L;
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
 
-                assertThrows(ForbiddenException.class,
-                                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
-        }
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
+    }
 
 }
