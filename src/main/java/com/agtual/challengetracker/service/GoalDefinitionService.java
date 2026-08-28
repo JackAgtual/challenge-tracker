@@ -35,7 +35,7 @@ public class GoalDefinitionService {
         return goalDefinitionRepo.save(goalDefinition);
     }
 
-    GoalDefinition getGoal(User user, Long goalId) {
+    public GoalDefinition getGoal(User user, Long goalId) {
         GoalDefinition goal = goalDefinitionRepo.findById(goalId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_DEFINITION, goalId));
 
@@ -47,7 +47,7 @@ public class GoalDefinitionService {
         return goal;
     }
 
-    List<GoalDefinition> getGoalsForChallenge(User user, Long challengeId) {
+    public List<GoalDefinition> getGoalsForChallenge(User user, Long challengeId) {
         return goalDefinitionRepo.findByParticipant_UserAndParticipant_Challenge_Id(user, challengeId);
     }
 }
