@@ -2,7 +2,10 @@ package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +52,7 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
     ParticipantRepo participantRepo;
 
     Participant participant;
+    Challenge challenge;
 
     @BeforeAll
     static void beforeAll() {
@@ -59,7 +63,7 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
     void beforeEach() {
         Challenge pendingChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
         pendingChallenge.setStatus(ChallengeStatus.PENDING);
-        Challenge challenge = challengeRepo.saveAndFlush(pendingChallenge);
+        challenge = challengeRepo.saveAndFlush(pendingChallenge);
 
         participant = participantRepo
                 .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
@@ -147,4 +151,16 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
                 () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
     }
 
+    @Test
+    void testGetGoalsForChallenge() {
+        GoalDefinition goal1 = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, "drink water"));
+        GoalDefinition goal2 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "read"));
+        GoalDefinition goal3 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "meditate"));
+
+        List<GoalDefinition> goals = goalDefinitionService.getGoalsForChallenge(savedUser, challenge.getId());
+
+        assertEquals(3, goals.size());
+        assertTrue(goals.containsAll(List.of(goal1, goal2, goal3)));
+    }
 }

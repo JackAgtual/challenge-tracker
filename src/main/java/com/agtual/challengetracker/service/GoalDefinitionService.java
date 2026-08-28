@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.dto.request.CreateGoalRequest;
@@ -43,5 +45,9 @@ public class GoalDefinitionService {
         }
 
         return goal;
+    }
+
+    List<GoalDefinition> getGoalsForChallenge(User user, Long challengeId) {
+        return goalDefinitionRepo.findByParticipant_UserAndParticipant_Challenge_Id(user, challengeId);
     }
 }
