@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
@@ -49,13 +50,18 @@ public class GoalCompletionService {
         return goalCompletionRepo.save(completion);
     }
 
-    public void uncompleteGoal(User user, Long goalCompletionId) {
+    public void uncompleteGoal(User user, Long challengeId, Long goalCompletionId) {
         GoalCompletion goalToDelete = goalCompletionRepo.findById(goalCompletionId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId));
 
-        if (goalToDelete.getGoalDefinition().getParticipant().getUser() != user) {
+        Participant participant = goalToDelete.getGoalDefinition().getParticipant();
+        if (participant.getUser() != user) {
             // Throw not found for authorization error
             throw new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId);
+        }
+        if (!participant.getChallenge().getId().equals(challengeId)) {
+            throw new ForbiddenException(ResourceType.GOAL_COMPLETION, goalCompletionId,
+                    "Goal completion does not belong to inputted challenge");
         }
         goalCompletionRepo.deleteById(goalCompletionId);
     }

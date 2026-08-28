@@ -61,6 +61,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
     @Autowired
     GoalCompletionRepo goalCompletionRepo;
 
+    Challenge challenge;
+
     @TestConfiguration
     static class ClockTestConfig {
         @Bean
@@ -77,7 +79,7 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
     void beforeEach() {
         Challenge validChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard");
         validChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
-        Challenge challenge = challengeRepo.save(validChallenge);
+        challenge = challengeRepo.save(validChallenge);
 
         createGoalsFromChallenge(challenge);
     }
@@ -167,11 +169,11 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
         @Test
         void testUncompleteGoal() {
-            goalCompletionService.uncompleteGoal(savedUser, goalCompletion1.getId());
+            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goalCompletion1.getId());
             assertEquals(1, goalCompletionRepo.count());
 
             // test another uncomplete
-            goalCompletionService.uncompleteGoal(savedUser, goalCompletion2.getId());
+            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goalCompletion2.getId());
             assertEquals(0, goalCompletionRepo.count());
         }
 
@@ -180,15 +182,22 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
             User otherUser = saveRandomUser();
 
             assertThrows(NotFoundException.class,
-                    () -> goalCompletionService.uncompleteGoal(otherUser,
+                    () -> goalCompletionService.uncompleteGoal(otherUser, challenge.getId(),
                             goalCompletion1.getId()));
         }
 
         @Test
         void testCantUncompleteInvalidGoal() {
             assertThrows(NotFoundException.class,
-                    () -> goalCompletionService.uncompleteGoal(savedUser, 999999L));
+                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), 999999L));
+        }
 
+        @Test
+        void testCantUncompleteGoalFromWrongChallenge() {
+            Challenge otherChallenge = challengeRepo
+                    .save(TestEntityFactory.validChallenge(savedUser, "another challenge"));
+            assertThrows(ForbiddenException.class, () -> goalCompletionService.uncompleteGoal(savedUser,
+                    otherChallenge.getId(), goalCompletion1.getId()));
         }
     }
 
