@@ -2,6 +2,7 @@ package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +10,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -152,7 +154,7 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
     }
 
     @Nested
-    class UncompleteGoal {
+    class RequiresExistingGoals {
         GoalCompletion goalCompletion1;
         GoalCompletion goalCompletion2;
 
@@ -199,6 +201,31 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
             assertThrows(ForbiddenException.class, () -> goalCompletionService.uncompleteGoal(savedUser,
                     otherChallenge.getId(), goalCompletion1.getId()));
         }
+
+        @Test
+        void testGetAllGoalCompletionsForChallenge() {
+            // Add another goal completion for other user
+            User otheruUser = saveRandomUser();
+            Participant otherParticipant = participantRepo
+                    .save(TestEntityFactory.validParticipant(otheruUser, challenge));
+            GoalDefinition otherUserGoalDef = goalDefinitionRepo
+                    .save(TestEntityFactory.validGoalDefinition(otherParticipant, "ride a bike"));
+            GoalCompletion otherGoalCompletion = goalCompletionRepo
+                    .save(TestEntityFactory.validGoalCompletion(otherUserGoalDef, completedDate));
+
+            List<GoalCompletion> savedUserCompletedGoals = goalCompletionService.getAllGoalCompletionsForChallenge(
+                    savedUser,
+                    challenge.getId());
+            List<GoalCompletion> otherUserCompletedGoals = goalCompletionService.getAllGoalCompletionsForChallenge(
+                    otheruUser,
+                    challenge.getId());
+
+            assertEquals(2, savedUserCompletedGoals.size());
+            assertTrue(savedUserCompletedGoals.containsAll(List.of(goalCompletion1, goalCompletion2)));
+            assertEquals(1, otherUserCompletedGoals.size());
+            assertTrue(otherUserCompletedGoals.contains(otherGoalCompletion));
+        }
+
     }
 
     private void createGoalsFromChallenge(Challenge challenge) {

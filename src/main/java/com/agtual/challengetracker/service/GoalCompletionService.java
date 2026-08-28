@@ -2,6 +2,7 @@ package com.agtual.challengetracker.service;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -64,5 +65,10 @@ public class GoalCompletionService {
                     "Goal completion does not belong to inputted challenge");
         }
         goalCompletionRepo.deleteById(goalCompletionId);
+    }
+
+    public List<GoalCompletion> getAllGoalCompletionsForChallenge(User user, Long challengeId) {
+        return goalCompletionRepo
+                .findByGoalDefinition_Participant_Challenge_IdAndGoalDefinition_Participant_User(challengeId, user);
     }
 }
