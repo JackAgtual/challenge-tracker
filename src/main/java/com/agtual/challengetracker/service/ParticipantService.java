@@ -48,6 +48,10 @@ public class ParticipantService {
         return participantRepo.existsByChallengeAndUser(challenge, user);
     }
 
+    public boolean isParticipant(User user, Long challengeId) {
+        return participantRepo.existsByChallenge_IdAndUser(challengeId, user);
+    }
+
     public List<Participant> getAllChallengeParticipationsForUser(User user) {
         return participantRepo.findByUser(user);
     }

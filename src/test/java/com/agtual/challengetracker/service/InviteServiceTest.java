@@ -221,6 +221,8 @@ public class InviteServiceTest extends MockUserBaseTest {
 
     @Test
     void testGetNonAcceptedInvitesForChallenge() {
+        when(participantService.isParticipant(savedUser, challenge.getId())).thenReturn(true);
+
         User pendingUser1 = saveRandomUser();
         User pendingUser2 = saveRandomUser();
         User delinedUser = saveRandomUser();
@@ -235,10 +237,22 @@ public class InviteServiceTest extends MockUserBaseTest {
         Invite acceptedInvite = inviteRepo
                 .save(TestEntityFactory.validInvite(challenge, savedUser, acceptedUser, InviteStatus.ACCEPTED));
 
-        List<Invite> nonAccepted = inviteService.getNonAcceptedInvitesForChallenge(challenge.getId());
+        List<Invite> nonAccepted = inviteService.getNonAcceptedInvitesForChallenge(savedUser, challenge.getId());
 
         assertEquals(3, nonAccepted.size());
         assertTrue(nonAccepted.containsAll(List.of(pendingInvite1, pendingInvite2, declinedInvite)));
         assertFalse(nonAccepted.contains(acceptedInvite));
+    }
+
+    @Test
+    void testGetNonAcceptedInvitesForChallengeNonChallengeParticipant() {
+        User pendingUser1 = saveRandomUser();
+
+        when(participantService.isParticipant(pendingUser1, challenge.getId())).thenReturn(false);
+
+        inviteRepo.save(TestEntityFactory.validInvite(challenge, pendingUser1, pendingUser1, InviteStatus.PENDING));
+
+        assertThrows(NotFoundException.class,
+                () -> inviteService.getNonAcceptedInvitesForChallenge(pendingUser1, challenge.getId()));
     }
 }

@@ -27,7 +27,12 @@ public class InviteService {
         return inviteRepo.findByInvitedUserAndStatus(invitedUser, InviteStatus.PENDING);
     }
 
-    public List<Invite> getNonAcceptedInvitesForChallenge(Long challengeId) {
+    public List<Invite> getNonAcceptedInvitesForChallenge(User user, Long challengeId) {
+        // User will only have access if they are paticipant (cannot just be invited)
+        if (!participantService.isParticipant(user, challengeId)) {
+            throw new NotFoundException(ResourceType.CHALLENGE, challengeId);
+        }
+
         return inviteRepo.findByChallengeIdAndStatusNot(challengeId, InviteStatus.ACCEPTED);
     }
 
