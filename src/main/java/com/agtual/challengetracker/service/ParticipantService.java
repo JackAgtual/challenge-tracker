@@ -73,14 +73,22 @@ public class ParticipantService {
         return participantRepo.save(participant);
     }
 
-    public void ownerRemovesParticipantFromChallenge(User challengeOwner, Long participantId) {
+    public void ownerRemovesParticipantFromChallenge(User challengeOwner, Long challengeId, Long participantId) {
         Participant participant = participantRepo
                 .findById(participantId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, participantId));
 
         Challenge challenge = participant.getChallenge();
+
         if (!challenge.getOwner().getId().equals(challengeOwner.getId())) {
             throw new NotFoundException(ResourceType.CHALLENGE, "participant id", participantId);
+        }
+
+        // Challenge owner removing a participant from a different challenge they own
+        // Make sure participantId belongs to challengeId
+        if (!challenge.getId().equals(challengeId)) {
+            throw new ForbiddenException(ResourceType.PARTICIPANT, participantId,
+                    "Inputted participant ID doesn't exist in inputted challenge");
         }
 
         removeParticipantFromChallenge(participant, challenge);

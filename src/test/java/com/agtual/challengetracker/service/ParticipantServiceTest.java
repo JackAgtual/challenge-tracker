@@ -250,7 +250,8 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         @Test
         void testRemoveParticipantFromChallenge() {
-            participantService.ownerRemovesParticipantFromChallenge(savedUser, participantToRemove.getId());
+            participantService.ownerRemovesParticipantFromChallenge(savedUser, challenge.getId(),
+                    participantToRemove.getId());
             assertParticipantHasBeenRemoved();
         }
 
@@ -265,6 +266,19 @@ public class ParticipantServiceTest extends MockUserBaseTest {
             Challenge challenge = saveChallengeWithOwner(savedUser, ChallengeStatus.COMPLETE);
 
             assertRemovingParticipantFromChallengeThrowsError(challenge);
+        }
+
+        @Test
+        void testRemoveChallengeParticipantParticipantMustBelongToChallenge() {
+            Challenge anotherChallengedOwnerBySameUser = saveChallengeWithOwner(savedUser);
+            User userToRemove = saveRandomUser();
+            Participant participantToRemove = participantRepo
+                    .saveAndFlush(TestEntityFactory.validParticipant(userToRemove, challenge));
+
+            assertThrows(ForbiddenException.class,
+                    () -> participantService.ownerRemovesParticipantFromChallenge(savedUser,
+                            anotherChallengedOwnerBySameUser.getId(),
+                            participantToRemove.getId()));
         }
 
         @Test
@@ -300,7 +314,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
                     .saveAndFlush(TestEntityFactory.validParticipant(nonChallengeOwner, challenge));
 
             assertThrows(ForbiddenException.class, () -> participantService
-                    .ownerRemovesParticipantFromChallenge(savedUser, participantToRemove.getId()));
+                    .ownerRemovesParticipantFromChallenge(savedUser, challenge.getId(), participantToRemove.getId()));
         }
 
         private void assertLeavingChallengeThrowsError(Challenge challenge) {
