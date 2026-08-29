@@ -1,7 +1,5 @@
 package com.agtual.challengetracker.controller;
 
-import com.agtual.challengetracker.service.InviteService;
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -26,6 +24,7 @@ import com.agtual.challengetracker.dto.response.ReadyRequest;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.ChallengeService;
+import com.agtual.challengetracker.service.InviteService;
 import com.agtual.challengetracker.service.ParticipantService;
 import com.agtual.challengetracker.service.UserService;
 
