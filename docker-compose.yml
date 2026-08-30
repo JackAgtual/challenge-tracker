@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:15.19
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer:6.0.1
+    restart: always
+    ports:
+      - 8081:8080
