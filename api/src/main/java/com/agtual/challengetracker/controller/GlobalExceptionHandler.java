@@ -1,7 +1,5 @@
 package com.agtual.challengetracker.controller;
 
-import java.time.Instant;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,7 +38,6 @@ public class GlobalExceptionHandler {
     private ProblemDetail buildProblemDetail(HttpStatus status, String message, String title) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
         problemDetail.setTitle(title);
-        problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
 }
