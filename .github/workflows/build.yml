@@ -7,9 +7,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
+
+    services:
+      postgres:
+        image: postgres:15.19
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: db
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout repository
@@ -21,9 +33,64 @@ jobs:
           java-version: "26"
           distribution: "temurin"
           cache: maven
+          cache-dependency-path: api/pom.xml
 
       - name: Make mvnw executable
         run: chmod +x mvnw
+        working-directory: api
 
       - name: Build with Maven Wrapper
         run: ./mvnw clean install
+        working-directory: api
+
+      - name: Start Spring Boot app
+        run: nohup ./mvnw spring-boot:run > ../spring-boot.log 2>&1 &
+        working-directory: api
+
+      - name: Wait for OpenAPI endpoint
+        run: |
+          echo "Waiting for Spring Boot app to be ready..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/v3/api-docs > /dev/null; then
+              echo "App is up."
+              exit 0
+            fi
+            echo "Not ready yet ($i/30)..."
+            sleep 2
+          done
+          echo "Timed out waiting for app to start."
+          cat spring-boot.log
+          exit 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26.8.1"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Generate types from OpenAPI spec
+        run: npm run gen:types
+        working-directory: web
+
+      - name: Fail if generated types are out of date
+        run: |
+          if ! git diff --exit-code -- web/types/api.d.ts; then
+            echo "::error::Generated types are out of date. Run 'npm run gen:types' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: Build Next.js app
+        run: npm run build
+        working-directory: web
+
+      - name: Upload Spring Boot log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-boot-log
+          path: spring-boot.log
