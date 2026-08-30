@@ -48,6 +48,14 @@ public class ChallengeController {
         return new IdResponse(challenge.getId());
     }
 
+    @GetMapping
+    public List<ChallengeResponse> getAllChallengeParticipationsForUser(@CurrentUser User user) {
+        return participantService.getAllChallengeParticipationsForUser(user)
+                .stream()
+                .map(ChallengeResponse::from)
+                .toList();
+    }
+
     @PostMapping("/{challengeId}/start")
     public void startChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
         challengeService.startChallenge(user, challengeId);
