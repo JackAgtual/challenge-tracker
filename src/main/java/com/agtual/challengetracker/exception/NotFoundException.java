@@ -4,13 +4,13 @@ import com.agtual.challengetracker.enums.ResourceType;
 
 public class NotFoundException extends ApplicationException {
 
-    private static final String ERROR_TYPE = "not found";
+    public static final String TITLE = "Not Found";
 
     public NotFoundException(ResourceType resourceType, Object identifier) {
-        super(ERROR_TYPE, resourceType, identifier);
+        super(TITLE, resourceType, identifier);
     }
 
     public NotFoundException(ResourceType resourceType, String field, Object value) {
-        super(ERROR_TYPE, resourceType, field, value);
+        super(TITLE, resourceType, field, value);
     }
 }
