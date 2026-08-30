@@ -56,6 +56,12 @@ public class ChallengeController {
                 .toList();
     }
 
+    @GetMapping("/{challengeId}")
+    public ChallengeResponse getMethodName(@CurrentUser User user, @PathVariable Long challengeId) {
+        Challenge challenge = challengeService.getChallenge(user, challengeId);
+        return ChallengeResponse.from(challenge);
+    }
+
     @PostMapping("/{challengeId}/start")
     public void startChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
         challengeService.startChallenge(user, challengeId);
