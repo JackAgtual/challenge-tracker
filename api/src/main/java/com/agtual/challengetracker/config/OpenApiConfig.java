@@ -40,9 +40,9 @@ public class OpenApiConfig {
                     resolvedSchema.schema);
 
             openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-                addApiResponseToOperation(operation, HttpStatus.CONFLICT, AlreadyExistsException.TITLE);
-                addApiResponseToOperation(operation, HttpStatus.FORBIDDEN, ForbiddenException.TITLE);
-                addApiResponseToOperation(operation, HttpStatus.NOT_FOUND, NotFoundException.TITLE);
+                addApiResponseToOperation(operation, AlreadyExistsException.HTTP_STATUS, AlreadyExistsException.TITLE);
+                addApiResponseToOperation(operation, ForbiddenException.HTTP_STATUS, ForbiddenException.TITLE);
+                addApiResponseToOperation(operation, NotFoundException.HTTP_STATUS, NotFoundException.TITLE);
                 addApiResponseToOperation(operation, HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
             }));
         };

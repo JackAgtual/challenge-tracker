@@ -13,17 +13,17 @@ import com.agtual.challengetracker.exception.NotFoundException;
 public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException.class)
     public ProblemDetail handleAlreadyExists(AlreadyExistsException ex) {
-        return buildProblemDetail(HttpStatus.CONFLICT, ex.getMessage(), AlreadyExistsException.TITLE);
+        return buildProblemDetail(AlreadyExistsException.HTTP_STATUS, ex.getMessage(), AlreadyExistsException.TITLE);
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ProblemDetail handleForbidden(ForbiddenException ex) {
-        return buildProblemDetail(HttpStatus.FORBIDDEN, ex.getMessage(), ForbiddenException.TITLE);
+        return buildProblemDetail(ForbiddenException.HTTP_STATUS, ex.getMessage(), ForbiddenException.TITLE);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex) {
-        return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), NotFoundException.TITLE);
+        return buildProblemDetail(NotFoundException.HTTP_STATUS, ex.getMessage(), NotFoundException.TITLE);
     }
 
     // Fallback for any other unhandled RuntimeException
