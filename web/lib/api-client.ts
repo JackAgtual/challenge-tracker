@@ -8,7 +8,6 @@ export const client = createClient<paths>({
 
 client.use({
   async onRequest({ request }) {
-    console.log("client middleware");
     const session = await auth0.getSession();
     if (session?.tokenSet.accessToken) {
       request.headers.set(

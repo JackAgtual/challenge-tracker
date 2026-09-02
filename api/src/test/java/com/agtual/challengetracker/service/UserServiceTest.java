@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.agtual.challengetracker.dto.request.CreateUserRequest;
+import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 import com.agtual.challengetracker.entity.User;
-import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
 
@@ -27,9 +27,8 @@ public class UserServiceTest {
     static String NEW_SUBJECT = "newSubject";
     static Jwt existingJwt = buildJwt(EXISTING_SUBJECT);
     static Jwt newJwt = buildJwt(NEW_SUBJECT);
-    static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com", "Alice", "Smith",
-            "asmith");
-    static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com", "John", "Doe", "jonjon1");
+    static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com");
+    static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com");
 
     @Autowired
     UserRepo userRepo;
@@ -42,9 +41,9 @@ public class UserServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        existingUser = new User(EXISTING_SUBJECT, existingUserRequest);
+        User existingUserNotSaved = new User(EXISTING_SUBJECT, existingUserRequest);
         userToCreate = new User(NEW_SUBJECT, newUserRequest);
-        userRepo.save(existingUser);
+        existingUser = userRepo.save(existingUserNotSaved);
     }
 
     @Test
@@ -55,8 +54,9 @@ public class UserServiceTest {
     }
 
     @Test
-    void testCreateUserThrowsExceptionIfUserAlreadyExists() {
-        assertThrows(AlreadyExistsException.class, () -> userService.createUser(existingJwt, existingUserRequest));
+    void testCreateUserReturnsExistingUserIfUserAlreadyExists() {
+        User existingUser = userService.createUser(existingJwt, existingUserRequest);
+        assertEquals(userRepo.findByAuthSubject(existingJwt.getSubject()).get(), existingUser);
     }
 
     @Test
@@ -87,6 +87,26 @@ public class UserServiceTest {
     @Test
     void testGetValidUserByUsernameNotFound() {
         assertThrows(NotFoundException.class, () -> userService.getValidUser("usernameDoesntExist"));
+    }
+
+    @Test
+    void testFinishAccountSetup() {
+        String firstName = "Bob";
+        String lastName = "Smith";
+        String username = "bsmith12";
+        UserAccountSetupRequest accountSetup = new UserAccountSetupRequest(firstName, lastName, username);
+        userService.finishAccountSetup(existingUser, accountSetup);
+
+        User userFromRepo = userRepo.findById(existingUser.getId()).get();
+
+        // check account setup fields
+        assertEquals(firstName, userFromRepo.getFirstName());
+        assertEquals(lastName, userFromRepo.getLastName());
+        assertEquals(username, userFromRepo.getUsername());
+
+        // make sure existing fields weren't modified
+        assertEquals(existingUser.getAuthSubject(), userFromRepo.getAuthSubject());
+        assertEquals(existingUser.getEmail(), userFromRepo.getEmail());
     }
 
     private static void assertUserEquality(User expected, User actual) {

@@ -66,26 +66,6 @@ public class UserRepoTest {
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user));
     }
 
-    @Test
-    void testCantSaveNullFirstName() {
-        User user = new User();
-        user.setAuthSubject("auth|1234");
-        user.setEmail("x@gmail.com");
-        user.setLastName("Smith");
-
-        assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user));
-    }
-
-    @Test
-    void testCantSaveNullLastName() {
-        User user = new User();
-        user.setAuthSubject("auth|1234");
-        user.setEmail("x@gmail.com");
-        user.setFirstName("Jack");
-
-        assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user));
-    }
-
     private User createValidUser(String authSubject, String email, String username) {
         User user = new User();
         user.setAuthSubject(authSubject);

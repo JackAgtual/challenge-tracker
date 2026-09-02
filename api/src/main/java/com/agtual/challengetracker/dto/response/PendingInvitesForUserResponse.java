@@ -8,6 +8,6 @@ public record PendingInvitesForUserResponse(Long id, ChallengeNameResponse chall
                 invite.getChallenge().getId(),
                 invite.getChallenge().getName());
         return new PendingInvitesForUserResponse(
-                invite.getId(), challengeName, invite.getInviteSender().getFirstName());
+                invite.getId(), challengeName, invite.getInviteSender().getUsername());
     }
 }

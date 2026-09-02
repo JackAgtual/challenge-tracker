@@ -164,6 +164,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["finishUserAccountSetup"];
+        trace?: never;
+    };
+    "/users/me/is-setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["isAccountSetup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/invites": {
         parameters: {
             query?: never;
@@ -232,15 +264,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        User: {
-            /** Format: int64 */
-            id?: number;
-            authSubject?: string;
-            email?: string;
-            firstName?: string;
-            lastName?: string;
-            username?: string;
-        };
         ModifyChallengeRequest: {
             name: string;
             /** Format: int32 */
@@ -260,9 +283,6 @@ export interface components {
         CreateUserRequest: {
             /** Format: email */
             email: string;
-            firstName: string;
-            lastName: string;
-            username: string;
         };
         UserResponse: {
             /** Format: int64 */
@@ -292,6 +312,14 @@ export interface components {
         CompleteGoalRequest: {
             /** Format: date */
             date: string;
+        };
+        UserAccountSetupRequest: {
+            firstName: string;
+            lastName: string;
+            username: string;
+        };
+        BooleanResponse: {
+            value?: boolean;
         };
         ChallengeNameResponse: {
             /** Format: int64 */
@@ -346,9 +374,7 @@ export type $defs = Record<string, never>;
 export interface operations {
     getMethodName: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -406,9 +432,7 @@ export interface operations {
     };
     modifyChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -481,7 +505,16 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Created */
+            /** @description User already existed, returning existing user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["UserResponse"];
+                };
+            };
+            /** @description User created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -530,9 +563,7 @@ export interface operations {
     };
     declineInvite: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 inviteId: number;
@@ -588,9 +619,7 @@ export interface operations {
     };
     acceptInvite: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 inviteId: number;
@@ -646,9 +675,7 @@ export interface operations {
     };
     getAllChallengeParticipationsForUser: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -704,9 +731,7 @@ export interface operations {
     };
     createChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -766,9 +791,7 @@ export interface operations {
     };
     startChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -824,9 +847,7 @@ export interface operations {
     };
     setReady: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -886,9 +907,7 @@ export interface operations {
     };
     getNonAcceptedInvitesForChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -946,9 +965,7 @@ export interface operations {
     };
     inviteUserToChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1008,9 +1025,7 @@ export interface operations {
     };
     getAllGoalsForChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1068,9 +1083,7 @@ export interface operations {
     };
     createGoalDefinition: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1130,9 +1143,7 @@ export interface operations {
     };
     getAllGoalCompletionsForChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1191,7 +1202,6 @@ export interface operations {
     recordGoalCompletion: {
         parameters: {
             query: {
-                user: components["schemas"]["User"];
                 completeGoalRequest: components["schemas"]["CompleteGoalRequest"];
             };
             header?: never;
@@ -1247,11 +1257,123 @@ export interface operations {
             };
         };
     };
+    finishUserAccountSetup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserAccountSetupRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    isAccountSetup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BooleanResponse"];
+                };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     getAllPendingInvitesForUser: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -1307,9 +1429,7 @@ export interface operations {
     };
     ownerRemoveParticipantFromChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1366,9 +1486,7 @@ export interface operations {
     };
     participantLeavesChallenge: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
@@ -1424,9 +1542,7 @@ export interface operations {
     };
     deleteExistingGoalCompletion: {
         parameters: {
-            query: {
-                user: components["schemas"]["User"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
