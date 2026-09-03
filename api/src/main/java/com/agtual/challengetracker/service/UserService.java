@@ -19,7 +19,7 @@ public class UserService {
     private final UserRepo userRepo;
 
     public Optional<User> getUser(Jwt jwt) {
-        return userRepo.findByAuthSubject(jwt.getSubject());
+        return userRepo.findById(jwt.getSubject());
     }
 
     public User getValidUser(Jwt jwt) {
@@ -38,7 +38,7 @@ public class UserService {
     public User createUser(Jwt jwt, CreateUserRequest userRequest) {
         String subject = jwt.getSubject();
 
-        Optional<User> user = userRepo.findByAuthSubject(subject);
+        Optional<User> user = userRepo.findById(subject);
         if (user.isPresent()) {
             // Return existing user if there is one
             return user.get();

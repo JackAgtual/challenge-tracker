@@ -285,8 +285,7 @@ export interface components {
             email: string;
         };
         UserResponse: {
-            /** Format: int64 */
-            id?: number;
+            authSubject?: string;
             email?: string;
             firstName?: string;
             lastName?: string;

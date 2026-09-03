@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agtual.challengetracker.entity.User;
 
-public interface UserRepo extends JpaRepository<User, Long> {
-    Optional<User> findByAuthSubject(String authSubject);
-
+public interface UserRepo extends JpaRepository<User, String> {
     Optional<User> findByUsername(String username);
 }

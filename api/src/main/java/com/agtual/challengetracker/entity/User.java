@@ -5,24 +5,18 @@ import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "auth_subject", "email" }))
+@Table(name = "users")
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "auth_subject", nullable = false, unique = true)
+    @Column(name = "auth_subject", nullable = false)
     private String authSubject;
 
     @Column(name = "email", nullable = false, unique = true)

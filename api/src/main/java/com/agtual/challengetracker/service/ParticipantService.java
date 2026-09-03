@@ -80,7 +80,7 @@ public class ParticipantService {
 
         Challenge challenge = participant.getChallenge();
 
-        if (!challenge.getOwner().getId().equals(challengeOwner.getId())) {
+        if (!challenge.getOwner().getAuthSubject().equals(challengeOwner.getAuthSubject())) {
             throw new NotFoundException(ResourceType.CHALLENGE, "participant id", participantId);
         }
 
@@ -99,7 +99,7 @@ public class ParticipantService {
                 .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, "?"));
 
         Challenge challenge = participant.getChallenge();
-        if (challenge.getOwner().getId().equals(user.getId())) {
+        if (challenge.getOwner().getAuthSubject().equals(user.getAuthSubject())) {
             throw new ForbiddenException("Challenge owner can't leave challenge");
         }
 
