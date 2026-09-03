@@ -1,7 +1,9 @@
 package com.agtual.challengetracker.controller;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -26,9 +28,19 @@ public class GlobalExceptionHandler {
         return buildProblemDetail(NotFoundException.HTTP_STATUS, ex.getMessage(), NotFoundException.TITLE);
     }
 
-    // Fallback for any other unhandled RuntimeException
-    @ExceptionHandler(RuntimeException.class)
-    public ProblemDetail handleRuntimeException(RuntimeException ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
+        return buildProblemDetail(HttpStatus.BAD_REQUEST, "Method argument not valid", "Invalid request");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return buildProblemDetail(HttpStatus.CONFLICT, ex.getMessage(), "Invalid Data");
+    }
+
+    // Fallback for any other unhandled Exception
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleException(Exception ex) {
         return buildProblemDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred. Please try again later.",
