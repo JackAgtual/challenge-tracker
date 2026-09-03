@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
 
@@ -107,6 +108,17 @@ public class UserServiceTest {
         // make sure existing fields weren't modified
         assertEquals(existingUser.getAuthSubject(), userFromRepo.getAuthSubject());
         assertEquals(existingUser.getEmail(), userFromRepo.getEmail());
+    }
+
+    @Test
+    void testFinishAccountSetupRepeatUsername() {
+        String username = "user1";
+        existingUser.setUsername(username);
+        userRepo.save(existingUser);
+
+        User savedNewUser = userRepo.save(userToCreate);
+        UserAccountSetupRequest setup = new UserAccountSetupRequest("jack", "a", username);
+        assertThrows(AlreadyExistsException.class, () -> userService.finishAccountSetup(savedNewUser, setup));
     }
 
     private static void assertUserEquality(User expected, User actual) {

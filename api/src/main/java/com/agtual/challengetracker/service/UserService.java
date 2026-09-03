@@ -9,6 +9,7 @@ import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
+import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
 
@@ -47,6 +48,10 @@ public class UserService {
     }
 
     public User finishAccountSetup(User user, UserAccountSetupRequest accountSetupRequest) {
+        if (userRepo.existsByUsername(accountSetupRequest.username())) {
+            throw new AlreadyExistsException(ResourceType.USER, accountSetupRequest.username());
+        }
+
         user.setupAccount(accountSetupRequest);
         return userRepo.save(user);
     }
