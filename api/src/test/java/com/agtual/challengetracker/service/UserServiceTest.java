@@ -121,6 +121,24 @@ public class UserServiceTest {
         assertThrows(AlreadyExistsException.class, () -> userService.finishAccountSetup(savedNewUser, setup));
     }
 
+    @Test
+    void testFinishAccountSetupUserCanReuseTheirOwnUsername() {
+        String firstName = "jack";
+        String lastName = "a";
+        String username = "user1";
+
+        existingUser.setUsername(username);
+        userRepo.save(existingUser);
+
+        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, username);
+        userService.finishAccountSetup(existingUser, setup);
+
+        User updatedUser = userRepo.findById(existingUser.getAuthSubject()).get();
+        assertEquals(firstName, updatedUser.getFirstName());
+        assertEquals(lastName, updatedUser.getLastName());
+        assertEquals(username, updatedUser.getUsername());
+    }
+
     private static void assertUserEquality(User expected, User actual) {
         assertEquals(expected.getAuthSubject(), actual.getAuthSubject());
         assertEquals(expected.getEmail(), actual.getEmail());

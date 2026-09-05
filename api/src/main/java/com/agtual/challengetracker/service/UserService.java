@@ -48,7 +48,7 @@ public class UserService {
     }
 
     public User finishAccountSetup(User user, UserAccountSetupRequest accountSetupRequest) {
-        if (userRepo.existsByUsername(accountSetupRequest.username())) {
+        if (userRepo.existsByUsernameAndAuthSubjectNot(accountSetupRequest.username(), user.getAuthSubject())) {
             throw new AlreadyExistsException(ResourceType.USER, accountSetupRequest.username());
         }
 
