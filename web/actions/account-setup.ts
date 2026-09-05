@@ -16,5 +16,4 @@ export async function accountSetup(formData: TSetupAccountFormSchema) {
     success: false,
     error,
   };
-  const x = 1;
 }

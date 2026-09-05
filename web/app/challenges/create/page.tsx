@@ -1,12 +1,12 @@
 "use client";
 
-import { accountSetup } from "@/actions/account-setup";
+import { createChallenge } from "@/actions/create-challenge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-  TSetupAccountFormSchema,
-  setupAccountFormSchema,
+  createChallengeFormSchema,
+  TCreateChallengeFormSchema,
 } from "@/types/form-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
@@ -14,62 +14,61 @@ import { Controller, useForm } from "react-hook-form";
 
 export default function Page() {
   const { control, handleSubmit, setError, formState } =
-    useForm<TSetupAccountFormSchema>({
-      resolver: zodResolver(setupAccountFormSchema),
+    useForm<TCreateChallengeFormSchema>({
+      resolver: zodResolver(createChallengeFormSchema),
       defaultValues: {
-        firstName: "",
-        lastName: "",
-        username: "",
+        name: "",
+        durationDays: 0,
       },
     });
 
-  const onSubmit = async (formData: TSetupAccountFormSchema) => {
-    const res = await accountSetup(formData);
-
+  const onSubmit = async (formData: TCreateChallengeFormSchema) => {
+    const res = await createChallenge(formData);
     if (res.success) {
-      redirect("/dashboard");
+      redirect(`/challenges/${res.data?.id}`);
     }
+
     setError("root", { message: res.error.detail });
   };
 
   return (
     <>
-      <h1>Finish setting up your account</h1>
+      <h1>Create a challenge</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
-          name="firstName"
+          name="name"
           control={control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
-              <Input {...field} id={field.name} placeholder="John" />
+              <FieldLabel htmlFor={field.name}>Challenge Name</FieldLabel>
+              <Input {...field} id={field.name} placeholder="75 Hard" />
               {fieldState.error && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
         <Controller
-          name="lastName"
+          name="durationDays"
           control={control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
-              <Input {...field} id={field.name} placeholder="Smith" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />{" "}
-        <Controller
-          name="username"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Username</FieldLabel>
-              <Input {...field} id={field.name} placeholder="jsmith12" />
+              <FieldLabel htmlFor={field.name}>
+                Challenge Duration (days)
+              </FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="75"
+                type="text"
+                onChange={(e) => {
+                  const digitsOnly = e.target.value.replace(/[^0-9]/g, "");
+                  field.onChange(digitsOnly === "" ? "" : Number(digitsOnly));
+                }}
+              />
               {fieldState.error && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Create</Button>
         {formState.errors.root && (
           <>
             <p className="text-red-600">
