@@ -1,6 +1,6 @@
 import createClient from "openapi-fetch";
 import type { paths } from "@/types/api";
-import { auth0 } from "./auht0";
+import { auth0 } from "./auth0";
 
 export const client = createClient<paths>({
   baseUrl: process.env.API_BASE_URL || "http://localhost:8080",
