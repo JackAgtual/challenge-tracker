@@ -1,5 +1,5 @@
 import { auth0 } from "./auth0";
-import { getValidUser } from "./auth-utils";
+import { getValidFirstTimeUser, getValidUser } from "./auth-utils";
 import { redirect } from "next/navigation";
 import { client } from "./api-client";
 
@@ -48,6 +48,29 @@ describe("getValidUser", () => {
     mockedClient.GET.mockReturnValue({ data: { value: true } } as any);
 
     const res = await getValidUser();
+    expect(res).toEqual({ user: "john" });
+  });
+});
+
+describe("getValidFirstTimeuser", () => {
+  it("redirects to login if user is not authenticated", async () => {
+    const mockedAuth0 = jest.mocked(auth0);
+    mockedAuth0.getSession.mockResolvedValue(null);
+
+    await expect(getValidFirstTimeUser()).rejects.toThrow("NEXT_REDIRECT");
+
+    expect(redirect).toHaveBeenCalledWith("/auth/login");
+  });
+
+  it("returns valid session if session is valid and account is set up", async () => {
+    const userData = { user: "john" };
+    const mockedAuth0 = jest.mocked(auth0);
+    mockedAuth0.getSession.mockResolvedValue(userData as any);
+
+    const mockedClient = jest.mocked(client);
+    mockedClient.GET.mockReturnValue({ data: { value: true } } as any);
+
+    const res = await getValidFirstTimeUser();
     expect(res).toEqual({ user: "john" });
   });
 });
