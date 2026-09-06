@@ -35,7 +35,7 @@ public class ParticipantService {
     }
 
     public boolean allJoinedParticipantsAreReady(Challenge challenge) {
-        List<Participant> participants = participantRepo.findByChallenge(challenge);
+        List<Participant> participants = participantRepo.findByChallengeId(challenge.getId());
         if (participants.isEmpty()) {
             return false;
         }
@@ -54,6 +54,13 @@ public class ParticipantService {
 
     public List<Participant> getAllChallengeParticipationsForUser(User user) {
         return participantRepo.findByUser(user);
+    }
+
+    public List<Participant> getAllParticipantsInChallenge(User user, Long challengeId) {
+        if (!isParticipant(user, challengeId)) {
+            throw new NotFoundException(ResourceType.PARTICIPANT, "challengeId", challengeId);
+        }
+        return participantRepo.findByChallengeId(challengeId);
     }
 
     public Participant getChallengeParticipationForUserAndChallengeId(User user, Long challengeId) {

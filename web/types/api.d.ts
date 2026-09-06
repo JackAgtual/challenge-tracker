@@ -332,6 +332,14 @@ export interface components {
             challengeName: components["schemas"]["ChallengeNameResponse"];
             inviteSenderUsername: string;
         };
+        ChallengeDetailResponse: {
+            challenge: components["schemas"]["ChallengeResponse"];
+            participants: components["schemas"]["ParticipantResponse"][];
+        };
+        ParticipantResponse: {
+            username: string;
+            ready: boolean;
+        };
         NonAcceptedInvitesForChallengeResponse: {
             username: string;
             /** @enum {string} */
@@ -389,7 +397,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ChallengeResponse"];
+                    "*/*": components["schemas"]["ChallengeDetailResponse"];
                 };
             };
             /** @description Forbidden Operation */

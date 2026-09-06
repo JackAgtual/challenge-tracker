@@ -17,11 +17,14 @@ import com.agtual.challengetracker.controller.resolver.CurrentUser;
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
+import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
 import com.agtual.challengetracker.dto.response.ChallengeResponse;
 import com.agtual.challengetracker.dto.response.IdResponse;
 import com.agtual.challengetracker.dto.response.NonAcceptedInvitesForChallengeResponse;
+import com.agtual.challengetracker.dto.response.ParticipantResponse;
 import com.agtual.challengetracker.dto.response.ReadyRequest;
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.ChallengeService;
 import com.agtual.challengetracker.service.InviteService;
@@ -57,9 +60,13 @@ public class ChallengeController {
     }
 
     @GetMapping("/{challengeId}")
-    public ChallengeResponse getMethodName(@CurrentUser User user, @PathVariable Long challengeId) {
+    public ChallengeDetailResponse getChallengeDetails(@CurrentUser User user, @PathVariable Long challengeId) {
         Challenge challenge = challengeService.getChallenge(user, challengeId);
-        return ChallengeResponse.from(challenge);
+        List<Participant> participants = participantService.getAllParticipantsInChallenge(user, challengeId);
+
+        ChallengeResponse challengeRes = ChallengeResponse.from(challenge);
+        List<ParticipantResponse> participantsRes = participants.stream().map(ParticipantResponse::from).toList();
+        return new ChallengeDetailResponse(challengeRes, participantsRes);
     }
 
     @PostMapping("/{challengeId}/start")

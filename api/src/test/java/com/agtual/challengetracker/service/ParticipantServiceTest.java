@@ -205,6 +205,37 @@ public class ParticipantServiceTest extends MockUserBaseTest {
                 () -> participantService.setReady(savedUser, completedChallenge.getId(), true));
     }
 
+    @Test
+    void testGetAllParticipantsInChallenge() {
+
+        User u1 = saveRandomUser();
+        Participant p1 = participantRepo.save(TestEntityFactory.validParticipant(u1, savedChallenge1));
+
+        User u2 = saveRandomUser();
+        Participant p2 = participantRepo.save(TestEntityFactory.validParticipant(u2, savedChallenge1));
+
+        User u3 = saveRandomUser();
+        Participant p3 = participantRepo.save(TestEntityFactory.validParticipant(u3, savedChallenge1));
+
+        List<Participant> participants = participantService.getAllParticipantsInChallenge(u1, savedChallenge1.getId());
+
+        assertEquals(3, participants.size());
+        assertTrue(participants.containsAll(List.of(p1, p2, p3)));
+    }
+
+    @Test
+    void testGetAllParticipantsInChallegeRequestorMustBeParticipant() {
+        // Saving another challenge not really necessary but doesn't hurt
+        User anotherUser = saveRandomUser();
+        saveChallengeWithOwner(anotherUser);
+
+        User u1 = saveRandomUser();
+        participantRepo.save(TestEntityFactory.validParticipant(u1, savedChallenge1));
+
+        assertThrows(NotFoundException.class,
+                () -> participantService.getAllParticipantsInChallenge(anotherUser, savedChallenge1.getId()));
+    }
+
     @Nested
     class RemovingParticipant {
 
