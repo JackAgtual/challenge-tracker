@@ -1,9 +1,9 @@
-import { getValidFirstTimeUser } from "@/lib/auth-utils";
+import { getValidFirstTimeSession } from "@/lib/auth-utils";
 import AccountSetupForm from "./components/AccountSetupForm";
 import { client } from "@/lib/api-client";
 
 export default async function Page() {
-  await getValidFirstTimeUser();
+  await getValidFirstTimeSession();
 
   const { data, error } = await client.GET("/users/me");
 

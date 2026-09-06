@@ -1,5 +1,5 @@
 import { auth0 } from "./auth0";
-import { getValidFirstTimeUser, getValidUser } from "./auth-utils";
+import { getValidFirstTimeSession, getValidSession } from "./auth-utils";
 import { redirect } from "next/navigation";
 import { client } from "./api-client";
 
@@ -17,12 +17,12 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("./api-client");
 
-describe("getValidUser", () => {
+describe("getValidSession", () => {
   it("redirects to login if user is not authenticated", async () => {
     const mockedAuth0 = jest.mocked(auth0);
     mockedAuth0.getSession.mockResolvedValue(null);
 
-    await expect(getValidUser()).rejects.toThrow("NEXT_REDIRECT");
+    await expect(getValidSession()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(redirect).toHaveBeenCalledWith("/auth/login");
   });
@@ -34,7 +34,7 @@ describe("getValidUser", () => {
     const mockedClient = jest.mocked(client);
     mockedClient.GET.mockReturnValue({ data: { value: false } } as any);
 
-    await expect(getValidUser()).rejects.toThrow("NEXT_REDIRECT");
+    await expect(getValidSession()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(redirect).toHaveBeenCalledWith("/account-setup");
   });
@@ -47,17 +47,17 @@ describe("getValidUser", () => {
     const mockedClient = jest.mocked(client);
     mockedClient.GET.mockReturnValue({ data: { value: true } } as any);
 
-    const res = await getValidUser();
+    const res = await getValidSession();
     expect(res).toEqual({ user: "john" });
   });
 });
 
-describe("getValidFirstTimeuser", () => {
+describe("getValidFirstTimeSession", () => {
   it("redirects to login if user is not authenticated", async () => {
     const mockedAuth0 = jest.mocked(auth0);
     mockedAuth0.getSession.mockResolvedValue(null);
 
-    await expect(getValidFirstTimeUser()).rejects.toThrow("NEXT_REDIRECT");
+    await expect(getValidFirstTimeSession()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(redirect).toHaveBeenCalledWith("/auth/login");
   });
@@ -70,7 +70,7 @@ describe("getValidFirstTimeuser", () => {
     const mockedClient = jest.mocked(client);
     mockedClient.GET.mockReturnValue({ data: { value: true } } as any);
 
-    const res = await getValidFirstTimeUser();
+    const res = await getValidFirstTimeSession();
     expect(res).toEqual({ user: "john" });
   });
 });

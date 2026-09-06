@@ -1,8 +1,10 @@
-import LoginButton from "@/components/LoginButton";
 import { Button } from "@/components/ui/button";
+import { getValidSession } from "@/lib/auth-utils";
 import Link from "next/link";
 
-export default function Page() {
+export default async function Page() {
+  await getValidSession();
+
   return (
     <>
       <h1>Dashboard</h1>

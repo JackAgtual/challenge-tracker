@@ -3,8 +3,8 @@ import { auth0 } from "./auth0";
 import { client } from "./api-client";
 
 // Will check for valid session and account is set up
-export async function getValidUser() {
-  const session = await getValidFirstTimeUser();
+export async function getValidSession() {
+  const session = await getValidFirstTimeSession();
 
   const isAccountSetup = await client.GET("/users/me/is-setup");
   if (!isAccountSetup.data?.value) {
@@ -15,7 +15,7 @@ export async function getValidUser() {
 }
 
 // Use when you don't need to check for account setup
-export async function getValidFirstTimeUser() {
+export async function getValidFirstTimeSession() {
   const session = await auth0.getSession();
 
   if (!session) {
