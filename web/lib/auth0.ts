@@ -12,8 +12,7 @@ export const auth0 = new Auth0Client({
   },
   async onCallback(error, context, session) {
     if (error) {
-      // TODO: Implement error page
-      return redirect(`/error?error=${error.message}`);
+      throw new Error(error.message);
     }
 
     if (!session) {
