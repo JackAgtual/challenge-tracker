@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.dto.response;
 
-public record BooleanResponse(boolean value) {
+import jakarta.validation.constraints.NotNull;
+
+public record BooleanResponse(@NotNull boolean value) {
 
 }

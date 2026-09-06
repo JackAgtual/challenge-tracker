@@ -171,7 +171,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["getAccountDetails"];
         put?: never;
         post?: never;
         delete?: never;
@@ -285,10 +285,11 @@ export interface components {
             email: string;
         };
         UserResponse: {
-            authSubject?: string;
-            email?: string;
+            authSubject: string;
+            email: string;
             firstName?: string;
             lastName?: string;
+            username?: string;
         };
         CreateChallengeRequest: {
             name: string;
@@ -318,7 +319,7 @@ export interface components {
             username: string;
         };
         BooleanResponse: {
-            value?: boolean;
+            value: boolean;
         };
         ChallengeNameResponse: {
             /** Format: int64 */
@@ -1217,6 +1218,62 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    getAccountDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["UserResponse"];
+                };
             };
             /** @description Forbidden Operation */
             403: {

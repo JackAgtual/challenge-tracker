@@ -50,6 +50,11 @@ public class UserController {
         return new BooleanResponse(user.isAccountSetup());
     }
 
+    @GetMapping("/me")
+    public UserResponse getAccountDetails(@CurrentUser User user) {
+        return UserResponse.from(user);
+    }
+
     @PatchMapping("/me")
     public void finishUserAccountSetup(@CurrentUser User user,
             @Valid @RequestBody UserAccountSetupRequest accountSetupRequest) {
