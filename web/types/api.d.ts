@@ -11,7 +11,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getMethodName"];
+        get: operations["getChallengeDetails"];
         put: operations["modifyChallenge"];
         post?: never;
         delete?: never;
@@ -278,7 +278,7 @@ export interface components {
             /** Format: int32 */
             durationDays?: number;
             /** @enum {string} */
-            status?: "PENDING" | "IN_PROGRESS" | "COMPLETE";
+            status: "PENDING" | "IN_PROGRESS" | "COMPLETE";
         };
         CreateUserRequest: {
             /** Format: email */
@@ -372,7 +372,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getMethodName: {
+    getChallengeDetails: {
         parameters: {
             query?: never;
             header?: never;
