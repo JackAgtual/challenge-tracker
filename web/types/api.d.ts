@@ -271,8 +271,8 @@ export interface components {
         };
         ChallengeResponse: {
             /** Format: int64 */
-            id?: number;
-            name?: string;
+            id: number;
+            name: string;
             /** Format: date */
             starDate?: string;
             /** Format: int32 */
@@ -298,10 +298,10 @@ export interface components {
         };
         IdResponse: {
             /** Format: int64 */
-            id?: number;
+            id: number;
         };
         ReadyRequest: {
-            ready?: boolean;
+            ready: boolean;
         };
         SendInviteRequest: {
             username: string;
@@ -323,32 +323,32 @@ export interface components {
         };
         ChallengeNameResponse: {
             /** Format: int64 */
-            id?: number;
-            name?: string;
+            id: number;
+            name: string;
         };
         PendingInvitesForUserResponse: {
             /** Format: int64 */
-            id?: number;
-            challengeName?: components["schemas"]["ChallengeNameResponse"];
-            inviteSenderUsername?: string;
+            id: number;
+            challengeName: components["schemas"]["ChallengeNameResponse"];
+            inviteSenderUsername: string;
         };
         NonAcceptedInvitesForChallengeResponse: {
-            username?: string;
+            username: string;
             /** @enum {string} */
-            inviteStatus?: "PENDING" | "ACCEPTED" | "DECLINED";
+            inviteStatus: "PENDING" | "ACCEPTED" | "DECLINED";
         };
         GoalDefinitionResponse: {
             /** Format: int64 */
-            id?: number;
-            name?: string;
+            id: number;
+            name: string;
         };
         GoalCompletionResponse: {
             /** Format: int64 */
-            id?: number;
+            id: number;
             /** Format: int64 */
-            goalDefinitionId?: number;
+            goalDefinitionId: number;
             /** Format: date */
-            completedDate?: string;
+            completedDate: string;
         };
         ProblemDetail: {
             /** Format: uri */

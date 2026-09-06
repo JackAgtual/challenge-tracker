@@ -4,7 +4,10 @@ import java.time.LocalDate;
 
 import com.agtual.challengetracker.entity.GoalCompletion;
 
-public record GoalCompletionResponse(Long id, Long goalDefinitionId, LocalDate completedDate) {
+import jakarta.validation.constraints.NotNull;
+
+public record GoalCompletionResponse(@NotNull Long id, @NotNull Long goalDefinitionId,
+        @NotNull LocalDate completedDate) {
     public static GoalCompletionResponse from(GoalCompletion goalCompletion) {
         return new GoalCompletionResponse(
                 goalCompletion.getId(),

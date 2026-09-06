@@ -1,5 +1,7 @@
 package com.agtual.challengetracker.dto.response;
 
-public record IdResponse(Long id) {
+import jakarta.validation.constraints.NotNull;
+
+public record IdResponse(@NotNull Long id) {
 
 }

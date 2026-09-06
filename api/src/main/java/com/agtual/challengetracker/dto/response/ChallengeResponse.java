@@ -6,7 +6,10 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 
-public record ChallengeResponse(Long id, String name, LocalDate starDate, Integer durationDays,
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record ChallengeResponse(@NotNull Long id, @NotBlank String name, LocalDate starDate, Integer durationDays,
         ChallengeStatus status) {
     public static ChallengeResponse from(Challenge challenge) {
         return new ChallengeResponse(challenge.getId(), challenge.getName(), challenge.getStartDate(),
