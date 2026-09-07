@@ -9,6 +9,7 @@ import com.agtual.challengetracker.entity.User;
 
 public interface ChallengeRepo extends JpaRepository<Challenge, Long> {
 
+    // TODO: Ignore case on name
     Optional<Challenge> findByOwnerAndName(User owner, String name);
 
     Optional<Challenge> findByOwnerAndId(User owner, Long id);

@@ -1,8 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { client } from "@/lib/api-client";
-import Link from "next/link";
+import ChallengeSection from "./ChallengeSection";
+import { getValidSession } from "@/lib/auth-utils";
 
 export default async function Challenges() {
+  await getValidSession();
+
   const { data, error } = await client.GET("/challenges");
 
   if (error) {
@@ -12,30 +14,10 @@ export default async function Challenges() {
   return (
     <>
       <h1>Your challenges</h1>
-      <div className="grid grid-cols-1 gap-y-6 my-6">
-        {data.map((challenge) => (
-          <Link
-            key={challenge.id}
-            href={`/challenges/${challenge.id}`}
-            className="max-w-2xs"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>{challenge.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2">
-                  <p>Status</p>
-                  <p>{challenge.status}</p>
-                  <p>Duration (days)</p>
-                  <p>{challenge.durationDays || "Not set"}</p>
-                  <p>Start date</p>
-                  <p>{challenge.starDate || "Not set"}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+      <div className="space-y-2">
+        <ChallengeSection title="In Progress" data={data.inProgress} />
+        <ChallengeSection title="Pending" data={data.pending} />
+        <ChallengeSection title="Complete" data={data.complete} />
       </div>
     </>
   );

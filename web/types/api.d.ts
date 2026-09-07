@@ -332,6 +332,11 @@ export interface components {
             challengeName: components["schemas"]["ChallengeNameResponse"];
             inviteSenderUsername: string;
         };
+        GroupedChallengeResponse: {
+            inProgress: components["schemas"]["ChallengeResponse"][];
+            pending: components["schemas"]["ChallengeResponse"][];
+            complete: components["schemas"]["ChallengeResponse"][];
+        };
         ChallengeDetailResponse: {
             challenge: components["schemas"]["ChallengeResponse"];
             participants: components["schemas"]["ParticipantResponse"][];
@@ -696,7 +701,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ChallengeResponse"][];
+                    "*/*": components["schemas"]["GroupedChallengeResponse"];
                 };
             };
             /** @description Forbidden Operation */

@@ -19,6 +19,7 @@ import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
 import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
 import com.agtual.challengetracker.dto.response.ChallengeResponse;
+import com.agtual.challengetracker.dto.response.GroupedChallengeResponse;
 import com.agtual.challengetracker.dto.response.IdResponse;
 import com.agtual.challengetracker.dto.response.NonAcceptedInvitesForChallengeResponse;
 import com.agtual.challengetracker.dto.response.ParticipantResponse;
@@ -52,11 +53,10 @@ public class ChallengeController {
     }
 
     @GetMapping
-    public List<ChallengeResponse> getAllChallengeParticipationsForUser(@CurrentUser User user) {
-        return participantService.getAllChallengeParticipationsForUser(user)
-                .stream()
-                .map(ChallengeResponse::from)
-                .toList();
+    public GroupedChallengeResponse getAllChallengeParticipationsForUser(@CurrentUser User user) {
+        List<Participant> participations = participantService.getAllChallengeParticipationsForUser(user);
+        return GroupedChallengeResponse.from(
+                participations.stream().map(p -> p.getChallenge()).toList());
     }
 
     @GetMapping("/{challengeId}")
