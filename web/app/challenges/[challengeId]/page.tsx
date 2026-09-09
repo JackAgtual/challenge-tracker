@@ -1,5 +1,6 @@
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
+import ParticipantStatus from "./components/ParticipantStatus";
 
 export default async function Page({
   params,
@@ -28,12 +29,7 @@ export default async function Page({
       {challenge.durationDays && <p>{challenge.durationDays} days</p>}
       <p>Challenge status: {challenge.status}</p>
       {challenge.starDate && <p>Start date: {challenge.starDate}</p>}
-      {participants.map((participant) => (
-        <div key={participant.username}>
-          <div>Username: {participant.username}</div>
-          <div>Ready: {participant.ready ? "Yes" : "No"}</div>
-        </div>
-      ))}
+      <ParticipantStatus participants={participants} />
     </>
   );
 }
