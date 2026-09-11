@@ -69,6 +69,7 @@ public class GoalCompletionService {
 
     public List<GoalCompletion> getAllGoalCompletionsForChallenge(User user, Long challengeId) {
         return goalCompletionRepo
-                .findByGoalDefinition_Participant_Challenge_IdAndGoalDefinition_Participant_User(challengeId, user);
+                .findByGoalDefinition_Participant_Challenge_IdAndGoalDefinition_Participant_UserOrderByCompletedDateDesc(
+                        challengeId, user);
     }
 }

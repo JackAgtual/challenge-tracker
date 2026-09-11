@@ -139,6 +139,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @deprecated */
         get: operations["getAllGoalsForChallenge"];
         put?: never;
         post: operations["createGoalDefinition"];
@@ -155,7 +156,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getAllGoalCompletionsForChallenge"];
+        get?: never;
         put?: never;
         post: operations["recordGoalCompletion"];
         delete?: never;
@@ -204,6 +205,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getAllPendingInvitesForUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/challenges/{challengeId}/goals/completions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllGoalCompletionsForChallenge"];
         put?: never;
         post?: never;
         delete?: never;
@@ -355,13 +372,16 @@ export interface components {
             id: number;
             name: string;
         };
-        GoalCompletionResponse: {
-            /** Format: int64 */
-            id: number;
-            /** Format: int64 */
-            goalDefinitionId: number;
+        GoalCompletionRowResponse: {
             /** Format: date */
-            completedDate: string;
+            date: string;
+            completionsPerGoal: {
+                [key: string]: boolean;
+            };
+        };
+        GoalTableResponse: {
+            goalDefinitionResponse: components["schemas"]["GoalDefinitionResponse"][];
+            goalCompletionRowResponses: components["schemas"]["GoalCompletionRowResponse"][];
         };
         ProblemDetail: {
             /** Format: uri */
@@ -1154,64 +1174,6 @@ export interface operations {
             };
         };
     };
-    getAllGoalCompletionsForChallenge: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                challengeId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["GoalCompletionResponse"][];
-                };
-            };
-            /** @description Forbidden Operation */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Conflict — resource already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     recordGoalCompletion: {
         parameters: {
             query: {
@@ -1456,6 +1418,64 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PendingInvitesForUserResponse"][];
+                };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    getAllGoalCompletionsForChallenge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GoalTableResponse"];
                 };
             };
             /** @description Forbidden Operation */

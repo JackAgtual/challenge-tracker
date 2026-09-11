@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
 import com.agtual.challengetracker.dto.request.CompleteGoalRequest;
 import com.agtual.challengetracker.dto.request.CreateGoalRequest;
-import com.agtual.challengetracker.dto.response.GoalCompletionResponse;
 import com.agtual.challengetracker.dto.response.GoalDefinitionResponse;
+import com.agtual.challengetracker.dto.response.GoalTableResponse;
+import com.agtual.challengetracker.entity.GoalCompletion;
+import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.GoalCompletionService;
 import com.agtual.challengetracker.service.GoalDefinitionService;
@@ -32,6 +34,7 @@ public class GoalController {
     private final GoalCompletionService goalCompletionService;
 
     @GetMapping
+    @Deprecated
     List<GoalDefinitionResponse> getAllGoalsForChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
         return goalDefinitionService.getGoalsForChallenge(user, challengeId)
                 .stream()
@@ -52,13 +55,15 @@ public class GoalController {
         goalCompletionService.completeGoal(user, challengeId, completeGoalRequest.date());
     }
 
-    @GetMapping("/{goalDefinitionId}/completions")
-    public List<GoalCompletionResponse> getAllGoalCompletionsForChallenge(@CurrentUser User user,
+    @GetMapping("/completions")
+    public GoalTableResponse getAllGoalCompletionsForChallenge(@CurrentUser User user,
             @PathVariable Long challengeId) {
-        return goalCompletionService.getAllGoalCompletionsForChallenge(user, challengeId)
-                .stream()
-                .map(completion -> GoalCompletionResponse.from(completion))
-                .toList();
+        List<GoalDefinition> goalDefinitions = goalDefinitionService.getGoalsForChallenge(user, challengeId);
+        List<GoalCompletion> goalCompletions = goalCompletionService.getAllGoalCompletionsForChallenge(user,
+                challengeId);
+        // goalCompletions.forEach(c -> System.out.println(c.getCompletedDate()));
+
+        return GoalTableResponse.from(goalDefinitions, goalCompletions);
     }
 
     @DeleteMapping("/{goalDefinitionId}/completions/{goalCompletionId}")
