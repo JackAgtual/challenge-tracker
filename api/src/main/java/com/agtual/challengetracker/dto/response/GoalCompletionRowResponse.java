@@ -10,7 +10,8 @@ import jakarta.validation.constraints.NotNull;
  * 
  * @param date               of goal completion
  * @param completionsPerGoal map where key is id of goal definition and value is
- *                           boolean if goal was completed on {@date}
+ *                           goalCompletionId if goal was completed on
+ *                           {@date} otherwise null
  */
-public record GoalCompletionRowResponse(@NotNull LocalDate date, @NotNull Map<Long, Boolean> completionsPerGoal) {
+public record GoalCompletionRowResponse(@NotNull LocalDate date, @NotNull Map<Long, Long> completionsPerGoal) {
 }

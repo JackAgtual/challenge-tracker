@@ -42,13 +42,25 @@ public class GoalTableResponseTest {
         LocalDate day2 = day1.minusDays(1);
         LocalDate day3 = day2.minusDays(1);
 
+        GoalCompletion goal1Day1 = validGoalCompletion(goal1, day1);
+        goal1Day1.setId(1L);
+        GoalCompletion goal1Day2 = validGoalCompletion(goal1, day2);
+        goal1Day2.setId(2L);
+        GoalCompletion goal1Day3 = validGoalCompletion(goal1, day3);
+        goal1Day3.setId(3L);
+        GoalCompletion goal2Day1 = validGoalCompletion(goal2, day1);
+        goal2Day1.setId(4L);
+        GoalCompletion goal3Day2 = validGoalCompletion(goal3, day2);
+        goal3Day2.setId(5L);
+        GoalCompletion goal3Day3 = validGoalCompletion(goal3, day3);
+        goal3Day3.setId(6L);
         List<GoalCompletion> goalCompletions = List.of(
-                validGoalCompletion(goal1, day1),
-                validGoalCompletion(goal1, day2),
-                validGoalCompletion(goal1, day3),
-                validGoalCompletion(goal2, day1),
-                validGoalCompletion(goal3, day2),
-                validGoalCompletion(goal3, day3));
+                goal1Day1,
+                goal1Day2,
+                goal1Day3,
+                goal2Day1,
+                goal3Day2,
+                goal3Day3);
 
         GoalTableResponse res = GoalTableResponse.from(goalDefinitions, goalCompletions);
 
@@ -59,20 +71,20 @@ public class GoalTableResponseTest {
 
         // goal completions rows
         List<GoalCompletionRowResponse> rowResponses = res.goalCompletionRowResponses();
-        Map<Long, Boolean> day1Completions = new HashMap<>();
-        day1Completions.put(goal1.getId(), Boolean.TRUE);
-        day1Completions.put(goal2.getId(), Boolean.TRUE);
-        day1Completions.put(goal3.getId(), Boolean.FALSE);
+        Map<Long, Long> day1Completions = new HashMap<>();
+        day1Completions.put(goal1.getId(), goal1Day1.getId());
+        day1Completions.put(goal2.getId(), goal2Day1.getId());
+        day1Completions.put(goal3.getId(), null);
 
-        Map<Long, Boolean> day2Completions = new HashMap<>();
-        day2Completions.put(goal1.getId(), Boolean.TRUE);
-        day2Completions.put(goal2.getId(), Boolean.FALSE);
-        day2Completions.put(goal3.getId(), Boolean.TRUE);
+        Map<Long, Long> day2Completions = new HashMap<>();
+        day2Completions.put(goal1.getId(), goal1Day2.getId());
+        day2Completions.put(goal2.getId(), null);
+        day2Completions.put(goal3.getId(), goal3Day2.getId());
 
-        Map<Long, Boolean> day3Completions = new HashMap<>();
-        day3Completions.put(goal1.getId(), Boolean.TRUE);
-        day3Completions.put(goal2.getId(), Boolean.FALSE);
-        day3Completions.put(goal3.getId(), Boolean.TRUE);
+        Map<Long, Long> day3Completions = new HashMap<>();
+        day3Completions.put(goal1.getId(), goal1Day3.getId());
+        day3Completions.put(goal2.getId(), null);
+        day3Completions.put(goal3.getId(), goal3Day3.getId());
 
         GoalCompletionRowResponse row1 = new GoalCompletionRowResponse(day1, day1Completions);
         GoalCompletionRowResponse row2 = new GoalCompletionRowResponse(day2, day2Completions);

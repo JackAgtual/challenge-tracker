@@ -70,7 +70,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
         @Bean
         @Primary
         Clock clock() {
-            return Clock.fixed(LocalDate.of(2026, 6, 5).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+            return Clock.fixed(LocalDate.of(2026, 6, 5).atStartOfDay(ZoneOffset.UTC).toInstant(),
+                    ZoneId.of("UTC"));
         }
     }
 
@@ -88,7 +89,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
     @Test
     void testCompleteGoal() {
-        GoalCompletion completedGoal = goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate);
+        GoalCompletion completedGoal = goalCompletionService.completeGoal(savedUser, challenge.getId(),
+                goal1.getId(), completedDate);
         assertEquals(completedGoal, goalCompletionRepo.findById(completedGoal.getId()).get());
         assertEquals(completedDate, completedGoal.getCompletedDate());
         assertEquals(goal1, completedGoal.getGoalDefinition());
@@ -96,15 +98,16 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
     @Test
     void testCanCompleteMultipleGoalsSameDay() {
-        goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate);
-        goalCompletionService.completeGoal(savedUser, goal2.getId(), completedDate);
+        goalCompletionService.completeGoal(savedUser, challenge.getId(), goal1.getId(), completedDate);
+        goalCompletionService.completeGoal(savedUser, challenge.getId(), goal2.getId(), completedDate);
         assertEquals(2, goalCompletionRepo.count());
     }
 
     @Test
     void testCantCompleteGoalInFuture() {
         assertThrows(ForbiddenException.class,
-                () -> goalCompletionService.completeGoal(savedUser, goal1.getId(), dateInFuture));
+                () -> goalCompletionService.completeGoal(savedUser, challenge.getId(), goal1.getId(),
+                        dateInFuture));
     }
 
     @Test
@@ -117,7 +120,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
                 .thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class,
-                () -> goalCompletionService.completeGoal(nonOwner, goal1.getId(), completedDate));
+                () -> goalCompletionService.completeGoal(nonOwner, challenge.getId(), goal1.getId(),
+                        completedDate));
     }
 
     @Test
@@ -128,7 +132,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
                 .thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class,
-                () -> goalCompletionService.completeGoal(savedUser, goal2.getId(), completedDate));
+                () -> goalCompletionService.completeGoal(savedUser, challenge.getId(), goal2.getId(),
+                        completedDate));
     }
 
     @Test
@@ -139,7 +144,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
         createGoalsFromChallenge(challenge);
 
         assertThrows(ForbiddenException.class,
-                () -> goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate));
+                () -> goalCompletionService.completeGoal(savedUser, challenge.getId(), goal1.getId(),
+                        completedDate));
     }
 
     @Test
@@ -150,7 +156,15 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
         createGoalsFromChallenge(challenge);
 
         assertThrows(ForbiddenException.class,
-                () -> goalCompletionService.completeGoal(savedUser, goal1.getId(), completedDate));
+                () -> goalCompletionService.completeGoal(savedUser, challenge.getId(), goal1.getId(),
+                        completedDate));
+    }
+
+    @Test
+    void testCantCompleteGoalThatBelongsToDifferentChallenge() {
+        Challenge otherChallenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "other"));
+        assertThrows(ForbiddenException.class, () -> goalCompletionService.completeGoal(savedUser,
+                otherChallenge.getId(), goal1.getId(), completedDate));
     }
 
     @Nested
@@ -171,11 +185,13 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
         @Test
         void testUncompleteGoal() {
-            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goalCompletion1.getId());
+            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goal1.getId(),
+                    goalCompletion1.getId());
             assertEquals(1, goalCompletionRepo.count());
 
             // test another uncomplete
-            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goalCompletion2.getId());
+            goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goal2.getId(),
+                    goalCompletion2.getId());
             assertEquals(0, goalCompletionRepo.count());
         }
 
@@ -185,13 +201,23 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
 
             assertThrows(NotFoundException.class,
                     () -> goalCompletionService.uncompleteGoal(otherUser, challenge.getId(),
+                            goal1.getId(),
                             goalCompletion1.getId()));
         }
 
         @Test
-        void testCantUncompleteInvalidGoal() {
+        void testCantUncompleteInvalidGoalCompletionId() {
             assertThrows(NotFoundException.class,
-                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), 999999L));
+                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(),
+                            goal1.getId(),
+                            999999L));
+        }
+
+        @Test
+        void testCantUncompleteGoalFromWrongGoalDefinition() {
+            assertThrows(ForbiddenException.class,
+                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goal2.getId(),
+                            goalCompletion1.getId()));
         }
 
         @Test
@@ -199,7 +225,7 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
             Challenge otherChallenge = challengeRepo
                     .save(TestEntityFactory.validChallenge(savedUser, "another challenge"));
             assertThrows(ForbiddenException.class, () -> goalCompletionService.uncompleteGoal(savedUser,
-                    otherChallenge.getId(), goalCompletion1.getId()));
+                    otherChallenge.getId(), goal1.getId(), goalCompletion1.getId()));
         }
 
         @Test
@@ -213,12 +239,14 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
             GoalCompletion otherGoalCompletion = goalCompletionRepo
                     .save(TestEntityFactory.validGoalCompletion(otherUserGoalDef, completedDate));
 
-            List<GoalCompletion> savedUserCompletedGoals = goalCompletionService.getAllGoalCompletionsForChallenge(
-                    savedUser,
-                    challenge.getId());
-            List<GoalCompletion> otherUserCompletedGoals = goalCompletionService.getAllGoalCompletionsForChallenge(
-                    otheruUser,
-                    challenge.getId());
+            List<GoalCompletion> savedUserCompletedGoals = goalCompletionService
+                    .getAllGoalCompletionsForChallenge(
+                            savedUser,
+                            challenge.getId());
+            List<GoalCompletion> otherUserCompletedGoals = goalCompletionService
+                    .getAllGoalCompletionsForChallenge(
+                            otheruUser,
+                            challenge.getId());
 
             assertEquals(2, savedUserCompletedGoals.size());
             assertTrue(savedUserCompletedGoals.containsAll(List.of(goalCompletion1, goalCompletion2)));

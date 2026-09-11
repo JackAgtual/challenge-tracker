@@ -51,8 +51,9 @@ public class GoalController {
     @PostMapping("/{goalDefinitionId}/completions")
     @ResponseStatus(HttpStatus.CREATED)
     public void recordGoalCompletion(@CurrentUser User user, @PathVariable Long challengeId,
-            @Valid CompleteGoalRequest completeGoalRequest) {
-        goalCompletionService.completeGoal(user, challengeId, completeGoalRequest.date());
+            @PathVariable Long goalDefinitionId,
+            @Valid @RequestBody CompleteGoalRequest completeGoalRequest) {
+        goalCompletionService.completeGoal(user, challengeId, goalDefinitionId, completeGoalRequest.date());
     }
 
     @GetMapping("/completions")
@@ -61,15 +62,15 @@ public class GoalController {
         List<GoalDefinition> goalDefinitions = goalDefinitionService.getGoalsForChallenge(user, challengeId);
         List<GoalCompletion> goalCompletions = goalCompletionService.getAllGoalCompletionsForChallenge(user,
                 challengeId);
-        // goalCompletions.forEach(c -> System.out.println(c.getCompletedDate()));
 
         return GoalTableResponse.from(goalDefinitions, goalCompletions);
     }
 
     @DeleteMapping("/{goalDefinitionId}/completions/{goalCompletionId}")
     public void deleteExistingGoalCompletion(@CurrentUser User user, @PathVariable Long challengeId,
+            @PathVariable Long goalDefinitionId,
             @PathVariable Long goalCompletionId) {
-        goalCompletionService.uncompleteGoal(user, challengeId, goalCompletionId);
+        goalCompletionService.uncompleteGoal(user, challengeId, goalDefinitionId, goalCompletionId);
     }
 
 }

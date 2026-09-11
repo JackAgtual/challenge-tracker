@@ -1,15 +1,7 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
+import GoalTable from "./components/GoalTable";
 import ParticipantStatus from "./components/ParticipantStatus";
-import { CircleCheck, Circle } from "lucide-react";
 
 export default async function Page({
   params,
@@ -48,32 +40,11 @@ export default async function Page({
       {challenge.starDate && <p>Start date: {challenge.starDate}</p>}
       <ParticipantStatus participants={participants} />
       <h2>Your goals</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            {goalDefinitionResponse?.map((def) => (
-              <TableHead key={def.id}>{def.name}</TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {goalCompletionRowResponses.map((row) => (
-            <TableRow key={row.date}>
-              <TableCell>{row.date}</TableCell>
-              {goalDefinitionResponse.map((goal) => (
-                <TableCell key={goal.id}>
-                  {row.completionsPerGoal[goal.id] ? (
-                    <CircleCheck />
-                  ) : (
-                    <Circle />
-                  )}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <GoalTable
+        challengeId={challengeId}
+        goalDefinitions={goalDefinitionResponse}
+        rows={goalCompletionRowResponses}
+      />
     </>
   );
 }

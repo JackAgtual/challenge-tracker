@@ -376,7 +376,7 @@ export interface components {
             /** Format: date */
             date: string;
             completionsPerGoal: {
-                [key: string]: boolean;
+                [key: string]: number;
             };
         };
         GoalTableResponse: {
@@ -1176,16 +1176,19 @@ export interface operations {
     };
     recordGoalCompletion: {
         parameters: {
-            query: {
-                completeGoalRequest: components["schemas"]["CompleteGoalRequest"];
-            };
+            query?: never;
             header?: never;
             path: {
                 challengeId: number;
+                goalDefinitionId: number;
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteGoalRequest"];
+            };
+        };
         responses: {
             /** @description Created */
             201: {
@@ -1635,6 +1638,7 @@ export interface operations {
             header?: never;
             path: {
                 challengeId: number;
+                goalDefinitionId: number;
                 goalCompletionId: number;
             };
             cookie?: never;

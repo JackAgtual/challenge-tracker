@@ -18,8 +18,8 @@ public record GoalTableResponse(@NotNull List<GoalDefinitionResponse> goalDefini
     public static GoalTableResponse from(List<GoalDefinition> goalDefinitions, List<GoalCompletion> goalCompletions) {
 
         // Start with all goals completed set to false and populate ones that are true
-        Map<Long, Boolean> allFalseGoalCompletions = new HashMap<>(goalDefinitions.size());
-        goalDefinitions.forEach(def -> allFalseGoalCompletions.put(def.getId(), Boolean.FALSE));
+        Map<Long, Long> allFalseGoalCompletions = new HashMap<>(goalDefinitions.size());
+        goalDefinitions.forEach(def -> allFalseGoalCompletions.put(def.getId(), null));
 
         // For each date store a list of completions for each goal
         Map<LocalDate, List<GoalCompletion>> dateToGoalCompletions = new LinkedHashMap<>();
@@ -32,10 +32,9 @@ public record GoalTableResponse(@NotNull List<GoalDefinitionResponse> goalDefini
         // Populate each row (each row is one day)
         List<GoalCompletionRowResponse> rows = new ArrayList<>(dateToGoalCompletions.size());
         for (Map.Entry<LocalDate, List<GoalCompletion>> entry : dateToGoalCompletions.entrySet()) {
-            Map<Long, Boolean> goalCompletionsMap = new HashMap<>(allFalseGoalCompletions);
-            System.out.println(entry.getKey());
+            Map<Long, Long> goalCompletionsMap = new HashMap<>(allFalseGoalCompletions);
             for (GoalCompletion completion : entry.getValue()) {
-                goalCompletionsMap.put(completion.getGoalDefinition().getId(), Boolean.TRUE);
+                goalCompletionsMap.put(completion.getGoalDefinition().getId(), completion.getId());
             }
             rows.add(new GoalCompletionRowResponse(entry.getKey(), goalCompletionsMap));
         }

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.Participant;
@@ -25,7 +26,7 @@ public class GoalCompletionService {
     private final GoalCompletionRepo goalCompletionRepo;
     private final Clock clock;
 
-    public GoalCompletion completeGoal(User user, Long goalDefinitionId, LocalDate date) {
+    public GoalCompletion completeGoal(User user, Long challengeId, Long goalDefinitionId, LocalDate date) {
         if (date.isAfter(LocalDate.now(clock))) {
             throw new ForbiddenException(ResourceType.GOAL_DEFINITION, goalDefinitionId,
                     "Can't complete goal in future");
@@ -33,8 +34,12 @@ public class GoalCompletionService {
 
         GoalDefinition goal = goalDefinitionService.getGoal(user, goalDefinitionId);
 
-        if (goal.getParticipant().getChallenge().getStatus() != ChallengeStatus.IN_PROGRESS) {
+        Challenge challenge = goal.getParticipant().getChallenge();
+        if (challenge.getStatus() != ChallengeStatus.IN_PROGRESS) {
             throw new ForbiddenException("Challenge must be in progres to complete goals");
+        }
+        if (!challenge.getId().equals(challengeId)) {
+            throw new ForbiddenException("Goal definition does not belong to inputted challenge");
         }
 
         Optional<GoalCompletion> goalCompletionDuplicate = goalCompletionRepo
@@ -51,11 +56,16 @@ public class GoalCompletionService {
         return goalCompletionRepo.save(completion);
     }
 
-    public void uncompleteGoal(User user, Long challengeId, Long goalCompletionId) {
+    public void uncompleteGoal(User user, Long challengeId, Long goalDefinitionId, Long goalCompletionId) {
         GoalCompletion goalToDelete = goalCompletionRepo.findById(goalCompletionId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId));
 
-        Participant participant = goalToDelete.getGoalDefinition().getParticipant();
+        GoalDefinition goalDefinition = goalToDelete.getGoalDefinition();
+        if (!goalDefinition.getId().equals(goalDefinitionId)) {
+            throw new ForbiddenException("Goal completion to remove does not belong to inputted goal definition");
+        }
+
+        Participant participant = goalDefinition.getParticipant();
         if (participant.getUser() != user) {
             // Throw not found for authorization error
             throw new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId);
