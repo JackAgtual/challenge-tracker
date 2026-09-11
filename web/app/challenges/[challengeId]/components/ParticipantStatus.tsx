@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { components } from "@/types/api";
+import { CircleCheck } from "lucide-react";
 
 type ParticipantStatusProps = {
   participants: components["schemas"]["ParticipantResponse"][];
@@ -29,7 +30,7 @@ export default function ParticipantStatus({
           {participants.map((participant) => (
             <TableRow key={participant.username}>
               <TableCell>{participant.username}</TableCell>
-              <TableCell>{participant.ready ? "Y" : "N"}</TableCell>
+              <TableCell>{participant.ready ? <CircleCheck /> : ""}</TableCell>
             </TableRow>
           ))}
         </TableBody>

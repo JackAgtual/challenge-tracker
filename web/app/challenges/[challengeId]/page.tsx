@@ -9,6 +9,7 @@ import {
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import ParticipantStatus from "./components/ParticipantStatus";
+import { CircleCheck, Circle } from "lucide-react";
 
 export default async function Page({
   params,
@@ -62,7 +63,11 @@ export default async function Page({
               <TableCell>{row.date}</TableCell>
               {goalDefinitionResponse.map((goal) => (
                 <TableCell key={goal.id}>
-                  {row.completionsPerGoal[goal.id] ? "X" : ""}
+                  {row.completionsPerGoal[goal.id] ? (
+                    <CircleCheck />
+                  ) : (
+                    <Circle />
+                  )}
                 </TableCell>
               ))}
             </TableRow>
