@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
+import com.agtual.challengetracker.exception.ForbiddenException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,5 +65,15 @@ public class Challenge {
 
     public boolean isConfigurable() {
         return status == ChallengeStatus.PENDING;
+    }
+
+    public LocalDate getMostRecentDate() {
+        if (status == ChallengeStatus.IN_PROGRESS) {
+            return LocalDate.now();
+        } else if (status == ChallengeStatus.COMPLETE) {
+            return startDate.plusDays(durationDays - 1);
+        }
+
+        throw new ForbiddenException("Can't calculate most recent date. Invalid challenge state: " + status);
     }
 }

@@ -3,12 +3,16 @@ package com.agtual.challengetracker.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
+import com.agtual.challengetracker.exception.ForbiddenException;
 
 public class ChallengeTest {
 
@@ -73,6 +77,33 @@ public class ChallengeTest {
 
         challenge.setStatus(ChallengeStatus.COMPLETE);
         assertFalse(challenge.isConfigurable());
+    }
+
+    @Test
+    void testGetMostRecentDateInProgressChallenge() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setStartDate(LocalDate.now().minusDays(10));
+
+        assertEquals(LocalDate.now(), challenge.getMostRecentDate());
+    }
+
+    @Test
+    void testGetMostRecentDateCompleteChallenge() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.COMPLETE);
+        challenge.setStartDate(LocalDate.of(2025, 6, 5));
+        challenge.setDurationDays(15);
+
+        assertEquals(LocalDate.of(2025, 6, 19), challenge.getMostRecentDate());
+    }
+
+    @Test
+    void testGetMostRecentDateInvalidState() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.PENDING);
+
+        assertThrows(ForbiddenException.class, () -> challenge.getMostRecentDate());
     }
 
     private Challenge createReadyChallenge() {
