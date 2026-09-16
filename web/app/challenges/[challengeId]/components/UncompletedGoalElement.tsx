@@ -7,13 +7,19 @@ type UncompletedGoalElementProps = {
   challengeId: number;
   goalDefinitionId: number;
   date: string;
+  challengeInProgress: boolean;
 };
 
 export default function UncompletedGoalElement({
   challengeId,
   goalDefinitionId,
   date,
+  challengeInProgress,
 }: UncompletedGoalElementProps) {
+  if (!challengeInProgress) {
+    return <Circle />;
+  }
+
   return (
     <Circle
       className="cursor-pointer"

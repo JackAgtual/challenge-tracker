@@ -70,10 +70,18 @@ public class GoalCompletionService {
             // Throw not found for authorization error
             throw new NotFoundException(ResourceType.GOAL_COMPLETION, goalCompletionId);
         }
-        if (!participant.getChallenge().getId().equals(challengeId)) {
+
+        Challenge challenge = participant.getChallenge();
+
+        if (!challenge.getId().equals(challengeId)) {
             throw new ForbiddenException(ResourceType.GOAL_COMPLETION, goalCompletionId,
                     "Goal completion does not belong to inputted challenge");
         }
+
+        if (!challenge.getStatus().equals(ChallengeStatus.IN_PROGRESS)) {
+            throw new ForbiddenException("Only allowed to uncomplete goals if challenge is in progress");
+        }
+
         goalCompletionRepo.deleteById(goalCompletionId);
     }
 

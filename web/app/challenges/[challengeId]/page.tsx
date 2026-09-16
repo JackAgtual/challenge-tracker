@@ -31,7 +31,6 @@ export default async function Page({
   const { challenge, participants } = challengeDetailRes.data;
   const { goalCompletionRowResponses, goalDefinitionResponse } =
     goalTableRes.data;
-
   return (
     <>
       <h1>{challenge.name}</h1>
@@ -44,6 +43,7 @@ export default async function Page({
         challengeId={challengeId}
         goalDefinitions={goalDefinitionResponse}
         rows={goalCompletionRowResponses}
+        challengeInProgress={challenge.status === "IN_PROGRESS"}
       />
     </>
   );

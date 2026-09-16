@@ -7,13 +7,19 @@ type GoalCompletionIconProps = {
   challengeId: number;
   goalDefinitionId: number;
   goalCompletionId: number;
+  challengeInProgress: boolean;
 };
 
 export default function GoalCompletionIcon({
   challengeId,
   goalDefinitionId,
   goalCompletionId,
+  challengeInProgress,
 }: GoalCompletionIconProps) {
+  if (!challengeInProgress) {
+    return <CircleCheck />;
+  }
+
   return (
     <CircleCheck
       className="cursor-pointer"

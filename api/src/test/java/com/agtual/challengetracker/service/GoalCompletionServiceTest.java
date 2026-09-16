@@ -24,17 +24,17 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
-import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.repo.GoalCompletionRepo;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
+import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
@@ -216,7 +216,8 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
         @Test
         void testCantUncompleteGoalFromWrongGoalDefinition() {
             assertThrows(ForbiddenException.class,
-                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(), goal2.getId(),
+                    () -> goalCompletionService.uncompleteGoal(savedUser, challenge.getId(),
+                            goal2.getId(),
                             goalCompletion1.getId()));
         }
 
@@ -226,6 +227,20 @@ public class GoalCompletionServiceTest extends MockUserBaseTest {
                     .save(TestEntityFactory.validChallenge(savedUser, "another challenge"));
             assertThrows(ForbiddenException.class, () -> goalCompletionService.uncompleteGoal(savedUser,
                     otherChallenge.getId(), goal1.getId(), goalCompletion1.getId()));
+        }
+
+        @Test
+        void testCantUncompleteGoalIfChallengeIsNotInProgress() {
+            challenge.setStatus(ChallengeStatus.COMPLETE);
+            Challenge completeChallenge = challengeRepo.save(challenge);
+
+            GoalCompletion completion = new GoalCompletion();
+            completion.setGoalDefinition(goal1);
+            completion.setCompletedDate(LocalDate.now());
+            GoalCompletion savedCompletion = goalCompletionRepo.save(completion);
+
+            assertThrows(ForbiddenException.class, () -> goalCompletionService.uncompleteGoal(savedUser,
+                    completeChallenge.getId(), goal1.getId(), savedCompletion.getId()));
         }
 
         @Test

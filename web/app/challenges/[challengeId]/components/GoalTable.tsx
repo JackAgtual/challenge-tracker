@@ -14,12 +14,14 @@ type GoalTableProps = {
   challengeId: number;
   rows: components["schemas"]["GoalTableResponse"]["goalCompletionRowResponses"];
   goalDefinitions: components["schemas"]["GoalTableResponse"]["goalDefinitionResponse"];
+  challengeInProgress: boolean;
 };
 
 export default async function GoalTable({
   goalDefinitions,
   rows,
   challengeId,
+  challengeInProgress,
 }: GoalTableProps) {
   return (
     <Table>
@@ -44,12 +46,14 @@ export default async function GoalTable({
                       challengeId={challengeId}
                       goalDefinitionId={goal.id}
                       goalCompletionId={goalCompletionId}
+                      challengeInProgress={challengeInProgress}
                     />
                   ) : (
                     <UncompletedGoalElement
                       challengeId={challengeId}
                       goalDefinitionId={goal.id}
                       date={row.date}
+                      challengeInProgress={challengeInProgress}
                     />
                   )}
                 </TableCell>
