@@ -6,23 +6,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { components } from "@/types/api";
+import { client } from "@/lib/api-client";
+import { getValidSession } from "@/lib/auth-utils";
 import CompletedGoalElement from "./CompletedGoalElement";
 import UncompletedGoalElement from "./UncompletedGoalElement";
 
-type GoalTableProps = {
+type GoalCompletionTableProps = {
   challengeId: number;
-  rows: components["schemas"]["GoalTableResponse"]["goalCompletionRowResponses"];
-  goalDefinitions: components["schemas"]["GoalTableResponse"]["goalDefinitionResponse"];
   challengeInProgress: boolean;
 };
 
-export default async function GoalTable({
-  goalDefinitions,
-  rows,
+export default async function GoalCompletionTable({
   challengeId,
   challengeInProgress,
-}: GoalTableProps) {
+}: GoalCompletionTableProps) {
+  await getValidSession();
+
+  const { data, error } = await client.GET(
+    "/challenges/{challengeId}/goals/completions",
+    {
+      params: { path: { challengeId } },
+    }
+  );
+
+  if (error) {
+    throw new Error(`Could not find challenge with id=${challengeId}`);
+  }
+  const {
+    goalDefinitionResponse: goalDefinitions,
+    goalCompletionRowResponses: rows,
+  } = data;
+
   return (
     <Table>
       <TableHeader>
