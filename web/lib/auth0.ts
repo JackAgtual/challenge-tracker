@@ -7,6 +7,7 @@ function redirect(path: string | undefined) {
 }
 
 export const auth0 = new Auth0Client({
+  signInReturnToPath: "/dashboard",
   authorizationParameters: {
     audience: process.env.AUTH0_AUDIENCE,
   },
