@@ -18,3 +18,9 @@ export const createChallengeFormSchema = z.object({
 export type TCreateChallengeFormSchema = z.infer<
   typeof createChallengeFormSchema
 >;
+
+export const createGoalFormSchema = z.object({
+  name: z.string().nonempty(),
+});
+
+export type TCreateGoalFormSchema = z.infer<typeof createGoalFormSchema>;

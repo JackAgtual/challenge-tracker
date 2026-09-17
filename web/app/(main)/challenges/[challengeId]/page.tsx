@@ -2,6 +2,8 @@ import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import GoalCompletionTable from "./components/GoalCompletionTable";
 import ParticipantStatus from "./components/ParticipantStatus";
+import CreateGoalForm from "./components/pending-challenges/CreateGoalForm";
+import GoalDefinitions from "./components/pending-challenges/GoalDefinitions";
 
 export default async function Page({
   params,
@@ -29,7 +31,10 @@ export default async function Page({
       <ParticipantStatus participants={participants} />
       <h2>Your goals</h2>
       {challenge.status === "PENDING" ? (
-        <div>TODO: List goal definitions</div>
+        <div>
+          <GoalDefinitions challengeId={challengeId} />
+          <CreateGoalForm challengeId={challengeId} />
+        </div>
       ) : (
         <GoalCompletionTable
           challengeId={challengeId}

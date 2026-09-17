@@ -38,7 +38,6 @@ public class GoalController {
     private final ChallengeService challengeService;
 
     @GetMapping
-    @Deprecated
     List<GoalDefinitionResponse> getAllGoalsForChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
         return goalDefinitionService.getGoalsForChallenge(user, challengeId)
                 .stream()
