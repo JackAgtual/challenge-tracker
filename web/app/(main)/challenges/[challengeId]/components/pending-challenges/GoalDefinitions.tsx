@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { client } from "@/lib/api-client";
 import { MoreHorizontalIcon } from "lucide-react";
+import GoalDefinitionActionMenu from "./GoalDefinitionActionMenu";
 
 type GoalDefinitionsProps = {
   challengeId: number;
@@ -37,8 +38,10 @@ export default async function GoalDefinitions({
           <TableRow key={goal.id}>
             <TableCell>{goal.name}</TableCell>
             <TableCell className="flex justify-end">
-              {/* TODO: Add dropdown to edit/delete */}
-              <MoreHorizontalIcon />
+              <GoalDefinitionActionMenu
+                challengeId={challengeId}
+                goalDefinitionId={goal.id}
+              />
             </TableCell>
           </TableRow>
         ))}

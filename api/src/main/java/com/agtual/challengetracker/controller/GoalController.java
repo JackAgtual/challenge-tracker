@@ -51,6 +51,12 @@ public class GoalController {
         goalDefinitionService.createGoal(user, challengeId, createGoalRequest);
     }
 
+    @DeleteMapping("/{goalDefinitionId}")
+    public void deleteGoalDefinition(@CurrentUser User user, @PathVariable Long challengeId,
+            @PathVariable Long goalDefinitionId) {
+        goalDefinitionService.deleteGoal(user, challengeId, goalDefinitionId);
+    }
+
     @PostMapping("/{goalDefinitionId}/completions")
     @ResponseStatus(HttpStatus.CREATED)
     public void recordGoalCompletion(@CurrentUser User user, @PathVariable Long challengeId,

@@ -43,6 +43,16 @@ public class GoalDefinitionService {
         return goalDefinitionRepo.save(goalDefinition);
     }
 
+    public void deleteGoal(User user, Long challengeId, Long goalId) {
+        GoalDefinition goal = getGoal(user, goalId);
+
+        if (!goal.getParticipant().getChallenge().getId().equals(challengeId)) {
+            throw new ForbiddenException(ResourceType.GOAL_DEFINITION, goalId, "Goal belongs to different challenge");
+        }
+
+        goalDefinitionRepo.delete(goal);
+    }
+
     public GoalDefinition getGoal(User user, Long goalId) {
         GoalDefinition goal = goalDefinitionRepo.findById(goalId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.GOAL_DEFINITION, goalId));

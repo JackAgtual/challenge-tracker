@@ -19,3 +19,20 @@ export async function createGoal(
 
   return { success: false, error };
 }
+
+export async function deleteGoal(
+  challengeId: number,
+  goalDefinitionId: number
+) {
+  const { error } = await client.DELETE(
+    "/challenges/{challengeId}/goals/{goalDefinitionId}",
+    {
+      params: { path: { challengeId, goalDefinitionId } },
+    }
+  );
+  if (!error) {
+    return { success: true as const };
+  }
+
+  return { success: false, error };
+}

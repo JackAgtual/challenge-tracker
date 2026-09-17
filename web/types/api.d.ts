@@ -139,7 +139,6 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @deprecated */
         get: operations["getAllGoalsForChallenge"];
         put?: never;
         post: operations["createGoalDefinition"];
@@ -256,6 +255,22 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["participantLeavesChallenge"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/challenges/{challengeId}/goals/{goalDefinitionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteGoalDefinition"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1582,6 +1597,63 @@ export interface operations {
             header?: never;
             path: {
                 challengeId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    deleteGoalDefinition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: number;
+                goalDefinitionId: number;
             };
             cookie?: never;
         };

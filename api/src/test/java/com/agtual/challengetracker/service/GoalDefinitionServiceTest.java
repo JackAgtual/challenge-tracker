@@ -17,16 +17,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.agtual.challengetracker.dto.request.CreateGoalRequest;
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
 import com.agtual.challengetracker.exception.NotFoundException;
-import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
+import com.agtual.challengetracker.repo.ParticipantRepo;
 import com.agtual.challengetracker.testutil.MockUserBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
@@ -193,4 +193,42 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
         assertEquals(3, goals.size());
         assertTrue(goals.containsAll(List.of(goal1, goal2, goal3)));
     }
+
+    @Test
+    void testDeleteGoal() {
+        GoalDefinition goal = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, goalName));
+
+        goalDefinitionService.deleteGoal(savedUser, challenge.getId(), goal.getId());
+
+        assertEquals(0, goalDefinitionRepo.count());
+
+    }
+
+    @Test
+    void testCantDeleteOtherUsersGoal() {
+        GoalDefinition goal = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, goalName));
+
+        User otherUser = saveRandomUser();
+        assertThrows(NotFoundException.class,
+                () -> goalDefinitionService.deleteGoal(otherUser, challenge.getId(), goal.getId()));
+    }
+
+    @Test
+    void testCantDeleteGoalFromDifferentChallenge() {
+        Challenge differentChallenge = TestEntityFactory.validChallenge(savedUser, "75 hard - different");
+        differentChallenge.setStatus(ChallengeStatus.PENDING);
+        Challenge savedDifferentChallenge = challengeRepo.save(differentChallenge);
+
+        Participant otherParticipant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, savedDifferentChallenge));
+
+        GoalDefinition goalFromOtherChallenge = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(otherParticipant, "another goal"));
+
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.deleteGoal(savedUser, challenge.getId(), goalFromOtherChallenge.getId()));
+    }
+
 }
