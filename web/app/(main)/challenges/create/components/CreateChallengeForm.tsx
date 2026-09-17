@@ -1,6 +1,7 @@
 "use client";
 
 import { createChallenge } from "@/actions/create-challenge";
+import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -67,14 +68,7 @@ export default function CreateChallengeForm() {
         )}
       />
       <Button type="submit">Create</Button>
-      {formState.errors.root && (
-        <>
-          <p className="text-red-600">
-            Something went wrong: {formState.errors.root?.message}
-          </p>
-          <p className="text-red-600">Try again</p>
-        </>
-      )}
+      <FormRootError formState={formState} />
     </form>
   );
 }

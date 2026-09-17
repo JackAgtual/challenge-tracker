@@ -1,6 +1,7 @@
 "use client";
 
 import { createGoal } from "@/actions/goal-definition";
+import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -49,14 +50,7 @@ export default function CreateGoalForm({ challengeId }: CreateGoalFormProps) {
         )}
       />
       <Button type="submit">Add</Button>
-      {formState.errors.root && (
-        <>
-          <p className="text-red-600">
-            Something went wrong: {formState.errors.root?.message}
-          </p>
-          <p className="text-red-600">Try again</p>
-        </>
-      )}
+      <FormRootError formState={formState} />
     </form>
   );
 }
