@@ -29,9 +29,17 @@ public class GoalDefinitionService {
             throw new ForbiddenException("Can only create goal when challenge is pending");
         }
 
+        String trimmedName = createGoalRequest.name().trim();
+
+        if (goalDefinitionRepo.existsByNameIgnoreCaseAndParticipant_Id(
+                trimmedName,
+                participant.getId())) {
+            throw new ForbiddenException("Goal definition already exists in challenge");
+        }
+
         GoalDefinition goalDefinition = new GoalDefinition();
         goalDefinition.setParticipant(participant);
-        goalDefinition.setName(createGoalRequest.name());
+        goalDefinition.setName(trimmedName);
         return goalDefinitionRepo.save(goalDefinition);
     }
 

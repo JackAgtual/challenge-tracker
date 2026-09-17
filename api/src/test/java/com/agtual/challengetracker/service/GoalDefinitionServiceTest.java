@@ -84,6 +84,34 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
     }
 
     @Test
+    void testCreateGoalTrimsGoalName() {
+        long challengeId = 333L;
+        CreateGoalRequest req = new CreateGoalRequest(" a name to trim ");
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser,
+                challengeId))
+                .thenReturn(participant);
+        GoalDefinition goal = goalDefinitionService.createGoal(savedUser,
+                challengeId, req);
+        assertEquals(1, goalDefinitionRepo.count());
+        assertEquals("a name to trim", goal.getName());
+        assertEquals(participant, goal.getParticipant());
+
+    }
+
+    @Test
+    void testCantCreateDuplicateGoalNameForSameChallenge() {
+        long challengeId = 333L;
+        when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
+                .thenReturn(participant);
+
+        goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, goalName));
+
+        assertThrows(ForbiddenException.class,
+                () -> goalDefinitionService.createGoal(savedUser, challengeId, createGoalRequest));
+    }
+
+    @Test
     void testCreateGoalParticipantNotFound() {
         Long challengeId = 12L;
         when(participantService.getChallengeParticipationForUserAndChallengeId(savedUser, challengeId))
@@ -155,8 +183,10 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
     void testGetGoalsForChallenge() {
         GoalDefinition goal1 = goalDefinitionRepo
                 .save(TestEntityFactory.validGoalDefinition(participant, "drink water"));
-        GoalDefinition goal2 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "read"));
-        GoalDefinition goal3 = goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "meditate"));
+        GoalDefinition goal2 = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, "read"));
+        GoalDefinition goal3 = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, "meditate"));
 
         List<GoalDefinition> goals = goalDefinitionService.getGoalsForChallenge(savedUser, challenge.getId());
 
