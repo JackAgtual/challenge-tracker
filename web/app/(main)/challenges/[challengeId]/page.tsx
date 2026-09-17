@@ -4,6 +4,7 @@ import GoalCompletionTable from "./components/GoalCompletionTable";
 import ParticipantStatus from "./components/ParticipantStatus";
 import CreateGoalForm from "./components/pending-challenges/CreateGoalForm";
 import GoalDefinitions from "./components/pending-challenges/GoalDefinitions";
+import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
 
 export default async function Page({
   params,
@@ -24,10 +25,7 @@ export default async function Page({
   const { challenge, participants } = challengeDetailRes.data;
   return (
     <>
-      <h1>{challenge.name}</h1>
-      {challenge.durationDays && <p>{challenge.durationDays} days</p>}
-      <p>Challenge status: {challenge.status}</p>
-      {challenge.starDate && <p>Start date: {challenge.starDate}</p>}
+      <ChallengeOverviewCard challenge={challenge} />
       <ParticipantStatus participants={participants} />
       <h2>Your goals</h2>
       {challenge.status === "PENDING" ? (

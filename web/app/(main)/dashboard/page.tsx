@@ -11,13 +11,10 @@ export default async function Page() {
   }
 
   return (
-    <>
-      <h1>Your challenges</h1>
-      <div className="space-y-2">
-        <ChallengeSection title="In Progress" data={data.inProgress} />
-        <ChallengeSection title="Pending" data={data.pending} />
-        <ChallengeSection title="Complete" data={data.complete} />
-      </div>
-    </>
+    <div className="space-y-2">
+      <ChallengeSection title="In Progress" data={data.inProgress} />
+      <ChallengeSection title="Pending" data={data.pending} />
+      <ChallengeSection title="Complete" data={data.complete} />
+    </div>
   );
 }

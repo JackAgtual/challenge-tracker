@@ -1,3 +1,4 @@
+import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { components } from "@/types/api";
 import Link from "next/link";
@@ -24,21 +25,7 @@ export default function ChallengeSection({
               href={`/challenges/${challenge.id}`}
               className="max-w-2xs"
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle>{challenge.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2">
-                    <p>Status</p>
-                    <p>{challenge.status}</p>
-                    <p>Duration (days)</p>
-                    <p>{challenge.durationDays || "Not set"}</p>
-                    <p>Start date</p>
-                    <p>{challenge.starDate || "Not set"}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <ChallengeOverviewCard challenge={challenge} />
             </Link>
           ))}
         </div>
