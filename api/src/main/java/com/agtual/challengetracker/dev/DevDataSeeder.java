@@ -108,8 +108,8 @@ public class DevDataSeeder implements CommandLineRunner {
 
         // Pending challenge: owner joined but not ready, invited user hasn't set up
         // goals
-        newParticipant(bob, plankChallenge, false);
-        newParticipant(andy, plankChallenge, true);
+        Participant bobOnPlank = newParticipant(bob, plankChallenge, false);
+        Participant andyOnPlank = newParticipant(andy, plankChallenge, true);
 
         // Active challenge: both participants ready and mid-way through
         Participant bobOnRunStreak = newParticipant(bob, runStreak, true);
@@ -121,8 +121,11 @@ public class DevDataSeeder implements CommandLineRunner {
 
         // ---------- Goal definitions + completions ----------
 
-        // Pending challenge has no goal definitions yet (nothing to track before it
-        // starts)
+        // Pending challenge: goal definitions exist (participants can configure
+        // goals before the challenge starts) but no completions yet since it
+        // hasn't started
+        newGoalDefinition(bobOnPlank, "Hold a 2-minute plank");
+        newGoalDefinition(andyOnPlank, "Hold a 90-second plank");
 
         // Active challenge: partial history (5 days in, some days missed)
         GoalDefinition bobRunGoal = newGoalDefinition(bobOnRunStreak, "Run 2 miles");
