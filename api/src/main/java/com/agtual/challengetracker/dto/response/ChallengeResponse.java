@@ -10,10 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ChallengeResponse(@NotNull Long id, @NotBlank String name, LocalDate starDate, Integer durationDays,
-        @NotNull ChallengeStatus status) {
+        @NotNull ChallengeStatus status, @NotNull UserResponse owner) {
     public static ChallengeResponse from(Challenge challenge) {
         return new ChallengeResponse(challenge.getId(), challenge.getName(), challenge.getStartDate(),
-                challenge.getDurationDays(), challenge.getStatus());
+                challenge.getDurationDays(), challenge.getStatus(), UserResponse.from(challenge.getOwner()));
     }
 
     public static ChallengeResponse from(Participant participant) {

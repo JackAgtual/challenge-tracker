@@ -311,10 +311,7 @@ export interface components {
             durationDays?: number;
             /** @enum {string} */
             status: "PENDING" | "IN_PROGRESS" | "COMPLETE";
-        };
-        CreateUserRequest: {
-            /** Format: email */
-            email: string;
+            owner: components["schemas"]["UserResponse"];
         };
         UserResponse: {
             authSubject: string;
@@ -322,6 +319,10 @@ export interface components {
             firstName?: string;
             lastName?: string;
             username?: string;
+        };
+        CreateUserRequest: {
+            /** Format: email */
+            email: string;
         };
         CreateChallengeRequest: {
             name: string;

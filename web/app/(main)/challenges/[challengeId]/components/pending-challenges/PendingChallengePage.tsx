@@ -1,5 +1,5 @@
 import { components } from "@/types/api";
-import ParticipantStatus from "../ParticipantStatus";
+import ParticipantStatus from "./ParticipantStatus";
 import GoalDefinitions from "./GoalDefinitions";
 import CreateGoalForm from "./CreateGoalForm";
 import { client } from "@/lib/api-client";

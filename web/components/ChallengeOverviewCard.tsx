@@ -21,6 +21,8 @@ export default function ChallengeOverviewCard({
           <p>{challenge.durationDays || "Not set"}</p>
           <p>Start date</p>
           <p>{challenge.starDate || "Not set"}</p>
+          <p>Owner</p>
+          <p>{challenge.owner.username}</p>
         </div>
       </CardContent>
     </Card>
