@@ -5,6 +5,7 @@ import ParticipantStatus from "./components/ParticipantStatus";
 import CreateGoalForm from "./components/pending-challenges/CreateGoalForm";
 import GoalDefinitions from "./components/pending-challenges/GoalDefinitions";
 import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
+import PendingChallengePage from "./components/pending-challenges/PendingChallengePage";
 
 export default async function Page({
   params,
@@ -22,17 +23,12 @@ export default async function Page({
     throw new Error(`Could not find challenge with id=${challengeId}`);
   }
 
-  const { challenge, participants } = challengeDetailRes.data;
+  const { challenge } = challengeDetailRes.data;
   return (
     <>
       <ChallengeOverviewCard challenge={challenge} />
-      <ParticipantStatus participants={participants} />
-      <h2>Your goals</h2>
       {challenge.status === "PENDING" ? (
-        <div>
-          <GoalDefinitions challengeId={challengeId} />
-          <CreateGoalForm challengeId={challengeId} />
-        </div>
+        <PendingChallengePage challengeDetails={challengeDetailRes.data} />
       ) : (
         <GoalCompletionTable
           challengeId={challengeId}

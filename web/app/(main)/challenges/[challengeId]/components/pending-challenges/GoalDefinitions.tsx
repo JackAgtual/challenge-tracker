@@ -6,25 +6,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { client } from "@/lib/api-client";
-import { MoreHorizontalIcon } from "lucide-react";
+import { components } from "@/types/api";
 import GoalDefinitionActionMenu from "./GoalDefinitionActionMenu";
 
 type GoalDefinitionsProps = {
   challengeId: number;
+  goalDefinitions: components["schemas"]["GoalDefinitionResponse"][]; // get this from components schema
 };
 
-export default async function GoalDefinitions({
+export default function GoalDefinitions({
   challengeId,
+  goalDefinitions,
 }: GoalDefinitionsProps) {
-  const { data, error } = await client.GET("/challenges/{challengeId}/goals", {
-    params: { path: { challengeId } },
-  });
-
-  if (error) {
-    throw new Error(`Unable to get goals for challenge ${challengeId}`);
-  }
-
   return (
     <Table>
       <TableHeader>
@@ -34,7 +27,7 @@ export default async function GoalDefinitions({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((goal) => (
+        {goalDefinitions.map((goal) => (
           <TableRow key={goal.id}>
             <TableCell>{goal.name}</TableCell>
             <TableCell className="flex justify-end">
