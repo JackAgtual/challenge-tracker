@@ -1,10 +1,7 @@
+import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import GoalCompletionTable from "./components/GoalCompletionTable";
-import ParticipantStatus from "./components/ParticipantStatus";
-import CreateGoalForm from "./components/pending-challenges/CreateGoalForm";
-import GoalDefinitions from "./components/pending-challenges/GoalDefinitions";
-import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
 import PendingChallengePage from "./components/pending-challenges/PendingChallengePage";
 
 export default async function Page({
