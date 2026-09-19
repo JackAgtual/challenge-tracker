@@ -273,14 +273,14 @@ public class ParticipantServiceTest extends MockUserBaseTest {
                     .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "bike"));
             proteinOwner = goalDefinitionRepo
                     .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "eat protein"));
-
-            // test-ism needed to clear hibernate cache
-            em.flush();
-            em.clear();
         }
 
         @Test
         void testRemoveParticipantFromChallenge() {
+            // test-ism needed to clear hibernate cache
+            em.flush();
+            em.clear();
+
             participantService.ownerRemovesParticipantFromChallenge(savedUser, challenge.getId(),
                     existingParticipant.getId());
             assertParticipantHasBeenRemoved();
@@ -314,6 +314,10 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         @Test
         void testLeaveChallenge() {
+            // test-ism needed to clear hibernate cache
+            em.flush();
+            em.clear();
+
             participantService.leaveChallenge(nonChallengeOwner, challenge.getId());
             assertParticipantHasBeenRemoved();
         }
@@ -338,31 +342,34 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         }
 
         @Test
-        void testUserCanAccessParticipantInfo() {
-            User userInSameChallenge = saveParticipant(saveRandomUser()).getUser();
-            assertTrue(
-                    participantService.userCanAccessParticipantInfo(userInSameChallenge, existingParticipant.getId()));
+        void testUserGetsParticipantInfo() {
+            User userInSameChallenge = saveRandomUser();
+            saveParticipant(userInSameChallenge, challenge);
+
+            assertEquals(existingParticipant,
+                    participantService.userGetsParticipantInfo(userInSameChallenge, existingParticipant.getId()));
         }
 
         @Test
-        void testUserCanAccessParticipantInfoUserNotInSameChallenge() {
+        void testUserGetsParticipantInfoUserNotInSameChallenge() {
             User userNotInSameChallenge = saveRandomUser();
             saveChallengeWithOwner(userNotInSameChallenge);
-            assertFalse(
-                    participantService.userCanAccessParticipantInfo(userNotInSameChallenge,
+            assertThrows(NotFoundException.class,
+                    () -> participantService.userGetsParticipantInfo(userNotInSameChallenge,
                             existingParticipant.getId()));
         }
 
         @Test
-        void testUserCanAccessParticipantInfoParticipantIsSelf() {
-            assertTrue(participantService.userCanAccessParticipantInfo(existingParticipant.getUser(),
-                    existingParticipant.getId()));
+        void testUserGetsParticipantInfoParticipantIsSelf() {
+            assertEquals(existingParticipant,
+                    participantService.userGetsParticipantInfo(existingParticipant.getUser(),
+                            existingParticipant.getId()));
         }
 
         @Test
-        void testUserCanAccessParticipantInfoInvalidParticipant() {
+        void testUserGetsParticipantInfoInvalidParticipant() {
             assertThrows(NotFoundException.class,
-                    () -> participantService.userCanAccessParticipantInfo(savedUser, 999999999L));
+                    () -> participantService.userGetsParticipantInfo(savedUser, 999999999L));
         }
 
         private void assertRemovingParticipantFromChallengeThrowsError(Challenge challenge) {
@@ -414,7 +421,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     private Participant saveParticipant(User user, Challenge challenge) {
-        Participant participant = TestEntityFactory.validParticipant(savedUser, challenge);
+        Participant participant = TestEntityFactory.validParticipant(user, challenge);
         return participantRepo.save(participant);
     }
 

@@ -113,12 +113,23 @@ public class ParticipantService {
         removeParticipantFromChallenge(participant, challenge);
     }
 
-    public boolean userCanAccessParticipantInfo(User user, Long participantId) {
+    /**
+     * A user requests participant details for a different participant
+     * 
+     * @param user          requesting info on another participant
+     * @param participantId the ID of the other participant
+     * @return Participant entity if the user has access, otherwise throws
+     *         NotFoundException
+     */
+    public Participant userGetsParticipantInfo(User user, Long participantId) {
         Participant participant = participantRepo.findById(participantId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, participantId));
 
-        return participantRepo.existsByUserAndChallenge(user,
-                participant.getChallenge());
+        if (!participantRepo.existsByUserAndChallenge(user,
+                participant.getChallenge())) {
+            throw new NotFoundException(ResourceType.PARTICIPANT, participantId);
+        }
+        return participant;
     }
 
     private void removeParticipantFromChallenge(Participant participant, Challenge challenge) {
