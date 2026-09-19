@@ -113,6 +113,14 @@ public class ParticipantService {
         removeParticipantFromChallenge(participant, challenge);
     }
 
+    public boolean userCanAccessParticipantInfo(User user, Long participantId) {
+        Participant participant = participantRepo.findById(participantId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, participantId));
+
+        return participantRepo.existsByUserAndChallenge(user,
+                participant.getChallenge());
+    }
+
     private void removeParticipantFromChallenge(Participant participant, Challenge challenge) {
         // challenge must be pending
         if (challenge.getStatus() != ChallengeStatus.PENDING) {

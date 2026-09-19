@@ -237,12 +237,12 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     @Nested
-    class RemovingParticipant {
+    class RequiresExistingParticipant {
 
         Challenge challenge;
         Participant challengeOwner;
         User nonChallengeOwner;
-        Participant participantToRemove;
+        Participant existingParticipant;
         GoalDefinition drinkWaterRemove;
         GoalDefinition runRemove;
         GoalDefinition bikeOwner;
@@ -256,19 +256,19 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
             challengeOwner = participantRepo
                     .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
-            participantToRemove = participantRepo
+            existingParticipant = participantRepo
                     .saveAndFlush(TestEntityFactory.validParticipant(nonChallengeOwner, challenge));
 
             assertEquals(2, participantRepo.count());
             assertTrue(participantRepo.findById(challengeOwner.getId()).isPresent());
-            assertTrue(participantRepo.findById(participantToRemove.getId()).isPresent());
+            assertTrue(participantRepo.findById(existingParticipant.getId()).isPresent());
 
             // create goal definitions for participant and owner
             // assume goal completions don't exist because challenge hasn't started yet
             drinkWaterRemove = goalDefinitionRepo
-                    .saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "drink water"));
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(existingParticipant, "drink water"));
             runRemove = goalDefinitionRepo
-                    .saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "run 1 mile"));
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(existingParticipant, "run 1 mile"));
             bikeOwner = goalDefinitionRepo
                     .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "bike"));
             proteinOwner = goalDefinitionRepo
@@ -282,7 +282,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         @Test
         void testRemoveParticipantFromChallenge() {
             participantService.ownerRemovesParticipantFromChallenge(savedUser, challenge.getId(),
-                    participantToRemove.getId());
+                    existingParticipant.getId());
             assertParticipantHasBeenRemoved();
         }
 
@@ -337,6 +337,34 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         }
 
+        @Test
+        void testUserCanAccessParticipantInfo() {
+            User userInSameChallenge = saveParticipant(saveRandomUser()).getUser();
+            assertTrue(
+                    participantService.userCanAccessParticipantInfo(userInSameChallenge, existingParticipant.getId()));
+        }
+
+        @Test
+        void testUserCanAccessParticipantInfoUserNotInSameChallenge() {
+            User userNotInSameChallenge = saveRandomUser();
+            saveChallengeWithOwner(userNotInSameChallenge);
+            assertFalse(
+                    participantService.userCanAccessParticipantInfo(userNotInSameChallenge,
+                            existingParticipant.getId()));
+        }
+
+        @Test
+        void testUserCanAccessParticipantInfoParticipantIsSelf() {
+            assertTrue(participantService.userCanAccessParticipantInfo(existingParticipant.getUser(),
+                    existingParticipant.getId()));
+        }
+
+        @Test
+        void testUserCanAccessParticipantInfoInvalidParticipant() {
+            assertThrows(NotFoundException.class,
+                    () -> participantService.userCanAccessParticipantInfo(savedUser, 999999999L));
+        }
+
         private void assertRemovingParticipantFromChallengeThrowsError(Challenge challenge) {
             User nonChallengeOwner = saveRandomUser();
             participantRepo
@@ -361,7 +389,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         private void assertParticipantHasBeenRemoved() {
             // assert challenge participant repo is changed
             assertEquals(1, participantRepo.count());
-            assertTrue(participantRepo.findById(participantToRemove.getId()).isEmpty());
+            assertTrue(participantRepo.findById(existingParticipant.getId()).isEmpty());
             assertTrue(participantRepo.findById(challengeOwner.getId()).isPresent());
 
             // assert goal definitions and goal completions are empty
