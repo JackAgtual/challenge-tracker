@@ -20,44 +20,50 @@ import com.agtual.challengetracker.dto.response.GoalTableResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.ChallengeService;
 import com.agtual.challengetracker.service.GoalCompletionService;
 import com.agtual.challengetracker.service.GoalDefinitionService;
+import com.agtual.challengetracker.service.ParticipantService;
 import com.agtual.challengetracker.util.GridUtil;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/challenges/{challengeId}/goals")
+@RequestMapping("/challenges/{challengeId}")
 @lombok.RequiredArgsConstructor
 public class GoalController {
 
     private final GoalDefinitionService goalDefinitionService;
     private final GoalCompletionService goalCompletionService;
     private final ChallengeService challengeService;
+    private final ParticipantService participantService;
 
-    @GetMapping
-    List<GoalDefinitionResponse> getAllGoalsForChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
-        return goalDefinitionService.getGoalsForChallenge(user, challengeId)
+    @GetMapping("/participants/{participantId}/goals")
+    List<GoalDefinitionResponse> getAllGoalsForChallenge(@CurrentUser User user, @PathVariable Long challengeId,
+            @PathVariable Long participantId) {
+        Participant participant = participantService.userGetsParticipantInfo(user, participantId);
+
+        return goalDefinitionService.getGoalsForChallenge(participant.getUser(), challengeId)
                 .stream()
                 .map(goal -> GoalDefinitionResponse.from(goal)).toList();
     }
 
-    @PostMapping
+    @PostMapping("/goals")
     @ResponseStatus(HttpStatus.CREATED)
     void createGoalDefinition(@CurrentUser User user, @PathVariable Long challengeId,
             @Valid @RequestBody CreateGoalRequest createGoalRequest) {
         goalDefinitionService.createGoal(user, challengeId, createGoalRequest);
     }
 
-    @DeleteMapping("/{goalDefinitionId}")
+    @DeleteMapping("/goals/{goalDefinitionId}")
     public void deleteGoalDefinition(@CurrentUser User user, @PathVariable Long challengeId,
             @PathVariable Long goalDefinitionId) {
         goalDefinitionService.deleteGoal(user, challengeId, goalDefinitionId);
     }
 
-    @PostMapping("/{goalDefinitionId}/completions")
+    @PostMapping("/goals/{goalDefinitionId}/completions")
     @ResponseStatus(HttpStatus.CREATED)
     public void recordGoalCompletion(@CurrentUser User user, @PathVariable Long challengeId,
             @PathVariable Long goalDefinitionId,
@@ -65,18 +71,22 @@ public class GoalController {
         goalCompletionService.completeGoal(user, challengeId, goalDefinitionId, completeGoalRequest.date());
     }
 
-    @GetMapping("/completions")
+    @GetMapping("/participants/{participantId}/goals/completions")
     public GoalTableResponse getAllGoalCompletionsForChallenge(@CurrentUser User user,
-            @PathVariable Long challengeId) {
+            @PathVariable Long challengeId, @PathVariable Long participantId) {
         Challenge challenge = challengeService.getChallenge(user, challengeId);
-        List<GoalDefinition> goalDefinitions = goalDefinitionService.getGoalsForChallenge(user, challenge.getId());
-        List<GoalCompletion> goalCompletions = goalCompletionService.getAllGoalCompletionsForChallenge(user,
-                challenge.getId());
+
+        Participant participant = participantService.userGetsParticipantInfo(user, participantId);
+
+        List<GoalDefinition> goalDefinitions = goalDefinitionService.getGoalsForChallenge(
+                participant.getUser(), challenge.getId());
+        List<GoalCompletion> goalCompletions = goalCompletionService.getAllGoalCompletionsForChallenge(
+                participant.getUser(), challenge.getId());
 
         return GridUtil.createGoalCompletionTable(challenge, goalDefinitions, goalCompletions);
     }
 
-    @DeleteMapping("/{goalDefinitionId}/completions/{goalCompletionId}")
+    @DeleteMapping("/goals/{goalDefinitionId}/completions/{goalCompletionId}")
     public void deleteExistingGoalCompletion(@CurrentUser User user, @PathVariable Long challengeId,
             @PathVariable Long goalDefinitionId,
             @PathVariable Long goalCompletionId) {

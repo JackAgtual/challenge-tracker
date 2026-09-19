@@ -139,7 +139,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getAllGoalsForChallenge"];
+        get?: never;
         put?: never;
         post: operations["createGoalDefinition"];
         delete?: never;
@@ -212,7 +212,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/challenges/{challengeId}/goals/completions": {
+    "/challenges/{challengeId}/participants/{participantId}/goals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllGoalsForChallenge"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/challenges/{challengeId}/participants/{participantId}/goals/completions": {
         parameters: {
             query?: never;
             header?: never;
@@ -220,6 +236,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getAllGoalCompletionsForChallenge"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/challenges/{challengeId}/participants/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getCurrentUserParticipantId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -375,13 +407,10 @@ export interface components {
             participants: components["schemas"]["ParticipantResponse"][];
         };
         ParticipantResponse: {
+            /** Format: int64 */
+            participantId: number;
             username: string;
             ready: boolean;
-        };
-        NonAcceptedInvitesForChallengeResponse: {
-            username: string;
-            /** @enum {string} */
-            inviteStatus: "PENDING" | "ACCEPTED" | "DECLINED";
         };
         GoalDefinitionResponse: {
             /** Format: int64 */
@@ -398,6 +427,11 @@ export interface components {
         GoalTableResponse: {
             goalDefinitionResponse: components["schemas"]["GoalDefinitionResponse"][];
             goalCompletionRowResponses: components["schemas"]["GoalCompletionRowResponse"][];
+        };
+        NonAcceptedInvitesForChallengeResponse: {
+            username: string;
+            /** @enum {string} */
+            inviteStatus: "PENDING" | "ACCEPTED" | "DECLINED";
         };
         ProblemDetail: {
             /** Format: uri */
@@ -1072,64 +1106,6 @@ export interface operations {
             };
         };
     };
-    getAllGoalsForChallenge: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                challengeId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["GoalDefinitionResponse"][];
-                };
-            };
-            /** @description Forbidden Operation */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Conflict — resource already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
     createGoalDefinition: {
         parameters: {
             query?: never;
@@ -1477,7 +1453,125 @@ export interface operations {
             };
         };
     };
+    getAllGoalsForChallenge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: number;
+                participantId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GoalDefinitionResponse"][];
+                };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
     getAllGoalCompletionsForChallenge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: number;
+                participantId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GoalTableResponse"];
+                };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    getCurrentUserParticipantId: {
         parameters: {
             query?: never;
             header?: never;
@@ -1494,7 +1588,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["GoalTableResponse"];
+                    "*/*": components["schemas"]["ParticipantResponse"];
                 };
             };
             /** @description Forbidden Operation */

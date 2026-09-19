@@ -69,6 +69,12 @@ public class ChallengeController {
         return new ChallengeDetailResponse(challengeRes, participantsRes);
     }
 
+    @GetMapping("/{challengeId}/participants/me")
+    public ParticipantResponse getCurrentUserParticipantId(@CurrentUser User user, @PathVariable Long challengeId) {
+        return ParticipantResponse
+                .from(participantService.getChallengeParticipationForUserAndChallengeId(user, challengeId));
+    }
+
     @PostMapping("/{challengeId}/start")
     public void startChallenge(@CurrentUser User user, @PathVariable Long challengeId) {
         challengeService.startChallenge(user, challengeId);

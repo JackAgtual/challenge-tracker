@@ -8,18 +8,22 @@ import { getValidSession } from "@/lib/auth-utils";
 
 type PendingChallengePageProps = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
+  curParticipantId: number;
 };
 
 export default async function PendingChallengePage({
   challengeDetails,
+  curParticipantId,
 }: PendingChallengePageProps) {
   await getValidSession();
 
   const { challenge, participants } = challengeDetails;
 
   const [goalDefinitions, invites] = await Promise.all([
-    client.GET("/challenges/{challengeId}/goals", {
-      params: { path: { challengeId: challenge.id } },
+    client.GET("/challenges/{challengeId}/participants/{participantId}/goals", {
+      params: {
+        path: { challengeId: challenge.id, participantId: curParticipantId },
+      },
     }),
     client.GET("/challenges/{challengeId}/invites", {
       params: { path: { challengeId: challenge.id } },
