@@ -14,18 +14,20 @@ import UncompletedGoalElement from "./UncompletedGoalElement";
 type GoalCompletionTableProps = {
   challengeId: number;
   challengeInProgress: boolean;
+  curParticipantId: number;
 };
 
 export default async function GoalCompletionTable({
   challengeId,
   challengeInProgress,
+  curParticipantId,
 }: GoalCompletionTableProps) {
   await getValidSession();
 
   const { data, error } = await client.GET(
-    "/challenges/{challengeId}/goals/completions",
+    "/challenges/{challengeId}/participants/{participantId}/goals/completions",
     {
-      params: { path: { challengeId } },
+      params: { path: { challengeId, participantId: curParticipantId } },
     }
   );
 

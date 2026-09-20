@@ -12,24 +12,36 @@ export default async function Page({
   await getValidSession();
   const { challengeId } = await params;
 
-  const challengeDetailRes = await client.GET("/challenges/{challengeId}", {
-    params: { path: { challengeId } },
-  });
+  const [curParticipant, challengeDetail] = await Promise.all([
+    client.GET("/challenges/{challengeId}/participants/me", {
+      params: { path: { challengeId } },
+    }),
+    client.GET("/challenges/{challengeId}", {
+      params: { path: { challengeId } },
+    }),
+  ]);
 
-  if (challengeDetailRes.error) {
+  if (curParticipant.error) {
+    throw new Error("Could not find your participant details");
+  }
+  if (challengeDetail.error) {
     throw new Error(`Could not find challenge with id=${challengeId}`);
   }
 
-  const { challenge } = challengeDetailRes.data;
+  const { challenge } = challengeDetail.data;
   return (
     <>
       <ChallengeOverviewCard challenge={challenge} />
       {challenge.status === "PENDING" ? (
-        <PendingChallengePage challengeDetails={challengeDetailRes.data} />
+        <PendingChallengePage
+          challengeDetails={challengeDetail.data}
+          curParticipantId={curParticipant.data.participantId}
+        />
       ) : (
         <GoalCompletionTable
           challengeId={challengeId}
           challengeInProgress={challenge.status === "IN_PROGRESS"}
+          curParticipantId={curParticipant.data.participantId}
         />
       )}
     </>

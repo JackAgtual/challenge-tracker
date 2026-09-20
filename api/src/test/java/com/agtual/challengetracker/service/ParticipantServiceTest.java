@@ -237,12 +237,12 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     @Nested
-    class RemovingParticipant {
+    class RequiresExistingParticipant {
 
         Challenge challenge;
         Participant challengeOwner;
         User nonChallengeOwner;
-        Participant participantToRemove;
+        Participant existingParticipant;
         GoalDefinition drinkWaterRemove;
         GoalDefinition runRemove;
         GoalDefinition bikeOwner;
@@ -256,33 +256,33 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
             challengeOwner = participantRepo
                     .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
-            participantToRemove = participantRepo
+            existingParticipant = participantRepo
                     .saveAndFlush(TestEntityFactory.validParticipant(nonChallengeOwner, challenge));
 
             assertEquals(2, participantRepo.count());
             assertTrue(participantRepo.findById(challengeOwner.getId()).isPresent());
-            assertTrue(participantRepo.findById(participantToRemove.getId()).isPresent());
+            assertTrue(participantRepo.findById(existingParticipant.getId()).isPresent());
 
             // create goal definitions for participant and owner
             // assume goal completions don't exist because challenge hasn't started yet
             drinkWaterRemove = goalDefinitionRepo
-                    .saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "drink water"));
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(existingParticipant, "drink water"));
             runRemove = goalDefinitionRepo
-                    .saveAndFlush(TestEntityFactory.validGoalDefinition(participantToRemove, "run 1 mile"));
+                    .saveAndFlush(TestEntityFactory.validGoalDefinition(existingParticipant, "run 1 mile"));
             bikeOwner = goalDefinitionRepo
                     .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "bike"));
             proteinOwner = goalDefinitionRepo
                     .saveAndFlush(TestEntityFactory.validGoalDefinition(challengeOwner, "eat protein"));
-
-            // test-ism needed to clear hibernate cache
-            em.flush();
-            em.clear();
         }
 
         @Test
         void testRemoveParticipantFromChallenge() {
+            // test-ism needed to clear hibernate cache
+            em.flush();
+            em.clear();
+
             participantService.ownerRemovesParticipantFromChallenge(savedUser, challenge.getId(),
-                    participantToRemove.getId());
+                    existingParticipant.getId());
             assertParticipantHasBeenRemoved();
         }
 
@@ -314,6 +314,10 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
         @Test
         void testLeaveChallenge() {
+            // test-ism needed to clear hibernate cache
+            em.flush();
+            em.clear();
+
             participantService.leaveChallenge(nonChallengeOwner, challenge.getId());
             assertParticipantHasBeenRemoved();
         }
@@ -334,6 +338,50 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         void testCantLeaveChallengeWhenComplete() {
             Challenge challenge = saveChallengeWithOwner(savedUser, ChallengeStatus.COMPLETE);
             assertLeavingChallengeThrowsError(challenge);
+
+        }
+
+        @Test
+        void testUserGetsParticipantInfo() {
+            User userInSameChallenge = saveRandomUser();
+            saveParticipant(userInSameChallenge, challenge);
+
+            assertEquals(existingParticipant,
+                    participantService.userGetsParticipantInfo(userInSameChallenge, existingParticipant.getId(),
+                            challenge.getId()));
+        }
+
+        @Test
+        void testUserGetsParticipantInfoUserNotInSameChallenge() {
+            User userNotInSameChallenge = saveRandomUser();
+            saveChallengeWithOwner(userNotInSameChallenge);
+            assertThrows(NotFoundException.class,
+                    () -> participantService.userGetsParticipantInfo(userNotInSameChallenge,
+                            existingParticipant.getId(), challenge.getId()));
+        }
+
+        @Test
+        void testUserGetsParticipantInfoParticipantIsSelf() {
+            assertEquals(existingParticipant,
+                    participantService.userGetsParticipantInfo(existingParticipant.getUser(),
+                            existingParticipant.getId(), challenge.getId()));
+        }
+
+        @Test
+        void testUserGetsParticipantInfoInvalidParticipant() {
+            assertThrows(NotFoundException.class,
+                    () -> participantService.userGetsParticipantInfo(savedUser, 999999999L, challenge.getId()));
+        }
+
+        @Test
+        void testUserGetsParticipantInfoChallengeIdDoesntMatch() {
+            User userInSameChallenge = saveRandomUser();
+            saveParticipant(userInSameChallenge, challenge);
+
+            Challenge otherChallenge = saveChallengeWithOwner(saveRandomUser());
+
+            assertThrows(NotFoundException.class, () -> participantService.userGetsParticipantInfo(userInSameChallenge,
+                    existingParticipant.getId(), otherChallenge.getId()));
 
         }
 
@@ -361,7 +409,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         private void assertParticipantHasBeenRemoved() {
             // assert challenge participant repo is changed
             assertEquals(1, participantRepo.count());
-            assertTrue(participantRepo.findById(participantToRemove.getId()).isEmpty());
+            assertTrue(participantRepo.findById(existingParticipant.getId()).isEmpty());
             assertTrue(participantRepo.findById(challengeOwner.getId()).isPresent());
 
             // assert goal definitions and goal completions are empty
@@ -386,7 +434,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     private Participant saveParticipant(User user, Challenge challenge) {
-        Participant participant = TestEntityFactory.validParticipant(savedUser, challenge);
+        Participant participant = TestEntityFactory.validParticipant(user, challenge);
         return participantRepo.save(participant);
     }
 
