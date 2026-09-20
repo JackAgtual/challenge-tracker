@@ -43,7 +43,7 @@ public class GoalController {
     @GetMapping("/participants/{participantId}/goals")
     List<GoalDefinitionResponse> getAllGoalsForChallenge(@CurrentUser User user, @PathVariable Long challengeId,
             @PathVariable Long participantId) {
-        Participant participant = participantService.userGetsParticipantInfo(user, participantId);
+        Participant participant = participantService.userGetsParticipantInfo(user, participantId, challengeId);
 
         return goalDefinitionService.getGoalsForChallenge(participant.getUser(), challengeId)
                 .stream()
@@ -76,7 +76,7 @@ public class GoalController {
             @PathVariable Long challengeId, @PathVariable Long participantId) {
         Challenge challenge = challengeService.getChallenge(user, challengeId);
 
-        Participant participant = participantService.userGetsParticipantInfo(user, participantId);
+        Participant participant = participantService.userGetsParticipantInfo(user, participantId, challenge.getId());
 
         List<GoalDefinition> goalDefinitions = goalDefinitionService.getGoalsForChallenge(
                 participant.getUser(), challenge.getId());

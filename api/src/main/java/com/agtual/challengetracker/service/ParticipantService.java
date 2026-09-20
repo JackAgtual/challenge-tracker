@@ -45,11 +45,11 @@ public class ParticipantService {
     }
 
     public boolean isParticipant(User user, Challenge challenge) {
-        return participantRepo.existsByChallengeAndUser(challenge, user);
+        return isParticipant(user, challenge.getId());
     }
 
     public boolean isParticipant(User user, Long challengeId) {
-        return participantRepo.existsByChallenge_IdAndUser(challengeId, user);
+        return participantRepo.existsByUserAndChallengeId(user, challengeId);
     }
 
     public List<Participant> getAllChallengeParticipationsForUser(User user) {
@@ -115,18 +115,19 @@ public class ParticipantService {
 
     /**
      * A user requests participant details for a different participant
+     * Will check to make sure participant and user belong to given challengeId
      * 
      * @param user          requesting info on another participant
      * @param participantId the ID of the other participant
+     * @param challengeId
      * @return Participant entity if the user has access, otherwise throws
      *         NotFoundException
      */
-    public Participant userGetsParticipantInfo(User user, Long participantId) {
-        Participant participant = participantRepo.findById(participantId)
+    public Participant userGetsParticipantInfo(User user, Long participantId, Long challengeId) {
+        Participant participant = participantRepo.findByIdAndChallengeId(participantId, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.PARTICIPANT, participantId));
 
-        if (!participantRepo.existsByUserAndChallenge(user,
-                participant.getChallenge())) {
+        if (!participantRepo.existsByUserAndChallengeId(user, challengeId)) {
             throw new NotFoundException(ResourceType.PARTICIPANT, participantId);
         }
         return participant;

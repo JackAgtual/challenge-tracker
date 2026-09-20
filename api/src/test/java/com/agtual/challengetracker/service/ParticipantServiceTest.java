@@ -347,7 +347,8 @@ public class ParticipantServiceTest extends MockUserBaseTest {
             saveParticipant(userInSameChallenge, challenge);
 
             assertEquals(existingParticipant,
-                    participantService.userGetsParticipantInfo(userInSameChallenge, existingParticipant.getId()));
+                    participantService.userGetsParticipantInfo(userInSameChallenge, existingParticipant.getId(),
+                            challenge.getId()));
         }
 
         @Test
@@ -356,20 +357,32 @@ public class ParticipantServiceTest extends MockUserBaseTest {
             saveChallengeWithOwner(userNotInSameChallenge);
             assertThrows(NotFoundException.class,
                     () -> participantService.userGetsParticipantInfo(userNotInSameChallenge,
-                            existingParticipant.getId()));
+                            existingParticipant.getId(), challenge.getId()));
         }
 
         @Test
         void testUserGetsParticipantInfoParticipantIsSelf() {
             assertEquals(existingParticipant,
                     participantService.userGetsParticipantInfo(existingParticipant.getUser(),
-                            existingParticipant.getId()));
+                            existingParticipant.getId(), challenge.getId()));
         }
 
         @Test
         void testUserGetsParticipantInfoInvalidParticipant() {
             assertThrows(NotFoundException.class,
-                    () -> participantService.userGetsParticipantInfo(savedUser, 999999999L));
+                    () -> participantService.userGetsParticipantInfo(savedUser, 999999999L, challenge.getId()));
+        }
+
+        @Test
+        void testUserGetsParticipantInfoChallengeIdDoesntMatch() {
+            User userInSameChallenge = saveRandomUser();
+            saveParticipant(userInSameChallenge, challenge);
+
+            Challenge otherChallenge = saveChallengeWithOwner(saveRandomUser());
+
+            assertThrows(NotFoundException.class, () -> participantService.userGetsParticipantInfo(userInSameChallenge,
+                    existingParticipant.getId(), otherChallenge.getId()));
+
         }
 
         private void assertRemovingParticipantFromChallengeThrowsError(Challenge challenge) {
