@@ -17,6 +17,7 @@ import com.agtual.challengetracker.controller.resolver.CurrentUser;
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
+import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
 import com.agtual.challengetracker.dto.response.ChallengeResponse;
 import com.agtual.challengetracker.dto.response.GroupedChallengeResponse;
@@ -91,6 +92,15 @@ public class ChallengeController {
     public void setReady(@CurrentUser User user, @PathVariable Long challengeId,
             @Valid @RequestBody ReadyRequest readyRequest) {
         participantService.setReady(user, challengeId, readyRequest.ready());
+    }
+
+    @GetMapping("/{challengeId}/participants/{participantId}/ready")
+    public BooleanResponse isReady(@CurrentUser User user, @PathVariable Long challengeId,
+            @PathVariable Long participantId) {
+        Participant participant = participantService.userGetsParticipantInfo(user,
+                participantId, challengeId);
+
+        return new BooleanResponse(participant.isReady());
     }
 
     @DeleteMapping("/{challengeId}/participants/{participantId}")

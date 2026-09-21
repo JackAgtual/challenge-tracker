@@ -5,6 +5,7 @@ import CreateGoalForm from "./CreateGoalForm";
 import { client } from "@/lib/api-client";
 import Invites from "./Invites";
 import { getValidSession } from "@/lib/auth-utils";
+import ToggleReady from "./ToggleReady";
 
 type PendingChallengePageProps = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
@@ -19,7 +20,7 @@ export default async function PendingChallengePage({
 
   const { challenge, participants } = challengeDetails;
 
-  const [goalDefinitions, invites] = await Promise.all([
+  const [goalDefinitions, invites, curParticipantIsReady] = await Promise.all([
     client.GET("/challenges/{challengeId}/participants/{participantId}/goals", {
       params: {
         path: { challengeId: challenge.id, participantId: curParticipantId },
@@ -27,6 +28,11 @@ export default async function PendingChallengePage({
     }),
     client.GET("/challenges/{challengeId}/invites", {
       params: { path: { challengeId: challenge.id } },
+    }),
+    client.GET("/challenges/{challengeId}/participants/{participantId}/ready", {
+      params: {
+        path: { challengeId: challenge.id, participantId: curParticipantId },
+      },
     }),
   ]);
 
@@ -36,10 +42,17 @@ export default async function PendingChallengePage({
   if (invites.error) {
     throw new Error(`Unable to get invites for challenge ${challenge.id}`);
   }
+  if (curParticipantIsReady.error) {
+    throw new Error("Unable to check if you're ready");
+  }
 
   return (
     <div>
       <ParticipantStatus participants={participants} />
+      <ToggleReady
+        isReady={curParticipantIsReady.data.value}
+        challengeId={challenge.id}
+      />
       <Invites invites={invites.data} />
       <h2>Your goals</h2>
       <GoalDefinitions
