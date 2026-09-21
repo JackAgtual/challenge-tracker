@@ -2,6 +2,7 @@
 
 import { client } from "@/lib/api-client";
 import { TCreateGoalFormSchema } from "@/types/form-types";
+import { revalidatePath } from "next/cache";
 import { success } from "zod";
 
 export async function createGoal(
@@ -14,6 +15,7 @@ export async function createGoal(
   });
 
   if (!error) {
+    revalidatePath(`/challenges/${challengeId}`);
     return { success: true as const };
   }
 
@@ -31,6 +33,7 @@ export async function deleteGoal(
     }
   );
   if (!error) {
+    revalidatePath(`/challenges/${challengeId}`);
     return { success: true as const };
   }
 

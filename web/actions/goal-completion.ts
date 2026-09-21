@@ -1,6 +1,7 @@
 "use server";
 
 import { client } from "@/lib/api-client";
+import { revalidatePath } from "next/cache";
 
 export async function handleGoalCompletion({
   challengeId,
@@ -11,11 +12,16 @@ export async function handleGoalCompletion({
   goalDefinitionId: number;
   date: string;
 }) {
-  const res = await client.POST(
+  const { error } = await client.POST(
     "/challenges/{challengeId}/goals/{goalDefinitionId}/completions",
     { params: { path: { challengeId, goalDefinitionId } }, body: { date } }
   );
-  // TODO: Add error handling and revalidate
+  if (error) {
+    return { success: false as const };
+  }
+
+  revalidatePath(`/challenges/${challengeId}`);
+  return { success: true };
 }
 
 export async function handleGoalUncompletion({
@@ -27,9 +33,15 @@ export async function handleGoalUncompletion({
   goalDefinitionId: number;
   goalCompletionId: number;
 }) {
-  const res = await client.DELETE(
+  const { error } = await client.DELETE(
     "/challenges/{challengeId}/goals/{goalDefinitionId}/completions/{goalCompletionId}",
     { params: { path: { challengeId, goalCompletionId, goalDefinitionId } } }
   );
-  // TODO: Add error handling and revalidate
+
+  if (error) {
+    return { success: false as const };
+  }
+
+  revalidatePath(`/challenges/${challengeId}`);
+  return { success: true };
 }

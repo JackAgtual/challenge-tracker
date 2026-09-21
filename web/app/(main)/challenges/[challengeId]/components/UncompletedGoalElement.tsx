@@ -1,6 +1,7 @@
 "use client";
 
 import { handleGoalCompletion } from "@/actions/goal-completion";
+import { toastGenericError } from "@/lib/toast-utils";
 import { Circle } from "lucide-react";
 
 type UncompletedGoalElementProps = {
@@ -20,16 +21,17 @@ export default function UncompletedGoalElement({
     return <Circle />;
   }
 
-  return (
-    <Circle
-      className="cursor-pointer"
-      onClick={() =>
-        handleGoalCompletion({
-          challengeId,
-          goalDefinitionId,
-          date,
-        })
-      }
-    />
-  );
+  async function handleClick() {
+    const { success } = await handleGoalCompletion({
+      challengeId,
+      goalDefinitionId,
+      date,
+    });
+
+    if (!success) {
+      toastGenericError();
+    }
+  }
+
+  return <Circle className="cursor-pointer" onClick={handleClick} />;
 }
