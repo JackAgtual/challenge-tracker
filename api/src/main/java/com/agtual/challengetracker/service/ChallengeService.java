@@ -93,16 +93,27 @@ public class ChallengeService {
         return challengeRepo.save(challenge);
     }
 
-    public Challenge startChallenge(User user, Long challengeId) {
+    public boolean canStartChallenge(User user, Long challengeId) {
         Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 
         if (!challenge.isReadyToStart()) {
-            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Challenge start conditions not met.");
+            return false;
         }
 
         if (!participantService.allJoinedParticipantsAreReady(challenge)) {
-            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Not all challenge participants ready.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public Challenge startChallenge(User user, Long challengeId) {
+        Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        if (!canStartChallenge(user, challengeId)) {
+            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Challenge start conditions not met.");
         }
 
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);

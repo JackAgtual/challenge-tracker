@@ -1,13 +1,16 @@
 package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
@@ -248,12 +252,67 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             }
         }
 
+        /**
+         * CanStartChallenge
+         * 
+         * Mocking challenge repo and challenge entity so I can mock return value of
+         * {@link Challenge#isReadyToStart()}
+         */
+        @Nested
+        class CanStartChallenge {
+
+            static Long mockChallengeId = 33L;
+
+            @MockitoBean
+            ChallengeRepo challengeRepoMock;
+
+            Challenge challengeMock;
+
+            @BeforeEach
+            void beforeEach() {
+                challengeMock = mock(Challenge.class);
+                when(participantService.allJoinedParticipantsAreReady(challengeMock)).thenReturn(true);
+                when(challengeMock.isReadyToStart()).thenReturn(true);
+                when(challengeRepoMock.findByOwnerAndId(savedUser, mockChallengeId))
+                        .thenReturn(Optional.of(challengeMock));
+            }
+
+            @Test
+            void testCanStartChallenge() {
+                assertTrue(challengeService.canStartChallenge(savedUser, mockChallengeId));
+            }
+
+            @Test
+            void testCanStartChallengeInvalidChallengeId() {
+                when(challengeRepoMock.findByOwnerAndId(savedUser, mockChallengeId))
+                        .thenReturn(Optional.empty());
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.canStartChallenge(savedUser, mockChallengeId));
+            }
+
+            @Test
+            void testCanStartChallengeChallengeNotReady() {
+                when(challengeMock.isReadyToStart()).thenReturn(false);
+                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId));
+            }
+
+            @Test
+            void testCanStartChallengeParticipantsNotReady() {
+                when(participantService.allJoinedParticipantsAreReady(challengeMock)).thenReturn(false);
+                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId));
+            }
+        }
+
         @Nested
         class StartChallenge {
+
+            @MockitoSpyBean
+            ChallengeService challengeService;
 
             @BeforeEach
             void beforeEach() {
                 when(participantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(true);
+                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId())).thenReturn(true);
             }
 
             @Test
@@ -273,29 +332,8 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             }
 
             @Test
-            void testStartParticipantsNotReady() {
-                when(participantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(false);
-                assertThrows(ForbiddenException.class,
-                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
-            }
-
-            @Test
             void testStartChallengeChallengeNotReady() {
-                savedChallenge.setDurationDays(null);
-                challengeRepo.save(savedChallenge);
-                assertThrows(ForbiddenException.class,
-                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
-            }
-
-            @Test
-            void testCantStartChallengeThatIsntPending() {
-                savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
-                challengeRepo.save(savedChallenge);
-                assertThrows(ForbiddenException.class,
-                        () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
-
-                savedChallenge.setStatus(ChallengeStatus.COMPLETE);
-                challengeRepo.save(savedChallenge);
+                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId())).thenReturn(false);
                 assertThrows(ForbiddenException.class,
                         () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
             }
