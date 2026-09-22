@@ -3,6 +3,7 @@ package com.agtual.challengetracker.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
@@ -83,6 +85,41 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             Challenge challengeToSave = TestEntityFactory.validChallenge(savedUser, "my challenge");
             challengeToSave.setDurationDays(30);
             savedChallenge = challengeRepo.save(challengeToSave);
+        }
+
+        @Nested
+        class GetChallengeOwner {
+
+            Participant expectedOwner;
+
+            void beforeEach() {
+                expectedOwner = mock(Participant.class);
+                when(participantService.getChallengeParticipationForUserAndChallengeId(savedChallenge.getOwner(),
+                        savedChallenge.getId())).thenReturn(expectedOwner);
+            }
+
+            @Test
+            void testGetChallengeOwner() {
+                when(participantService.isParticipant(savedUser, savedChallenge.getId())).thenReturn(true);
+
+                Participant owner = challengeService.getChallengeOwner(savedUser, savedChallenge.getId());
+                assertEquals(expectedOwner, owner);
+            }
+
+            @Test
+            void testGetChallengeOwnerChallengeDoesntExist() {
+                when(participantService.isParticipant(savedUser, savedChallenge.getId())).thenReturn(true);
+
+                assertThrows(NotFoundException.class, () -> challengeService.getChallengeOwner(savedUser, 9999L));
+            }
+
+            @Test
+            void testGetChallengeOwnerRequestorIsNotParticipant() {
+                when(participantService.isParticipant(savedUser, savedChallenge.getId())).thenReturn(false);
+                assertThrows(NotFoundException.class,
+                        () -> challengeService.getChallengeOwner(savedUser, savedChallenge.getId()));
+
+            }
         }
 
         @Nested

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.ResourceType;
@@ -55,6 +56,17 @@ public class ChallengeService {
     public Challenge getChallengeFromOwner(Long challengeId, User challengeOwner) {
         return challengeRepo.findByOwnerAndId(challengeOwner, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+    }
+
+    public Participant getChallengeOwner(User user, Long challengeId) {
+        if (!participantService.isParticipant(user, challengeId)) {
+            throw new NotFoundException(ResourceType.CHALLENGE, challengeId);
+        }
+
+        Challenge challenge = challengeRepo.findById(challengeId)
+                .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
+
+        return participantService.getChallengeParticipationForUserAndChallengeId(challenge.getOwner(), challengeId);
     }
 
     /**
