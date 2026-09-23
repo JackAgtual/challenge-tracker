@@ -19,6 +19,7 @@ import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
 import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
+import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.dto.response.ChallengeResponse;
 import com.agtual.challengetracker.dto.response.GroupedChallengeResponse;
 import com.agtual.challengetracker.dto.response.IdResponse;
@@ -82,8 +83,8 @@ public class ChallengeController {
     }
 
     @GetMapping("/{challengeId}/start-eligibility")
-    public BooleanResponse canChallengeBeStarted(@CurrentUser User user, @PathVariable Long challengeId) {
-        return new BooleanResponse(challengeService.canStartChallenge(user, challengeId));
+    public ChallengeReadyResponse canChallengeBeStarted(@CurrentUser User user, @PathVariable Long challengeId) {
+        return challengeService.canStartChallenge(user, challengeId);
     }
 
     @PostMapping("/{challengeId}/start")

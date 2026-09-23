@@ -1,6 +1,8 @@
 package com.agtual.challengetracker.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
@@ -93,27 +96,30 @@ public class ChallengeService {
         return challengeRepo.save(challenge);
     }
 
-    public boolean canStartChallenge(User user, Long challengeId) {
+    public ChallengeReadyResponse canStartChallenge(User user, Long challengeId) {
         Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 
+        List<String> reasonsNotReady = new ArrayList<>();
+
         if (!challenge.isReadyToStart()) {
-            return false;
+            reasonsNotReady.add("Challenge must have name, duration and be pending");
         }
 
         if (!participantService.allJoinedParticipantsAreReady(challenge)) {
-            return false;
+            reasonsNotReady.add("Not all participants are ready");
         }
 
-        return true;
+        return new ChallengeReadyResponse(reasonsNotReady.isEmpty(), reasonsNotReady);
     }
 
     public Challenge startChallenge(User user, Long challengeId) {
         Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 
-        if (!canStartChallenge(user, challengeId)) {
-            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, "Challenge start conditions not met.");
+        ChallengeReadyResponse readyRes = canStartChallenge(user, challengeId);
+        if (!readyRes.ready()) {
+            throw new ForbiddenException(ResourceType.CHALLENGE, challengeId, String.join(", ", readyRes.reasons()));
         }
 
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);

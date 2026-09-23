@@ -460,6 +460,10 @@ export interface components {
             username: string;
             ready: boolean;
         };
+        ChallengeReadyResponse: {
+            ready: boolean;
+            reasons?: string[];
+        };
         GoalDefinitionResponse: {
             /** Format: int64 */
             id: number;
@@ -1518,7 +1522,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BooleanResponse"];
+                    "*/*": components["schemas"]["ChallengeReadyResponse"];
                 };
             };
             /** @description Forbidden Operation */

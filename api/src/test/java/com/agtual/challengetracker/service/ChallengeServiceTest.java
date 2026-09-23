@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
 import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
@@ -279,7 +282,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testCanStartChallenge() {
-                assertTrue(challengeService.canStartChallenge(savedUser, mockChallengeId));
+                assertTrue(challengeService.canStartChallenge(savedUser, mockChallengeId).ready());
             }
 
             @Test
@@ -293,13 +296,47 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             @Test
             void testCanStartChallengeChallengeNotReady() {
                 when(challengeMock.isReadyToStart()).thenReturn(false);
-                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId));
+                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId).ready());
             }
 
             @Test
             void testCanStartChallengeParticipantsNotReady() {
                 when(participantService.allJoinedParticipantsAreReady(challengeMock)).thenReturn(false);
-                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId));
+                assertFalse(challengeService.canStartChallenge(savedUser, mockChallengeId).ready());
+            }
+
+            @Test
+            void testCanStartChallengeReasons() {
+                when(challengeMock.isReadyToStart()).thenReturn(false);
+                when(participantService.allJoinedParticipantsAreReady(challengeMock)).thenReturn(false);
+
+                List<String> reasons = challengeService.canStartChallenge(savedUser, mockChallengeId).reasons();
+
+                assertEquals(2, reasons.size());
+                assertTrue(reasons.containsAll(List.of("Challenge must have name, duration and be pending",
+                        "Not all participants are ready")));
+            }
+
+            @Test
+            void testCanStartChallengeOnlyChallengeNotReady() {
+                when(challengeMock.isReadyToStart()).thenReturn(false);
+
+                List<String> reasons = challengeService.canStartChallenge(savedUser, mockChallengeId).reasons();
+
+                assertEquals(1, reasons.size());
+                assertTrue(reasons.contains("Challenge must have name, duration and be pending"));
+
+            }
+
+            @Test
+            void testCanStartChallengeOnlyParticipantsNotReady() {
+                when(participantService.allJoinedParticipantsAreReady(challengeMock)).thenReturn(false);
+
+                List<String> reasons = challengeService.canStartChallenge(savedUser, mockChallengeId).reasons();
+
+                assertEquals(1, reasons.size());
+                assertTrue(reasons.contains("Not all participants are ready"));
+
             }
         }
 
@@ -311,8 +348,10 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @BeforeEach
             void beforeEach() {
+                ChallengeReadyResponse readyChallengeRes = new ChallengeReadyResponse(true, Collections.emptyList());
                 when(participantService.allJoinedParticipantsAreReady(savedChallenge)).thenReturn(true);
-                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId())).thenReturn(true);
+                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId()))
+                        .thenReturn(readyChallengeRes);
             }
 
             @Test
@@ -333,7 +372,10 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testStartChallengeChallengeNotReady() {
-                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId())).thenReturn(false);
+                ChallengeReadyResponse notReadyChallengeRes = new ChallengeReadyResponse(false,
+                        List.of("Not all participants are ready"));
+                when(challengeService.canStartChallenge(savedUser, savedChallenge.getId())).thenReturn(
+                        notReadyChallengeRes);
                 assertThrows(ForbiddenException.class,
                         () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
             }

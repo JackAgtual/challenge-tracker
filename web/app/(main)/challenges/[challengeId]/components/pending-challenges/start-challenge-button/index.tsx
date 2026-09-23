@@ -23,8 +23,8 @@ export default async function StartChallengeButton({
 
   return (
     <ClientButton
-      canStart={startEligibility.data.value}
       challengeId={challengeId}
+      startEligibility={startEligibility.data}
     />
   );
 }
