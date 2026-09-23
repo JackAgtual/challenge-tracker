@@ -1,6 +1,6 @@
 "use client";
 
-import { createChallenge } from "@/actions/create-challenge";
+import { createChallenge, modifyChallenge } from "@/actions/challenge-actions";
 import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -13,23 +13,52 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 
-export default function CreateChallengeForm() {
+type ChallengeFormProps =
+  | {
+      action: "EDIT";
+      defaultValues: TCreateChallengeFormSchema; // TODO: Create one type for create/modify challenge
+      challengeId: number;
+    }
+  | {
+      action: "CREATE";
+      defaultValues?: never;
+      challengeId?: never;
+    };
+
+export default function ChallengeForm(props: ChallengeFormProps) {
   const { control, handleSubmit, setError, formState } =
     useForm<TCreateChallengeFormSchema>({
       resolver: zodResolver(createChallengeFormSchema),
-      defaultValues: {
-        name: "",
-        durationDays: 0,
-      },
+      defaultValues: props.defaultValues ?? { name: "", durationDays: 0 },
     });
 
-  const onSubmit = async (formData: TCreateChallengeFormSchema) => {
+  const handleCreate = async (formData: TCreateChallengeFormSchema) => {
     const res = await createChallenge(formData);
     if (res.success) {
       redirect(`/challenges/${res.data?.id}`);
     }
 
     setError("root", { message: res.error.detail });
+  };
+
+  const handleModify = async (
+    formData: TCreateChallengeFormSchema,
+    challengeId: number
+  ) => {
+    const res = await modifyChallenge(formData, challengeId);
+    if (res.success) {
+      redirect(`/challenges/${challengeId}`);
+    }
+
+    setError("root", { message: res.error.detail });
+  };
+
+  const onSubmit = async (formData: TCreateChallengeFormSchema) => {
+    if (props.action === "CREATE") {
+      handleCreate(formData);
+    } else {
+      handleModify(formData, props.challengeId);
+    }
   };
 
   return (
@@ -67,7 +96,9 @@ export default function CreateChallengeForm() {
           </Field>
         )}
       />
-      <Button type="submit">Create</Button>
+      <Button type="submit">
+        {props.action === "CREATE" ? "Create" : "Save"}
+      </Button>
       <FormRootError formState={formState} />
     </form>
   );

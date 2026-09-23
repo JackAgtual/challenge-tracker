@@ -1,5 +1,5 @@
+import ChallengeForm from "@/components/ChallengeForm";
 import { getValidSession } from "@/lib/auth-utils";
-import CreateChallengeForm from "./components/CreateChallengeForm";
 
 export default async function Page() {
   await getValidSession();
@@ -7,7 +7,7 @@ export default async function Page() {
   return (
     <>
       <h1>Create a challenge</h1>
-      <CreateChallengeForm />
+      <ChallengeForm action="CREATE" />
     </>
   );
 }

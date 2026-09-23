@@ -7,6 +7,7 @@ import Invites from "./Invites";
 import ParticipantStatus from "./ParticipantStatus";
 import ToggleReady from "./ToggleReady";
 import StartChallengeButton from "./start-challenge-button";
+import EditChallengeButton from "./EditChallengeButton";
 
 type PendingChallengePageProps = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
@@ -69,7 +70,10 @@ export default async function PendingChallengePage({
   return (
     <div>
       {curUserIsChallengeOwner && (
-        <StartChallengeButton challengeId={challenge.id} />
+        <>
+          <EditChallengeButton challengeId={challenge.id} />
+          <StartChallengeButton challengeId={challenge.id} />
+        </>
       )}
       <ParticipantStatus participants={participants} />
       <ToggleReady

@@ -12,3 +12,19 @@ export async function createChallenge(formData: TCreateChallengeFormSchema) {
 
   return { success: false, error };
 }
+
+export async function modifyChallenge(
+  formData: TCreateChallengeFormSchema,
+  challengeId: number
+) {
+  const { error } = await client.PUT("/challenges/{challengeId}", {
+    params: { path: { challengeId } },
+    body: formData,
+  });
+
+  if (!error) {
+    return { success: true as const };
+  }
+
+  return { success: false, error };
+}
