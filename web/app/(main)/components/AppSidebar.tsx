@@ -12,6 +12,15 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 
+type MenuLink = {
+  groupLabel: string;
+  menuItems: {
+    name: string;
+    href: string;
+    anchorTag?: boolean;
+  }[];
+};
+
 export function AppSidebar() {
   const { isMobile, setOpenMobile } = useSidebar();
 
@@ -21,50 +30,49 @@ export function AppSidebar() {
     }
   }
 
+  const links: MenuLink[] = [
+    {
+      groupLabel: "Challenges",
+      menuItems: [
+        { href: "/dashboard", name: "Dashboard" },
+        { href: "/challenges/create", name: "Create" },
+      ],
+    },
+    {
+      groupLabel: "Account",
+      menuItems: [
+        { href: "/account-setup", name: "Edit" },
+        { href: "/auth/logout", name: "Logout", anchorTag: true },
+      ],
+    },
+  ];
+
   return (
     <Sidebar>
       <SidebarHeader>Challenge Tracker</SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Challenges</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                render={
-                  <Link href="/dashboard" onClick={handleNavClick}>
-                    Dashboard
-                  </Link>
-                }
-              />
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                render={
-                  <Link href="/challenges/create" onClick={handleNavClick}>
-                    Create
-                  </Link>
-                }
-              />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                render={
-                  <Link href="/account-setup" onClick={handleNavClick}>
-                    Edit
-                  </Link>
-                }
-              />
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton render={<a href="/auth/logout">Logout</a>} />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
+        {links.map(({ groupLabel, menuItems }) => (
+          <SidebarGroup key={groupLabel}>
+            <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+            <SidebarMenu>
+              {menuItems.map(({ href, name, anchorTag }) => (
+                <SidebarMenuItem key={href}>
+                  <SidebarMenuButton
+                    render={
+                      anchorTag ? (
+                        <a href={href}>{name}</a>
+                      ) : (
+                        <Link href={href} onClick={handleNavClick}>
+                          {name}
+                        </Link>
+                      )
+                    }
+                  />
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </Sidebar>
   );
