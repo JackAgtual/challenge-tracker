@@ -2,7 +2,6 @@ package com.agtual.challengetracker.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 
@@ -46,18 +45,12 @@ public class ChallengeTest {
     @Test
     void testUpdate() {
         Challenge challenge = new Challenge();
-        ModifyChallengeRequest mod1 = new ModifyChallengeRequest("new name", 20);
+        ChallengeDataRequest mod1 = new ChallengeDataRequest("new name", 20);
 
         challenge.update(mod1);
 
         assertEquals(mod1.name(), challenge.getName());
         assertEquals(mod1.durationDays(), challenge.getDurationDays());
-
-        ModifyChallengeRequest mod2 = new ModifyChallengeRequest("final name", null);
-
-        challenge.update(mod2);
-        assertEquals(mod2.name(), challenge.getName());
-        assertNull(challenge.getDurationDays());
     }
 
     @Test

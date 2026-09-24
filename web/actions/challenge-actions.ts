@@ -1,9 +1,9 @@
 "use server";
 
 import { client } from "@/lib/api-client";
-import { TCreateChallengeFormSchema } from "@/types/form-types";
+import { TChallengeDataFormSchema } from "@/types/form-types";
 
-export async function createChallenge(formData: TCreateChallengeFormSchema) {
+export async function createChallenge(formData: TChallengeDataFormSchema) {
   const { error, data } = await client.POST("/challenges", { body: formData });
 
   if (!error) {
@@ -14,7 +14,7 @@ export async function createChallenge(formData: TCreateChallengeFormSchema) {
 }
 
 export async function modifyChallenge(
-  formData: TCreateChallengeFormSchema,
+  formData: TChallengeDataFormSchema,
   challengeId: number
 ) {
   const { error } = await client.PUT("/challenges/{challengeId}", {

@@ -2,7 +2,6 @@ package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -23,8 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
-import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
@@ -52,7 +50,7 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
     @Nested
     class CreateChallenge {
-        static CreateChallengeRequest createChallengeRequest = new CreateChallengeRequest("my challenge", 30);
+        static ChallengeDataRequest createChallengeRequest = new ChallengeDataRequest("my challenge", 30);
 
         @Test
         void testCreateChallenge() {
@@ -202,31 +200,22 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
             @Test
             void testModifyChallenge() {
-                ModifyChallengeRequest mod1 = new ModifyChallengeRequest("challenge mod", null);
-                Challenge modifiedChallenge1 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
-                        mod1);
-                assertEquals(savedChallenge.getId(), modifiedChallenge1.getId());
-                assertEquals(savedChallenge.getOwner(), modifiedChallenge1.getOwner());
-                assertEquals(savedChallenge.getStartDate(), modifiedChallenge1.getStartDate());
-                assertEquals("challenge mod", modifiedChallenge1.getName());
-                assertNull(modifiedChallenge1.getDurationDays());
-
-                ModifyChallengeRequest mod2 = new ModifyChallengeRequest("name change", 30);
+                ChallengeDataRequest mod2 = new ChallengeDataRequest("name change", 30);
                 Challenge modifiedChallenge2 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
                         mod2);
                 assertEquals(savedChallenge.getId(), modifiedChallenge2.getId());
                 assertEquals(savedChallenge.getOwner(), modifiedChallenge2.getOwner());
                 assertEquals(savedChallenge.getStartDate(), modifiedChallenge2.getStartDate());
-                assertEquals("name change", modifiedChallenge1.getName());
+                assertEquals("name change", modifiedChallenge2.getName());
                 assertEquals(30, modifiedChallenge2.getDurationDays());
 
-                ModifyChallengeRequest mod3 = new ModifyChallengeRequest("final name", 45);
+                ChallengeDataRequest mod3 = new ChallengeDataRequest("final name", 45);
                 Challenge modifiedChallenge3 = challengeService.modifyChallenge(savedUser, savedChallenge.getId(),
                         mod3);
                 assertEquals(savedChallenge.getId(), modifiedChallenge3.getId());
                 assertEquals(savedChallenge.getOwner(), modifiedChallenge3.getOwner());
                 assertEquals(savedChallenge.getStartDate(), modifiedChallenge3.getStartDate());
-                assertEquals("final name", modifiedChallenge1.getName());
+                assertEquals("final name", modifiedChallenge2.getName());
                 assertEquals(45, modifiedChallenge3.getDurationDays());
             }
 
@@ -234,14 +223,14 @@ public class ChallengeServiceTest extends MockUserBaseTest {
             void testModifyChallengeNotAllowedForNonOwner() {
                 User nonOwner = saveRandomUser();
 
-                ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
+                ChallengeDataRequest mod = new ChallengeDataRequest("name", 30);
                 assertThrows(NotFoundException.class, () -> challengeService.modifyChallenge(nonOwner,
                         savedChallenge.getId(), mod));
             }
 
             @Test
             void testModifyChallengeNotAllowedForInProgressOrCompleteChallenge() {
-                ModifyChallengeRequest mod = new ModifyChallengeRequest("name", 30);
+                ChallengeDataRequest mod = new ChallengeDataRequest("name", 30);
 
                 savedChallenge.setStatus(ChallengeStatus.IN_PROGRESS);
                 challengeRepo.save(savedChallenge);

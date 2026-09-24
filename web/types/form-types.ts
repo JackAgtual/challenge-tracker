@@ -10,14 +10,12 @@ export const setupAccountFormSchema = z.object({
 
 export type TSetupAccountFormSchema = z.infer<typeof setupAccountFormSchema>;
 
-export const createChallengeFormSchema = z.object({
+export const challengeDataFormSchema = z.object({
   name: z.string().nonempty(),
   durationDays: z.int().min(1),
 });
 
-export type TCreateChallengeFormSchema = z.infer<
-  typeof createChallengeFormSchema
->;
+export type TChallengeDataFormSchema = z.infer<typeof challengeDataFormSchema>;
 
 export const createGoalFormSchema = z.object({
   name: z.string().nonempty(),

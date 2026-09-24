@@ -1,7 +1,7 @@
 import ChallengeForm from "@/components/ChallengeForm";
 import { Button } from "@/components/ui/button";
 import { client } from "@/lib/api-client";
-import { TCreateChallengeFormSchema } from "@/types/form-types";
+import { TChallengeDataFormSchema } from "@/types/form-types";
 import Link from "next/link";
 
 export default async function Page({
@@ -15,7 +15,7 @@ export default async function Page({
     params: { path: { challengeId } },
   });
 
-  const defaultVals: TCreateChallengeFormSchema = res.error
+  const defaultVals: TChallengeDataFormSchema = res.error
     ? { name: "", durationDays: 0 }
     : {
         name: res.data.challenge.name,

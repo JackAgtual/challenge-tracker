@@ -376,10 +376,10 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ModifyChallengeRequest: {
+        ChallengeDataRequest: {
             name: string;
             /** Format: int32 */
-            durationDays?: number | null;
+            durationDays?: number;
         };
         ChallengeResponse: {
             /** Format: int64 */
@@ -403,11 +403,6 @@ export interface components {
         CreateUserRequest: {
             /** Format: email */
             email: string;
-        };
-        CreateChallengeRequest: {
-            name: string;
-            /** Format: int32 */
-            durationDays?: number;
         };
         IdResponse: {
             /** Format: int64 */
@@ -576,7 +571,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ModifyChallengeRequest"];
+                "application/json": components["schemas"]["ChallengeDataRequest"];
             };
         };
         responses: {
@@ -873,7 +868,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateChallengeRequest"];
+                "application/json": components["schemas"]["ChallengeDataRequest"];
             };
         };
         responses: {

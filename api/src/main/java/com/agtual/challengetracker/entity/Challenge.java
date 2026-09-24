@@ -2,8 +2,7 @@ package com.agtual.challengetracker.entity;
 
 import java.time.LocalDate;
 
-import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
-import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
 
@@ -48,13 +47,13 @@ public class Challenge {
     @Column(name = "challenge_status", nullable = false)
     private ChallengeStatus status = ChallengeStatus.PENDING;
 
-    public Challenge(CreateChallengeRequest createChallengeRequest, User user) {
+    public Challenge(ChallengeDataRequest createChallengeRequest, User user) {
         this.owner = user;
         this.name = createChallengeRequest.name();
         this.durationDays = createChallengeRequest.durationDays();
     }
 
-    public void update(ModifyChallengeRequest modifyChallengeRequest) {
+    public void update(ChallengeDataRequest modifyChallengeRequest) {
         this.name = modifyChallengeRequest.name();
         this.durationDays = modifyChallengeRequest.durationDays();
     }

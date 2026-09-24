@@ -8,8 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
-import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
@@ -29,7 +28,7 @@ public class ChallengeService {
     private final ChallengeRepo challengeRepo;
 
     @Transactional
-    public Challenge createChallenge(User user, CreateChallengeRequest challengeRequest) {
+    public Challenge createChallenge(User user, ChallengeDataRequest challengeRequest) {
         // challenge owner must not have challenge of same name
         Optional<Challenge> existingChallenge = challengeRepo.findByOwnerAndName(user, challengeRequest.name());
 
@@ -74,7 +73,7 @@ public class ChallengeService {
 
     /**
      * Will update challenge that belongs to a user
-     * Will set all values in modifyChallengeRequest even if null
+     * Will set all values in modifyChallengeRequest
      * Only allowed to modify challenges in pending state (not in progress or
      * complete)
      * 
@@ -83,7 +82,7 @@ public class ChallengeService {
      * @param modifyChallengeRequest
      * @return
      */
-    public Challenge modifyChallenge(User user, Long challengeId, ModifyChallengeRequest modifyChallengeRequest) {
+    public Challenge modifyChallenge(User user, Long challengeId, ChallengeDataRequest modifyChallengeRequest) {
         Challenge challenge = challengeRepo.findByOwnerAndId(user, challengeId)
                 .orElseThrow(() -> new NotFoundException(ResourceType.CHALLENGE, challengeId));
 

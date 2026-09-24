@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-  createChallengeFormSchema,
-  TCreateChallengeFormSchema,
+  challengeDataFormSchema,
+  TChallengeDataFormSchema,
 } from "@/types/form-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
@@ -16,7 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 type ChallengeFormProps =
   | {
       action: "EDIT";
-      defaultValues: TCreateChallengeFormSchema; // TODO: Create one type for create/modify challenge
+      defaultValues: TChallengeDataFormSchema;
       challengeId: number;
     }
   | {
@@ -27,12 +27,12 @@ type ChallengeFormProps =
 
 export default function ChallengeForm(props: ChallengeFormProps) {
   const { control, handleSubmit, setError, formState } =
-    useForm<TCreateChallengeFormSchema>({
-      resolver: zodResolver(createChallengeFormSchema),
+    useForm<TChallengeDataFormSchema>({
+      resolver: zodResolver(challengeDataFormSchema),
       defaultValues: props.defaultValues ?? { name: "", durationDays: 0 },
     });
 
-  const handleCreate = async (formData: TCreateChallengeFormSchema) => {
+  const handleCreate = async (formData: TChallengeDataFormSchema) => {
     const res = await createChallenge(formData);
     if (res.success) {
       redirect(`/challenges/${res.data?.id}`);
@@ -42,7 +42,7 @@ export default function ChallengeForm(props: ChallengeFormProps) {
   };
 
   const handleModify = async (
-    formData: TCreateChallengeFormSchema,
+    formData: TChallengeDataFormSchema,
     challengeId: number
   ) => {
     const res = await modifyChallenge(formData, challengeId);
@@ -53,7 +53,7 @@ export default function ChallengeForm(props: ChallengeFormProps) {
     setError("root", { message: res.error.detail });
   };
 
-  const onSubmit = async (formData: TCreateChallengeFormSchema) => {
+  const onSubmit = async (formData: TChallengeDataFormSchema) => {
     if (props.action === "CREATE") {
       handleCreate(formData);
     } else {

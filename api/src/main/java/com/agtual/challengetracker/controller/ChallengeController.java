@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
-import com.agtual.challengetracker.dto.request.CreateChallengeRequest;
-import com.agtual.challengetracker.dto.request.ModifyChallengeRequest;
+import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
 import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
@@ -49,7 +48,7 @@ public class ChallengeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public IdResponse createChallenge(@CurrentUser User user,
-            @Valid @RequestBody CreateChallengeRequest createChallengeRequest) {
+            @Valid @RequestBody ChallengeDataRequest createChallengeRequest) {
         Challenge challenge = challengeService.createChallenge(user, createChallengeRequest);
         return new IdResponse(challenge.getId());
     }
@@ -94,7 +93,7 @@ public class ChallengeController {
 
     @PutMapping("/{challengeId}")
     public ChallengeResponse modifyChallenge(@CurrentUser User user, @PathVariable Long challengeId,
-            @Valid @RequestBody ModifyChallengeRequest modifications) {
+            @Valid @RequestBody ChallengeDataRequest modifications) {
         Challenge challenge = challengeService.modifyChallenge(user, challengeId, modifications);
         return ChallengeResponse.from(challenge);
     }
