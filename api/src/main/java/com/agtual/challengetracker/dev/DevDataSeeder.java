@@ -42,6 +42,15 @@ public class DevDataSeeder implements CommandLineRunner {
     private final GoalCompletionRepo goalCompletionRepository;
     private final InviteRepo inviteRepository;
 
+    public void dropDbs() {
+        goalCompletionRepository.deleteAll();
+        goalDefinitionRepository.deleteAll();
+        participantRepository.deleteAll();
+        inviteRepository.deleteAll();
+        challengeRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
