@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
-import com.agtual.challengetracker.dto.response.PendingInvitesForUserResponse;
+import com.agtual.challengetracker.dto.response.ReceivedInviteResponse;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.InviteService;
 
@@ -21,10 +21,10 @@ public class InviteResponseController {
     private final InviteService inviteService;
 
     @GetMapping
-    public List<PendingInvitesForUserResponse> getAllPendingInvitesForUser(@CurrentUser User user) {
+    public List<ReceivedInviteResponse> getAllPendingInvitesForUser(@CurrentUser User user) {
         return inviteService.getPendingInvites(user)
                 .stream()
-                .map(PendingInvitesForUserResponse::from)
+                .map(ReceivedInviteResponse::from)
                 .toList();
     }
 

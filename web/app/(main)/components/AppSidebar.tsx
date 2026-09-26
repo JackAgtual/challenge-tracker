@@ -36,6 +36,7 @@ export function AppSidebar() {
       menuItems: [
         { href: "/dashboard", name: "Dashboard" },
         { href: "/challenges/create", name: "Create" },
+        { href: "/invites", name: "Invites" },
       ],
     },
     {
