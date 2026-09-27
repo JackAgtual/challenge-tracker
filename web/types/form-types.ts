@@ -22,3 +22,9 @@ export const createGoalFormSchema = z.object({
 });
 
 export type TCreateGoalFormSchema = z.infer<typeof createGoalFormSchema>;
+
+export const inviteUserFormSchema = z.object({
+  username: z.string().nonempty(),
+});
+
+export type TInviteUserFormSchema = z.infer<typeof inviteUserFormSchema>;

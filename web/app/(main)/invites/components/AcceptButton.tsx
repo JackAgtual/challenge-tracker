@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { acceptInvite } from "@/actions/invite-response";
+import { acceptInvite } from "@/actions/invites";
 import { redirect } from "next/navigation";
 import { toastGenericError } from "@/lib/toast-utils";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { declineInvite } from "@/actions/invite-response";
+import { declineInvite } from "@/actions/invites";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
