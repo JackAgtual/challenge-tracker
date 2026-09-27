@@ -52,6 +52,9 @@ public class InviteServiceTest extends MockUserBaseTest {
     void beforeEach() {
         challenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "75 hard"));
         when(challengeService.getChallengeFromOwner(challenge.getId(), savedUser)).thenReturn(challenge);
+        when(participantService.isParticipant(savedUser, challenge)).thenReturn(false);
+        when(participantService.isParticipant(savedUser, challenge.getId())).thenReturn(false);
+
     }
 
     @Test
@@ -66,6 +69,17 @@ public class InviteServiceTest extends MockUserBaseTest {
         assertEquals(InviteStatus.PENDING, invite.getStatus());
 
         assertEquals(invite, inviteRepo.findById(invite.getId()).get());
+    }
+
+    @Test
+    void testCantInviteUserThatIsAlreadyParticipant() {
+        User userToInvite = saveRandomUser();
+
+        when(participantService.isParticipant(userToInvite, challenge)).thenReturn(true);
+        when(participantService.isParticipant(userToInvite, challenge.getId())).thenReturn(true);
+
+        assertThrows(ForbiddenException.class,
+                () -> inviteService.inviteToChallenge(savedUser, challenge.getId(), userToInvite));
     }
 
     @Test

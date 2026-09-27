@@ -39,6 +39,10 @@ public class InviteService {
     public Invite inviteToChallenge(User challengeOwner, Long challengeId, User userToInvite) {
         Challenge challenge = challengeService.getChallengeFromOwner(challengeId, challengeOwner);
 
+        if (participantService.isParticipant(userToInvite, challengeId)) {
+            throw new ForbiddenException("User is already a participant in challenge");
+        }
+
         Optional<Invite> existingInvite = inviteRepo.findByChallengeAndInvitedUser(challenge,
                 userToInvite);
         if (existingInvite.isPresent()) {
