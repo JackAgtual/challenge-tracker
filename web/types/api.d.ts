@@ -454,6 +454,8 @@ export interface components {
             /** Format: int64 */
             participantId: number;
             username: string;
+            firstName: string;
+            lastName: string;
             ready: boolean;
         };
         ChallengeReadyResponse: {

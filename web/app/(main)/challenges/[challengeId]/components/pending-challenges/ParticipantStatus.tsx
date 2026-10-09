@@ -1,13 +1,5 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { components } from "@/types/api";
-import { CircleCheck } from "lucide-react";
 
 type ParticipantStatusProps = {
   participants: components["schemas"]["ParticipantResponse"][];
@@ -18,23 +10,22 @@ export default function ParticipantStatus({
 }: ParticipantStatusProps) {
   return (
     <div>
-      <h2>Participants</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Username</TableHead>
-            <TableHead>Ready</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <Card>
+        <CardHeader>
+          <CardTitle>Participants</CardTitle>
+        </CardHeader>
+        <CardContent className="divide-y">
           {participants.map((participant) => (
-            <TableRow key={participant.username}>
-              <TableCell>{participant.username}</TableCell>
-              <TableCell>{participant.ready ? <CircleCheck /> : ""}</TableCell>
-            </TableRow>
+            <div
+              key={participant.participantId}
+              className="flex justify-between py-2 my-0"
+            >
+              <div>{`${participant.username} (${participant.firstName} ${participant.lastName})`}</div>
+              <div>{participant.ready ? "Ready" : "Not ready"}</div>
+            </div>
           ))}
-        </TableBody>
-      </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
