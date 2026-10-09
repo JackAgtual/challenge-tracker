@@ -50,14 +50,14 @@ public class UserServiceTest {
     @Test
     void testCreateUser() {
         User created = userService.createUser(newJwt, newUserRequest);
-        User userFromRepo = userRepo.findById(created.getAuthSubject()).get();
+        User userFromRepo = userRepo.findByAuthSubject(created.getAuthSubject()).get();
         assertUserEquality(userToCreate, userFromRepo);
     }
 
     @Test
     void testCreateUserReturnsExistingUserIfUserAlreadyExists() {
         User existingUser = userService.createUser(existingJwt, existingUserRequest);
-        assertEquals(userRepo.findById(existingJwt.getSubject()).get(), existingUser);
+        assertEquals(userRepo.findByAuthSubject(existingJwt.getSubject()).get(), existingUser);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class UserServiceTest {
         UserAccountSetupRequest accountSetup = new UserAccountSetupRequest(firstName, lastName, username);
         userService.finishAccountSetup(existingUser, accountSetup);
 
-        User userFromRepo = userRepo.findById(existingUser.getAuthSubject()).get();
+        User userFromRepo = userRepo.findByAuthSubject(existingUser.getAuthSubject()).get();
 
         // check account setup fields
         assertEquals(firstName, userFromRepo.getFirstName());
@@ -133,7 +133,7 @@ public class UserServiceTest {
         UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, username);
         userService.finishAccountSetup(existingUser, setup);
 
-        User updatedUser = userRepo.findById(existingUser.getAuthSubject()).get();
+        User updatedUser = userRepo.findByAuthSubject(existingUser.getAuthSubject()).get();
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());

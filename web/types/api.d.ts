@@ -394,7 +394,8 @@ export interface components {
             owner: components["schemas"]["UserResponse"];
         };
         UserResponse: {
-            authSubject: string;
+            /** Format: int64 */
+            id: number;
             email: string;
             firstName?: string;
             lastName?: string;
