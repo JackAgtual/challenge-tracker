@@ -65,8 +65,7 @@ export default async function PendingChallengePage({
   }
 
   const curUserIsChallengeOwner =
-    curParticipant.data.participantId ===
-    challengeOwnerParticipant.data.participantId;
+    curParticipant.data.id === challengeOwnerParticipant.data.id;
 
   return (
     <div>

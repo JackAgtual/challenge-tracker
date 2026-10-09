@@ -452,7 +452,7 @@ export interface components {
         };
         ParticipantResponse: {
             /** Format: int64 */
-            participantId: number;
+            id: number;
             username: string;
             firstName: string;
             lastName: string;

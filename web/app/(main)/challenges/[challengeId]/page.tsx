@@ -35,13 +35,13 @@ export default async function Page({
       {challenge.status === "PENDING" ? (
         <PendingChallengePage
           challengeDetails={challengeDetail.data}
-          curParticipantId={curParticipant.data.participantId}
+          curParticipantId={curParticipant.data.id}
         />
       ) : (
         <GoalCompletionTable
           challengeId={challengeId}
           challengeInProgress={challenge.status === "IN_PROGRESS"}
-          curParticipantId={curParticipant.data.participantId}
+          curParticipantId={curParticipant.data.id}
         />
       )}
     </>

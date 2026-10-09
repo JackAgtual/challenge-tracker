@@ -17,7 +17,7 @@ export default function ParticipantStatus({
         <CardContent className="divide-y">
           {participants.map((participant) => (
             <div
-              key={participant.participantId}
+              key={participant.id}
               className="flex justify-between py-2 my-0"
             >
               <div>{`${participant.username} (${participant.firstName} ${participant.lastName})`}</div>

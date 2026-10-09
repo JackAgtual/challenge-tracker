@@ -6,7 +6,7 @@ import com.agtual.challengetracker.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ParticipantResponse(@NotNull Long participantId, @NotBlank String username, @NotBlank String firstName,
+public record ParticipantResponse(@NotNull Long id, @NotBlank String username, @NotBlank String firstName,
         @NotBlank String lastName, @NotNull boolean ready) {
     public static ParticipantResponse from(Participant participant) {
         User user = participant.getUser();
