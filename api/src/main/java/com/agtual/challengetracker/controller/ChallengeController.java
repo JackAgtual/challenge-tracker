@@ -81,6 +81,12 @@ public class ChallengeController {
         return ParticipantResponse.from(challengeService.getChallengeOwner(user, challengeId));
     }
 
+    @GetMapping("/{challengeId}/participants/{participantId}")
+    public ParticipantResponse getChallengeParticipant(@CurrentUser User user, @PathVariable Long challengeId,
+            @PathVariable Long participantId) {
+        return ParticipantResponse.from(participantService.userGetsParticipantInfo(user, participantId, challengeId));
+    }
+
     @GetMapping("/{challengeId}/start-eligibility")
     public ChallengeReadyResponse canChallengeBeStarted(@CurrentUser User user, @PathVariable Long challengeId) {
         return challengeService.canStartChallenge(user, challengeId);

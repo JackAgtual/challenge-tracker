@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toastGenericError } from "@/lib/toast-utils";
 import { MoreHorizontalIcon } from "lucide-react";
 
 type GoalDefinitionActionMenuProps = {
@@ -26,8 +27,7 @@ export default function GoalDefinitionActionMenu({
       return;
     }
 
-    // TODO: Handle error
-    console.error(res.error);
+    toastGenericError();
   }
 
   return (

@@ -11,7 +11,7 @@ import GoalDefinitionActionMenu from "./GoalDefinitionActionMenu";
 
 type GoalDefinitionsProps = {
   challengeId: number;
-  goalDefinitions: components["schemas"]["GoalDefinitionResponse"][]; // get this from components schema
+  goalDefinitions: components["schemas"]["GoalDefinitionResponse"][];
 };
 
 export default function GoalDefinitions({
