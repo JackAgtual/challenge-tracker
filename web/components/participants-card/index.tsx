@@ -2,6 +2,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -9,19 +10,33 @@ import { getParticipantDisplayName } from "@/lib/participant-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
 import RemoveParticipantButton from "./RemoveParticipantButton";
+import ToggleReady from "./ToggleReady";
 
-type ParticipantsCardProps = {
+type BaseProps = {
   participants: components["schemas"]["ParticipantResponse"][];
   challengeId: number;
-  challengeIsPending: boolean;
-  curUserIsOwner?: boolean;
 };
+
+type PendingProps = BaseProps & {
+  challengeIsPending: true;
+  curUserIsOwner: boolean;
+  curUserIsReady: boolean;
+};
+
+type NonPendingProps = BaseProps & {
+  challengeIsPending: false;
+  curUserIsOwner?: never;
+  curUserIsReady?: never;
+};
+
+type ParticipantsCardProps = PendingProps | NonPendingProps;
 
 export default function ParticipantsCard({
   participants,
   challengeId,
   challengeIsPending,
-  curUserIsOwner = false,
+  curUserIsOwner,
+  curUserIsReady,
 }: ParticipantsCardProps) {
   return (
     <div>
@@ -64,6 +79,11 @@ export default function ParticipantsCard({
             </div>
           ))}
         </CardContent>
+        <CardFooter>
+          {challengeIsPending && (
+            <ToggleReady challengeId={challengeId} isReady={curUserIsReady} />
+          )}
+        </CardFooter>
       </Card>
     </div>
   );

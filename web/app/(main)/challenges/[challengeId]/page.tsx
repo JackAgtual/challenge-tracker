@@ -45,7 +45,6 @@ export default async function Page({
             challengeId={challenge.id}
             participants={challengeDetail.data.participants}
             challengeIsPending={false}
-            curUserIsOwner={curParticipant.data.isChallengeOwner}
           />
           <GoalCompletionTable
             challengeId={challengeId}
