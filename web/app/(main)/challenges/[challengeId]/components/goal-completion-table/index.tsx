@@ -13,13 +13,13 @@ import UncompletedGoalElement from "./UncompletedGoalElement";
 
 type GoalCompletionTableProps = {
   challengeId: number;
-  challengeInProgress: boolean;
+  canModifyGoalCompletions: boolean;
   curParticipantId: number;
 };
 
 export default async function GoalCompletionTable({
   challengeId,
-  challengeInProgress,
+  canModifyGoalCompletions,
   curParticipantId,
 }: GoalCompletionTableProps) {
   await getValidSession();
@@ -62,14 +62,14 @@ export default async function GoalCompletionTable({
                       challengeId={challengeId}
                       goalDefinitionId={goal.id}
                       goalCompletionId={goalCompletionId}
-                      challengeInProgress={challengeInProgress}
+                      canModifyGoalCompletions={canModifyGoalCompletions}
                     />
                   ) : (
                     <UncompletedGoalElement
                       challengeId={challengeId}
                       goalDefinitionId={goal.id}
                       date={row.date}
-                      challengeInProgress={challengeInProgress}
+                      canModifyGoalCompletions={canModifyGoalCompletions}
                     />
                   )}
                 </TableCell>

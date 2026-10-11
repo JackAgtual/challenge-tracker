@@ -8,16 +8,16 @@ type UncompletedGoalElementProps = {
   challengeId: number;
   goalDefinitionId: number;
   date: string;
-  challengeInProgress: boolean;
+  canModifyGoalCompletions: boolean;
 };
 
 export default function UncompletedGoalElement({
   challengeId,
   goalDefinitionId,
   date,
-  challengeInProgress,
+  canModifyGoalCompletions,
 }: UncompletedGoalElementProps) {
-  if (!challengeInProgress) {
+  if (!canModifyGoalCompletions) {
     return <Circle />;
   }
 

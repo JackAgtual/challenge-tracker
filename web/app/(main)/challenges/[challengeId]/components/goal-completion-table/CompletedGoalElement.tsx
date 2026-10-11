@@ -8,16 +8,16 @@ type GoalCompletionIconProps = {
   challengeId: number;
   goalDefinitionId: number;
   goalCompletionId: number;
-  challengeInProgress: boolean;
+  canModifyGoalCompletions: boolean;
 };
 
 export default function GoalCompletionIcon({
   challengeId,
   goalDefinitionId,
   goalCompletionId,
-  challengeInProgress,
+  canModifyGoalCompletions,
 }: GoalCompletionIconProps) {
-  if (!challengeInProgress) {
+  if (!canModifyGoalCompletions) {
     return <CircleCheck />;
   }
 
