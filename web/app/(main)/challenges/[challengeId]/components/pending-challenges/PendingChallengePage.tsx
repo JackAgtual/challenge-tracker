@@ -79,6 +79,7 @@ export default async function PendingChallengePage({
         participants={participants}
         challengeId={challenge.id}
         challengeIsPending={true}
+        curUserIsOwner={curUserIsChallengeOwner}
       />
       {curUserIsChallengeOwner && <InviteUser challengeId={challenge.id} />}
       <ToggleReady

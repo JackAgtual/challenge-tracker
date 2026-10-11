@@ -8,17 +8,20 @@ import {
 import { getParticipantDisplayName } from "@/lib/participant-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
+import RemoveParticipantButton from "./pending-challenges/RemoveParticipantButton";
 
 type ParticipantStatusProps = {
   participants: components["schemas"]["ParticipantResponse"][];
   challengeId: number;
   challengeIsPending: boolean;
+  curUserIsOwner: boolean;
 };
 
 export default function ParticipantStatus({
   participants,
   challengeId,
   challengeIsPending,
+  curUserIsOwner,
 }: ParticipantStatusProps) {
   return (
     <div>
@@ -40,12 +43,23 @@ export default function ParticipantStatus({
               className="flex justify-between py-2 my-0"
             >
               <Link
+                className="flex items-center"
                 href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
               >
                 {getParticipantDisplayName(participant)}
               </Link>
               {challengeIsPending && (
-                <div>{participant.ready ? "Ready" : "Not ready"}</div>
+                <div className="flex gap-x-2">
+                  <div className="flex items-center">
+                    {participant.ready ? "Ready" : "Not ready"}
+                  </div>
+                  {curUserIsOwner && (
+                    <RemoveParticipantButton
+                      challengeId={challengeId}
+                      participantId={participant.id}
+                    />
+                  )}
+                </div>
               )}
             </div>
           ))}
