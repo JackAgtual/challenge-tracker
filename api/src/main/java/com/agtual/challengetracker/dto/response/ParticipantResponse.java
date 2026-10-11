@@ -10,10 +10,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ParticipantResponse(@NotNull Long id, @NotBlank String username, @NotBlank String firstName,
-        @NotBlank String lastName, @NotNull boolean ready, @NotNull LocalDate joinedAt) {
+        @NotBlank String lastName, @NotNull boolean ready, @NotNull LocalDate joinedAt,
+        @NotNull boolean isChallengeOwner) {
     public static ParticipantResponse from(Participant participant) {
         User user = participant.getUser();
+        boolean isChallengeOwner = participant.getChallenge().getOwner().getId() == user.getId();
         return new ParticipantResponse(participant.getId(), user.getUsername(), user.getFirstName(), user.getLastName(),
-                participant.isReady(), LocalDate.ofInstant(participant.getJoinedAt(), ZoneId.systemDefault()));
+                participant.isReady(), LocalDate.ofInstant(participant.getJoinedAt(), ZoneId.systemDefault()),
+                isChallengeOwner);
     }
 }

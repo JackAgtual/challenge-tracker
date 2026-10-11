@@ -459,6 +459,7 @@ export interface components {
             ready: boolean;
             /** Format: date */
             joinedAt: string;
+            isChallengeOwner: boolean;
         };
         ChallengeReadyResponse: {
             ready: boolean;

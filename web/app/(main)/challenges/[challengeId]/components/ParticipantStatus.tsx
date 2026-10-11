@@ -53,7 +53,7 @@ export default function ParticipantStatus({
                   <div className="flex items-center">
                     {participant.ready ? "Ready" : "Not ready"}
                   </div>
-                  {curUserIsOwner && (
+                  {curUserIsOwner && !participant.isChallengeOwner && (
                     <RemoveParticipantButton
                       challengeId={challengeId}
                       participantId={participant.id}
