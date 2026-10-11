@@ -4,9 +4,12 @@ import { getValidSession } from "@/lib/auth-utils";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ challengeId: number; participantId: number }>;
+  params: Promise<{ challengeId: string; participantId: string }>;
 }) {
-  const { challengeId, participantId } = await params;
+  const { challengeId: challengeIdStr, participantId: participantIdStr } =
+    await params;
+  const challengeId = Number(challengeIdStr);
+  const participantId = Number(participantIdStr);
 
   await getValidSession();
 

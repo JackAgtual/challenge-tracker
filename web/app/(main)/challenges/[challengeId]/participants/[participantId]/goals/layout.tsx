@@ -9,11 +9,14 @@ export default async function Layout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ challengeId: number; participantId: number }>;
+  params: Promise<{ challengeId: string; participantId: string }>;
 }) {
   await getValidSession();
 
-  const { challengeId, participantId } = await params;
+  const { challengeId: challengeIdStr, participantId: participantIdStr } =
+    await params;
+  const challengeId = Number(challengeIdStr);
+  const participantId = Number(participantIdStr);
 
   const { data: participant, error } = await client.GET(
     "/challenges/{challengeId}/participants/{participantId}",

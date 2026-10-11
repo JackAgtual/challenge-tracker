@@ -8,10 +8,11 @@ import GoalCompletionTable from "@/components/goal-completion-table";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ challengeId: number }>;
+  params: Promise<{ challengeId: string }>;
 }) {
   await getValidSession();
-  const { challengeId } = await params;
+  const { challengeId: challengeIdStr } = await params;
+  const challengeId = Number(challengeIdStr);
 
   const [curParticipant, challengeDetail] = await Promise.all([
     client.GET("/challenges/{challengeId}/participants/me", {

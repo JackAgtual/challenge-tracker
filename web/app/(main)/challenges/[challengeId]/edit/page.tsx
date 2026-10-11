@@ -7,9 +7,10 @@ import Link from "next/link";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ challengeId: number }>;
+  params: Promise<{ challengeId: string }>;
 }) {
-  const { challengeId } = await params;
+  const { challengeId: challengeIdStr } = await params;
+  const challengeId = Number(challengeIdStr);
 
   const res = await client.GET("/challenges/{challengeId}", {
     params: { path: { challengeId } },
