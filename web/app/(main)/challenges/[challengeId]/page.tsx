@@ -2,8 +2,8 @@ import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import PendingChallengePage from "./components/pending-challenges/PendingChallengePage";
-import ParticipantStatus from "./components/ParticipantStatus";
 import GoalCompletionTable from "@/components/goal-completion-table";
+import ParticipantsCard from "@/components/participants-card";
 
 export default async function Page({
   params,
@@ -41,10 +41,11 @@ export default async function Page({
         />
       ) : (
         <>
-          <ParticipantStatus
+          <ParticipantsCard
             challengeId={challenge.id}
             participants={challengeDetail.data.participants}
             challengeIsPending={false}
+            curUserIsOwner={curParticipant.data.isChallengeOwner}
           />
           <GoalCompletionTable
             challengeId={challengeId}

@@ -1,7 +1,6 @@
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import { components } from "@/types/api";
-import ParticipantStatus from "../ParticipantStatus";
 import CreateGoalForm from "./CreateGoalForm";
 import EditChallengeButton from "./EditChallengeButton";
 import InviteUser from "./InviteUser";
@@ -9,6 +8,7 @@ import Invites from "./Invites";
 import ToggleReady from "./ToggleReady";
 import GoalDefinitions from "./goal-definitions";
 import StartChallengeButton from "./start-challenge-button";
+import ParticipantsCard from "@/components/participants-card";
 
 type PendingChallengePageProps = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
@@ -75,7 +75,7 @@ export default async function PendingChallengePage({
           <StartChallengeButton challengeId={challenge.id} />
         </>
       )}
-      <ParticipantStatus
+      <ParticipantsCard
         participants={participants}
         challengeId={challenge.id}
         challengeIsPending={true}

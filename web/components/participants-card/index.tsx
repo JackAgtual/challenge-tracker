@@ -8,21 +8,21 @@ import {
 import { getParticipantDisplayName } from "@/lib/participant-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
-import RemoveParticipantButton from "./pending-challenges/RemoveParticipantButton";
+import RemoveParticipantButton from "./RemoveParticipantButton";
 
-type ParticipantStatusProps = {
+type ParticipantsCardProps = {
   participants: components["schemas"]["ParticipantResponse"][];
   challengeId: number;
   challengeIsPending: boolean;
-  curUserIsOwner: boolean;
+  curUserIsOwner?: boolean;
 };
 
-export default function ParticipantStatus({
+export default function ParticipantsCard({
   participants,
   challengeId,
   challengeIsPending,
-  curUserIsOwner,
-}: ParticipantStatusProps) {
+  curUserIsOwner = false,
+}: ParticipantsCardProps) {
   return (
     <div>
       <Card>
