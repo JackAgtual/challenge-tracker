@@ -9,10 +9,11 @@ export default function EditChallengeButton({
   challengeId,
 }: EditChallengeButtonProps) {
   return (
-    <div>
-      <Link href={`/challenges/${challengeId}/edit`}>
-        <Button>Edit challenge</Button>
-      </Link>
-    </div>
+    <Button
+      render={<Link href={`/challenges/${challengeId}/edit`} />}
+      nativeButton={false}
+    >
+      Edit challenge
+    </Button>
   );
 }

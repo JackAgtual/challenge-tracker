@@ -30,9 +30,13 @@ export default async function Page({
         challengeId={challengeId}
         defaultValues={defaultVals}
       />
-      <Link href={`/challenges/${challengeId}`}>
-        <Button variant="outline">Cancel</Button>
-      </Link>
+      <Button
+        variant="outline"
+        render={<Link href={`/challenges/${challengeId}`} />}
+        nativeButton={false}
+      >
+        Cancel
+      </Button>
     </div>
   );
 }
