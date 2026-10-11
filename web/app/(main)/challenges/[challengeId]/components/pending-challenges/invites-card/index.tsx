@@ -1,0 +1,44 @@
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { components } from "@/types/api";
+import InviteUserForm from "./InviteUserForm";
+import InvitesTable from "./InvitesTable";
+
+type InvitesCardProps = {
+  invites: components["schemas"]["NonAcceptedInvitesForChallengeResponse"][];
+  challengeId: number;
+  curUserIsChallengeOwner: boolean;
+};
+
+export default function InvitesCard({
+  invites,
+  challengeId,
+  curUserIsChallengeOwner,
+}: InvitesCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Invites</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {invites.length === 0 ? (
+          <div>No invites</div>
+        ) : (
+          <InvitesTable invites={invites} />
+        )}
+      </CardContent>
+      <CardFooter>
+        {curUserIsChallengeOwner && (
+          <div>
+            <InviteUserForm challengeId={challengeId} />
+          </div>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}

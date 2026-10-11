@@ -4,9 +4,8 @@ import { getValidSession } from "@/lib/auth-utils";
 import { components } from "@/types/api";
 import CreateGoalForm from "./CreateGoalForm";
 import EditChallengeButton from "./EditChallengeButton";
-import InviteUser from "./InviteUser";
-import Invites from "./Invites";
 import GoalDefinitions from "./goal-definitions";
+import InvitesCard from "./invites-card";
 import StartChallengeButton from "./start-challenge-button";
 
 type PendingChallengePageProps = {
@@ -81,8 +80,11 @@ export default async function PendingChallengePage({
         curUserIsOwner={curUserIsChallengeOwner}
         curUserIsReady={curParticipant.data.ready}
       />
-      {curUserIsChallengeOwner && <InviteUser challengeId={challenge.id} />}
-      <Invites invites={invites.data} />
+      <InvitesCard
+        invites={invites.data}
+        challengeId={challenge.id}
+        curUserIsChallengeOwner={curUserIsChallengeOwner}
+      />
       <h2>Your goals</h2>
       <GoalDefinitions
         challengeId={challenge.id}
