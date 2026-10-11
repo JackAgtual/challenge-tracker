@@ -41,7 +41,7 @@ export default function InviteUser({ challengeId }: InviteUserProps) {
         render={({ field, fieldState }) => (
           <Field>
             <FieldLabel>Username</FieldLabel>
-            <Input {...field} id={field.name} placeholder="75 Hard" />
+            <Input {...field} id={field.name} />
             {fieldState.error && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
