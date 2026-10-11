@@ -1,13 +1,13 @@
-import GoalDefinitions from "@/app/(main)/challenges/[challengeId]/components/pending-challenges/goal-definitions";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import { components } from "@/types/api";
+import ParticipantStatus from "../ParticipantStatus";
 import CreateGoalForm from "./CreateGoalForm";
 import EditChallengeButton from "./EditChallengeButton";
 import InviteUser from "./InviteUser";
 import Invites from "./Invites";
-import ParticipantStatus from "./ParticipantStatus";
 import ToggleReady from "./ToggleReady";
+import GoalDefinitions from "./goal-definitions";
 import StartChallengeButton from "./start-challenge-button";
 
 type PendingChallengePageProps = {
@@ -78,6 +78,7 @@ export default async function PendingChallengePage({
       <ParticipantStatus
         participants={participants}
         challengeId={challenge.id}
+        challengeIsPending={true}
       />
       {curUserIsChallengeOwner && <InviteUser challengeId={challenge.id} />}
       <ToggleReady

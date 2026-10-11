@@ -12,11 +12,13 @@ import Link from "next/link";
 type ParticipantStatusProps = {
   participants: components["schemas"]["ParticipantResponse"][];
   challengeId: number;
+  challengeIsPending: boolean;
 };
 
 export default function ParticipantStatus({
   participants,
   challengeId,
+  challengeIsPending,
 }: ParticipantStatusProps) {
   return (
     <div>
@@ -25,8 +27,9 @@ export default function ParticipantStatus({
           <CardTitle>Participants</CardTitle>
           <CardDescription>
             <p>
-              Participants that have accepted an invite to this challenge. Click
-              on a user to see their goal definitions.
+              {challengeIsPending
+                ? "Participants that have accepted an invite to this challenge. Click on a user to see their goal definitions."
+                : "Participants of this challenge. Click on a user to see their goal completions."}
             </p>
           </CardDescription>
         </CardHeader>
@@ -37,11 +40,13 @@ export default function ParticipantStatus({
               className="flex justify-between py-2 my-0"
             >
               <Link
-                href={`/challenges/${challengeId}/participants/${participant.id}/goals`}
+                href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
               >
                 {getParticipantDisplayName(participant)}
               </Link>
-              <div>{participant.ready ? "Ready" : "Not ready"}</div>
+              {challengeIsPending && (
+                <div>{participant.ready ? "Ready" : "Not ready"}</div>
+              )}
             </div>
           ))}
         </CardContent>
