@@ -1,5 +1,6 @@
 import { client } from "@/lib/api-client";
 import ClientButton from "./ClientButton";
+import { getValidSession } from "@/lib/auth-utils";
 
 type StartChallengeButtonProps = {
   challengeId: number;
@@ -8,6 +9,7 @@ type StartChallengeButtonProps = {
 export default async function StartChallengeButton({
   challengeId,
 }: StartChallengeButtonProps) {
+  await getValidSession();
   const startEligibility = await client.GET(
     "/challenges/{challengeId}/start-eligibility",
     {

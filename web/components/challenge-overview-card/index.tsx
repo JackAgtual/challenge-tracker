@@ -1,12 +1,22 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { components } from "@/types/api";
+import EditChallengeButton from "./EditChallengeButton";
+import StartChallengeButton from "./start-challenge-button";
 
 type ChallengeOverviewCardProps = {
   challenge: components["schemas"]["ChallengeResponse"];
+  canEditAndStartChallenge: boolean;
 };
 
 export default function ChallengeOverviewCard({
   challenge,
+  canEditAndStartChallenge,
 }: ChallengeOverviewCardProps) {
   return (
     <Card>
@@ -25,6 +35,12 @@ export default function ChallengeOverviewCard({
           <p>{challenge.owner.username}</p>
         </div>
       </CardContent>
+      {canEditAndStartChallenge && (
+        <CardFooter>
+          <EditChallengeButton challengeId={challenge.id} />
+          <StartChallengeButton challengeId={challenge.id} />
+        </CardFooter>
+      )}
     </Card>
   );
 }

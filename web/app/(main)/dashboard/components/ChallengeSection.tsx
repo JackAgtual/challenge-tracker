@@ -1,5 +1,4 @@
-import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ChallengeOverviewCard from "@/components/challenge-overview-card";
 import { components } from "@/types/api";
 import Link from "next/link";
 
@@ -25,7 +24,10 @@ export default function ChallengeSection({
               href={`/challenges/${challenge.id}`}
               className="max-w-2xs"
             >
-              <ChallengeOverviewCard challenge={challenge} />
+              <ChallengeOverviewCard
+                challenge={challenge}
+                canEditAndStartChallenge={false}
+              />
             </Link>
           ))}
         </div>

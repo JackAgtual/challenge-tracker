@@ -1,9 +1,9 @@
-import ChallengeOverviewCard from "@/components/ChallengeOverviewCard";
+import ChallengeOverviewCard from "@/components/challenge-overview-card";
+import GoalCompletionTable from "@/components/goal-completion-table";
+import ParticipantsCard from "@/components/participants-card";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import PendingChallengePage from "./components/pending-challenges/PendingChallengePage";
-import GoalCompletionTable from "@/components/goal-completion-table";
-import ParticipantsCard from "@/components/participants-card";
 
 export default async function Page({
   params,
@@ -33,14 +33,19 @@ export default async function Page({
   const { challenge } = challengeDetail.data;
   return (
     <>
-      <ChallengeOverviewCard challenge={challenge} />
       {challenge.status === "PENDING" ? (
-        <PendingChallengePage
-          challengeDetails={challengeDetail.data}
-          curParticipantId={curParticipant.data.id}
-        />
+        <>
+          <PendingChallengePage
+            challengeDetails={challengeDetail.data}
+            curParticipantId={curParticipant.data.id}
+          />
+        </>
       ) : (
         <>
+          <ChallengeOverviewCard
+            challenge={challengeDetail.data.challenge}
+            canEditAndStartChallenge={false}
+          />
           <ParticipantsCard
             challengeId={challenge.id}
             participants={challengeDetail.data.participants}
