@@ -6,15 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { components } from "@/types/api";
+import { GoalDefinitionsProps } from ".";
 import GoalDefinitionActionMenu from "./GoalDefinitionActionMenu";
 
-type GoalDefinitionsProps = {
-  challengeId: number;
-  goalDefinitions: components["schemas"]["GoalDefinitionResponse"][];
-};
-
-export default function GoalDefinitions({
+export default function GoalDefinitionsTable({
   challengeId,
   goalDefinitions,
 }: GoalDefinitionsProps) {

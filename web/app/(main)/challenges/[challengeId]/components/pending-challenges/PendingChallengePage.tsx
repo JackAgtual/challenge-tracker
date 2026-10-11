@@ -2,11 +2,12 @@ import ParticipantsCard from "@/components/participants-card";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
 import { components } from "@/types/api";
-import CreateGoalForm from "./CreateGoalForm";
+import CreateGoalForm from "./goal-definitions-card/CreateGoalForm";
 import EditChallengeButton from "./EditChallengeButton";
-import GoalDefinitions from "./goal-definitions";
+import GoalDefinitionsTable from "./goal-definitions-card/GoalDefinitionsTable";
 import InvitesCard from "./invites-card";
 import StartChallengeButton from "./start-challenge-button";
+import GoalDefinitionsCard from "./goal-definitions-card";
 
 type PendingChallengePageProps = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
@@ -85,12 +86,10 @@ export default async function PendingChallengePage({
         challengeId={challenge.id}
         curUserIsChallengeOwner={curUserIsChallengeOwner}
       />
-      <h2>Your goals</h2>
-      <GoalDefinitions
+      <GoalDefinitionsCard
         challengeId={challenge.id}
         goalDefinitions={goalDefinitions.data}
       />
-      <CreateGoalForm challengeId={challenge.id} />
     </div>
   );
 }
