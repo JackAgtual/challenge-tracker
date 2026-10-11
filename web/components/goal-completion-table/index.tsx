@@ -45,7 +45,9 @@ export default async function GoalCompletionTable({
         <TableRow>
           <TableHead>Date</TableHead>
           {goalDefinitions.map((def) => (
-            <TableHead key={def.id}>{def.name}</TableHead>
+            <TableHead key={def.id} className="text-center">
+              {def.name}
+            </TableHead>
           ))}
         </TableRow>
       </TableHeader>
@@ -57,21 +59,23 @@ export default async function GoalCompletionTable({
               const goalCompletionId = row.completionsPerGoal[goal.id];
               return (
                 <TableCell key={goal.id}>
-                  {goalCompletionId ? (
-                    <CompletedGoalElement
-                      challengeId={challengeId}
-                      goalDefinitionId={goal.id}
-                      goalCompletionId={goalCompletionId}
-                      canModifyGoalCompletions={canModifyGoalCompletions}
-                    />
-                  ) : (
-                    <UncompletedGoalElement
-                      challengeId={challengeId}
-                      goalDefinitionId={goal.id}
-                      date={row.date}
-                      canModifyGoalCompletions={canModifyGoalCompletions}
-                    />
-                  )}
+                  <div className="flex justify-center">
+                    {goalCompletionId ? (
+                      <CompletedGoalElement
+                        challengeId={challengeId}
+                        goalDefinitionId={goal.id}
+                        goalCompletionId={goalCompletionId}
+                        canModifyGoalCompletions={canModifyGoalCompletions}
+                      />
+                    ) : (
+                      <UncompletedGoalElement
+                        challengeId={challengeId}
+                        goalDefinitionId={goal.id}
+                        date={row.date}
+                        canModifyGoalCompletions={canModifyGoalCompletions}
+                      />
+                    )}
+                  </div>
                 </TableCell>
               );
             })}
