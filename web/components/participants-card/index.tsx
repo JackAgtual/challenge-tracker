@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getParticipantDisplayName } from "@/lib/participant-utils";
+import { getDisplayNameFromParticipant } from "@/lib/name-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
 import RemoveParticipantButton from "./RemoveParticipantButton";
@@ -61,7 +61,7 @@ export default function ParticipantsCard({
                 className="flex items-center"
                 href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
               >
-                {getParticipantDisplayName(participant)}
+                {getDisplayNameFromParticipant(participant)}
               </Link>
               {challengeIsPending && (
                 <div className="flex gap-x-2">

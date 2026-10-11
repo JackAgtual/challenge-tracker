@@ -8,6 +8,7 @@ import {
 import { client } from "@/lib/api-client";
 import AcceptButton from "./components/AcceptButton";
 import DeclineButton from "./components/DeclineButton";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
 
 export default async function Page() {
   const { error, data } = await client.GET("/invites");
@@ -26,10 +27,7 @@ export default async function Page() {
               <CardTitle>{challenge.name}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>
-                Invited by {inviteSender.username} (
-                {`${inviteSender.firstName} ${inviteSender.lastName}`})
-              </p>
+              <p>Invited by {getDisplayNameFromUser(inviteSender)}</p>
             </CardContent>
             <CardFooter className="grid grid-cols-2 w-fit gap-x-2">
               <AcceptButton inviteId={id} challengeId={challenge.id} />

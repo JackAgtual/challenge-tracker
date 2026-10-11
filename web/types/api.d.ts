@@ -396,7 +396,6 @@ export interface components {
         UserResponse: {
             /** Format: int64 */
             id: number;
-            email: string;
             firstName?: string;
             lastName?: string;
             username?: string;
@@ -434,12 +433,7 @@ export interface components {
             /** Format: int64 */
             id: number;
             challenge: components["schemas"]["ChallengeResponse"];
-            inviteSender: components["schemas"]["UserNameResponse"];
-        };
-        UserNameResponse: {
-            firstName: string;
-            lastName: string;
-            username: string;
+            inviteSender: components["schemas"]["UserResponse"];
         };
         GroupedChallengeResponse: {
             inProgress: components["schemas"]["ChallengeResponse"][];
@@ -482,7 +476,7 @@ export interface components {
             goalCompletionRowResponses: components["schemas"]["GoalCompletionRowResponse"][];
         };
         NonAcceptedInvitesForChallengeResponse: {
-            username: string;
+            user: components["schemas"]["UserResponse"];
             /** @enum {string} */
             inviteStatus: "PENDING" | "ACCEPTED" | "DECLINED";
         };

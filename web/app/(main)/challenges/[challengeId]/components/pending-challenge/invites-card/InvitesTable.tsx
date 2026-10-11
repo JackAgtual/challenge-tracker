@@ -1,11 +1,12 @@
 import {
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
 import { components } from "@/types/api";
 
 type InvitesTableProps = {
@@ -23,8 +24,8 @@ export default function InvitesTable({ invites }: InvitesTableProps) {
       </TableHeader>
       <TableBody>
         {invites.map((invite) => (
-          <TableRow key={invite.username}>
-            <TableCell>{invite.username}</TableCell>
+          <TableRow key={invite.user.id}>
+            <TableCell>{getDisplayNameFromUser(invite.user)}</TableCell>
             <TableCell>{invite.inviteStatus}</TableCell>
           </TableRow>
         ))}
