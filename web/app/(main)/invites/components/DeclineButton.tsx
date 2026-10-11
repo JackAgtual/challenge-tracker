@@ -1,16 +1,17 @@
 "use client";
 
 import { declineInvite } from "@/actions/invites";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { toastGenericError } from "@/lib/toast-utils";
 
 type DeclineButtonProps = {
@@ -26,18 +27,20 @@ export default function DeclineButton({ inviteId }: DeclineButtonProps) {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger render={<Button variant="destructive">Decline</Button>} />
-      <DialogContent>
-        <DialogTitle>Are you sure?</DialogTitle>
-        <DialogDescription>This can't be undone</DialogDescription>
-        <DialogFooter>
-          <Button variant="destructive" onClick={handleClick}>
+    <AlertDialog>
+      <AlertDialogTrigger
+        render={<Button variant="destructive">Decline</Button>}
+      />
+      <AlertDialogContent>
+        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+        <AlertDialogDescription>This can't be undone</AlertDialogDescription>
+        <AlertDialogFooter>
+          <AlertDialogAction variant="destructive" onClick={handleClick}>
             Decline
-          </Button>
-          <DialogClose render={<Button variant="secondary">Cancel</Button>} />
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
