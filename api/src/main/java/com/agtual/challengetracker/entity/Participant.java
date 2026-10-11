@@ -1,7 +1,10 @@
 package com.agtual.challengetracker.entity;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,4 +44,8 @@ public class Participant {
 
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
     private List<GoalDefinition> goalDefinitions = new ArrayList<>();
+
+    @CreationTimestamp
+    @Column(name = "joined_at", nullable = false, updatable = false)
+    private Instant joinedAt;
 }

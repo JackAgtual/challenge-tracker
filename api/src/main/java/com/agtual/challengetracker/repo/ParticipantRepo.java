@@ -17,7 +17,7 @@ public interface ParticipantRepo extends JpaRepository<Participant, Long> {
 
     Optional<Participant> findByIdAndChallengeId(Long participantId, Long challengeId);
 
-    List<Participant> findByChallengeId(Long challengeId);
+    List<Participant> findByChallengeIdOrderByJoinedAtAsc(Long challengeId);
 
     List<Participant> findByUser(User user);
 

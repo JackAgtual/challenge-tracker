@@ -457,6 +457,8 @@ export interface components {
             firstName: string;
             lastName: string;
             ready: boolean;
+            /** Format: date */
+            joinedAt: string;
         };
         ChallengeReadyResponse: {
             ready: boolean;
