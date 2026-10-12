@@ -8,6 +8,7 @@ import {
 import { components } from "@/types/api";
 import EditChallengeButton from "./EditChallengeButton";
 import StartChallengeButton from "./start-challenge-button";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
 
 type ChallengeOverviewCardProps = {
   challenge: components["schemas"]["ChallengeResponse"];
@@ -32,7 +33,7 @@ export default function ChallengeOverviewCard({
           <p>Start date</p>
           <p>{challenge.starDate || "Not set"}</p>
           <p>Owner</p>
-          <p>{challenge.owner.username}</p>
+          <p>{getDisplayNameFromUser(challenge.owner)}</p>
         </div>
       </CardContent>
       {canEditAndStartChallenge && (
