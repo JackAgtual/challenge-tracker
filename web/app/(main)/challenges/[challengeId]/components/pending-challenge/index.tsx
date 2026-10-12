@@ -19,33 +19,43 @@ export default async function PendingChallengePage({
 
   const { challenge, participants } = challengeDetails;
 
-  const [goalDefinitions, invites, curParticipant, challengeOwnerParticipant] =
-    await Promise.all([
-      client.GET(
-        "/challenges/{challengeId}/participants/{participantId}/goals",
-        {
-          params: {
-            path: {
-              challengeId: challenge.id,
-              participantId: curParticipantId,
-            },
-          },
-        }
-      ),
-      client.GET("/challenges/{challengeId}/invites", {
-        params: { path: { challengeId: challenge.id } },
-      }),
-      client.GET("/challenges/{challengeId}/participants/me", {
-        params: {
-          path: { challengeId: challenge.id },
+  const [
+    goalDefinitions,
+    invites,
+    curParticipant,
+    challengeOwnerParticipant,
+    readyResponse,
+  ] = await Promise.all([
+    client.GET("/challenges/{challengeId}/participants/{participantId}/goals", {
+      params: {
+        path: {
+          challengeId: challenge.id,
+          participantId: curParticipantId,
         },
-      }),
-      client.GET("/challenges/{challengeId}/participants/owner", {
-        params: {
-          path: { challengeId: challenge.id },
+      },
+    }),
+    client.GET("/challenges/{challengeId}/invites", {
+      params: { path: { challengeId: challenge.id } },
+    }),
+    client.GET("/challenges/{challengeId}/participants/me", {
+      params: {
+        path: { challengeId: challenge.id },
+      },
+    }),
+    client.GET("/challenges/{challengeId}/participants/owner", {
+      params: {
+        path: { challengeId: challenge.id },
+      },
+    }),
+    client.GET("/challenges/{challengeId}/participants/{participantId}/ready", {
+      params: {
+        path: {
+          challengeId: challenge.id,
+          participantId: curParticipantId,
         },
-      }),
-    ]);
+      },
+    }),
+  ]);
 
   if (goalDefinitions.error) {
     throw new Error(`Unable to get goals for challenge ${challenge.id}`);
@@ -58,6 +68,10 @@ export default async function PendingChallengePage({
   }
   if (challengeOwnerParticipant.error) {
     throw new Error("Could not get challenge owner");
+  }
+
+  if (readyResponse.error) {
+    throw new Error("Could not get your ready response");
   }
 
   const curUserIsChallengeOwner =
@@ -74,7 +88,7 @@ export default async function PendingChallengePage({
         challengeId={challenge.id}
         challengeIsPending={true}
         curUserIsOwner={curUserIsChallengeOwner}
-        curUserIsReady={curParticipant.data.ready}
+        curUserReadyResponse={readyResponse.data}
       />
       <InvitesCard
         invites={invites.data}

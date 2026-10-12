@@ -48,4 +48,8 @@ public class Participant {
     @CreationTimestamp
     @Column(name = "joined_at", nullable = false, updatable = false)
     private Instant joinedAt;
+
+    public boolean isEligibleToSetReady() {
+        return !goalDefinitions.isEmpty();
+    }
 }

@@ -459,6 +459,10 @@ export interface components {
             ready: boolean;
             reasons?: string[];
         };
+        ReadyResponse: {
+            ready: boolean;
+            eligibleToSetReady: boolean;
+        };
         GoalDefinitionResponse: {
             /** Format: int64 */
             id: number;
@@ -1692,7 +1696,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BooleanResponse"];
+                    "*/*": components["schemas"]["ReadyResponse"];
                 };
             };
             /** @description Forbidden Operation */

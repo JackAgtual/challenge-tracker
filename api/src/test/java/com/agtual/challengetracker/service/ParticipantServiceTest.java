@@ -168,7 +168,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
 
     @Test
     void testSetReady() {
-        saveParticipant(savedUser);
+        saveParticipantWithGoalDefinition(savedUser);
 
         Participant resReady = participantService.setReady(savedUser, savedChallenge1.getId(), true);
         assertEquals(1, participantRepo.count());
@@ -184,9 +184,30 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     }
 
     @Test
+    void testCanSetNotReadyWithNoGoalDefinitions() {
+        // No goal definitions
+        saveParticipant(savedUser);
+
+        Participant resNotReady = participantService.setReady(savedUser, savedChallenge1.getId(),
+                false);
+        assertEquals(1, participantRepo.count());
+        assertEquals(false, resNotReady.isReady());
+        assertEquals(resNotReady, participantRepo.findById(resNotReady.getId()).get());
+    }
+
+    @Test
+    void testCantSetReadyIfParticipantDoesntHaveGoalDefinitions() {
+        // No goal definitions
+        saveParticipant(savedUser);
+
+        assertThrows(ForbiddenException.class, () -> participantService.setReady(savedUser, savedChallenge1.getId(),
+                true));
+    }
+
+    @Test
     void testCantSetReadyWhenChallengeIsInProgress() {
         Challenge inProgressChallenge = saveChallengeWithOwner(savedUser, ChallengeStatus.IN_PROGRESS);
-        saveParticipant(savedUser, inProgressChallenge);
+        saveParticipantWithGoalDefinition(savedUser, inProgressChallenge);
 
         assertThrows(ForbiddenException.class,
                 () -> participantService.setReady(savedUser, inProgressChallenge.getId(), false));
@@ -197,7 +218,7 @@ public class ParticipantServiceTest extends MockUserBaseTest {
     @Test
     void testCantSetReadyWhenChallengeIsComplete() {
         Challenge completedChallenge = saveChallengeWithOwner(savedUser, ChallengeStatus.COMPLETE);
-        saveParticipant(savedUser, completedChallenge);
+        saveParticipantWithGoalDefinition(savedUser, completedChallenge);
 
         assertThrows(ForbiddenException.class,
                 () -> participantService.setReady(savedUser, completedChallenge.getId(), false));
@@ -427,6 +448,26 @@ public class ParticipantServiceTest extends MockUserBaseTest {
         Participant participant = TestEntityFactory.validParticipant(userEntity, savedChallenge1);
         participant.setReady(ready);
         participantRepo.save(participant);
+    }
+
+    private Participant saveParticipantWithGoalDefinition(User user) {
+        Participant participant = saveParticipant(user);
+        GoalDefinition goalDefinition = new GoalDefinition();
+        goalDefinition.setName("drink water");
+        goalDefinition.setParticipant(participant);
+        goalDefinitionRepo.save(goalDefinition);
+        participant.setGoalDefinitions(List.of(goalDefinition));
+        return participant;
+    }
+
+    private Participant saveParticipantWithGoalDefinition(User user, Challenge challenge) {
+        Participant participant = saveParticipant(user, challenge);
+        GoalDefinition goalDefinition = new GoalDefinition();
+        goalDefinition.setName("drink water");
+        goalDefinition.setParticipant(participant);
+        goalDefinitionRepo.save(goalDefinition);
+        participant.setGoalDefinitions(List.of(goalDefinition));
+        return participant;
     }
 
     private Participant saveParticipant(User user) {

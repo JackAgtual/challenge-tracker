@@ -3,6 +3,8 @@ package com.agtual.challengetracker.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -196,13 +198,26 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
 
     @Test
     void testDeleteGoal() {
+        // save multiple goals
+        GoalDefinition goal = goalDefinitionRepo
+                .save(TestEntityFactory.validGoalDefinition(participant, goalName));
+        goalDefinitionRepo.save(TestEntityFactory.validGoalDefinition(participant, "another goal"));
+
+        goalDefinitionService.deleteGoal(savedUser, challenge.getId(), goal.getId());
+
+        assertEquals(1, goalDefinitionRepo.count());
+        verify(participantService, never()).setReady(savedUser, challenge.getId(), false);
+
+    }
+
+    @Test
+    void testDeletingLastGoalDefinitionSetsNotReadyOnParticipant() {
         GoalDefinition goal = goalDefinitionRepo
                 .save(TestEntityFactory.validGoalDefinition(participant, goalName));
 
         goalDefinitionService.deleteGoal(savedUser, challenge.getId(), goal.getId());
 
-        assertEquals(0, goalDefinitionRepo.count());
-
+        verify(participantService).setReady(savedUser, challenge.getId(), false);
     }
 
     @Test
@@ -228,7 +243,8 @@ public class GoalDefinitionServiceTest extends MockUserBaseTest {
                 .save(TestEntityFactory.validGoalDefinition(otherParticipant, "another goal"));
 
         assertThrows(ForbiddenException.class,
-                () -> goalDefinitionService.deleteGoal(savedUser, challenge.getId(), goalFromOtherChallenge.getId()));
+                () -> goalDefinitionService.deleteGoal(savedUser, challenge.getId(),
+                        goalFromOtherChallenge.getId()));
     }
 
 }

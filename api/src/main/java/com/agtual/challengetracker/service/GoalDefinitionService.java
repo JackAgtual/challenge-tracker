@@ -3,6 +3,7 @@ package com.agtual.challengetracker.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.agtual.challengetracker.dto.request.CreateGoalRequest;
 import com.agtual.challengetracker.entity.Participant;
@@ -43,6 +44,7 @@ public class GoalDefinitionService {
         return goalDefinitionRepo.save(goalDefinition);
     }
 
+    @Transactional
     public void deleteGoal(User user, Long challengeId, Long goalId) {
         GoalDefinition goal = getGoal(user, goalId);
 
@@ -51,6 +53,11 @@ public class GoalDefinitionService {
         }
 
         goalDefinitionRepo.delete(goal);
+
+        // If deleting last goal definition set the participant to not ready
+        if (getGoalsForChallenge(user, challengeId).isEmpty()) {
+            participantService.setReady(user, challengeId, false);
+        }
     }
 
     public GoalDefinition getGoal(User user, Long goalId) {

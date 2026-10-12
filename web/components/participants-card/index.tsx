@@ -20,13 +20,13 @@ type BaseProps = {
 type PendingProps = BaseProps & {
   challengeIsPending: true;
   curUserIsOwner: boolean;
-  curUserIsReady: boolean;
+  curUserReadyResponse: components["schemas"]["ReadyResponse"];
 };
 
 type NonPendingProps = BaseProps & {
   challengeIsPending: false;
   curUserIsOwner?: never;
-  curUserIsReady?: never;
+  curUserReadyResponse?: never;
 };
 
 type ParticipantsCardProps = PendingProps | NonPendingProps;
@@ -36,7 +36,7 @@ export default function ParticipantsCard({
   challengeId,
   challengeIsPending,
   curUserIsOwner,
-  curUserIsReady,
+  curUserReadyResponse,
 }: ParticipantsCardProps) {
   return (
     <div>
@@ -81,7 +81,11 @@ export default function ParticipantsCard({
         </CardContent>
         <CardFooter>
           {challengeIsPending && (
-            <ToggleReady challengeId={challengeId} isReady={curUserIsReady} />
+            <ToggleReady
+              challengeId={challengeId}
+              isReady={curUserReadyResponse.ready}
+              eligibleToSetReady={curUserReadyResponse.eligibleToSetReady}
+            />
           )}
         </CardFooter>
       </Card>

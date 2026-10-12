@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
 import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.dto.request.SendInviteRequest;
-import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.ChallengeDetailResponse;
 import com.agtual.challengetracker.dto.response.ChallengeReadyResponse;
 import com.agtual.challengetracker.dto.response.ChallengeResponse;
@@ -25,6 +24,7 @@ import com.agtual.challengetracker.dto.response.IdResponse;
 import com.agtual.challengetracker.dto.response.NonAcceptedInvitesForChallengeResponse;
 import com.agtual.challengetracker.dto.response.ParticipantResponse;
 import com.agtual.challengetracker.dto.response.ReadyRequest;
+import com.agtual.challengetracker.dto.response.ReadyResponse;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
@@ -111,12 +111,12 @@ public class ChallengeController {
     }
 
     @GetMapping("/{challengeId}/participants/{participantId}/ready")
-    public BooleanResponse isReady(@CurrentUser User user, @PathVariable Long challengeId,
+    public ReadyResponse isReady(@CurrentUser User user, @PathVariable Long challengeId,
             @PathVariable Long participantId) {
         Participant participant = participantService.userGetsParticipantInfo(user,
                 participantId, challengeId);
 
-        return new BooleanResponse(participant.isReady());
+        return ReadyResponse.from(participant);
     }
 
     @DeleteMapping("/{challengeId}/participants/{participantId}")

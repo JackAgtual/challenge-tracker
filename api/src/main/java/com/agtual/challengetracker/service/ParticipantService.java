@@ -71,12 +71,17 @@ public class ParticipantService {
 
     public Participant setReady(User user, Long challengeId, boolean ready) {
         Participant participant = getChallengeParticipationForUserAndChallengeId(user, challengeId);
-        participant.setReady(ready);
 
         if (participant.getChallenge().getStatus() != ChallengeStatus.PENDING) {
             throw new ForbiddenException("Can only change ready state when challenge is pending");
         }
 
+        if (ready && !participant.isEligibleToSetReady()) {
+            throw new ForbiddenException(ResourceType.PARTICIPANT, participant.getId(),
+                    "Must have at leaset one goal definition to set ready.");
+        }
+
+        participant.setReady(ready);
         return participantRepo.save(participant);
     }
 
