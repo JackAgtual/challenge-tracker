@@ -44,11 +44,24 @@ export default function ParticipantsCard({
         <CardHeader>
           <CardTitle>Participants</CardTitle>
           <CardDescription>
-            <p>
-              {challengeIsPending
-                ? "Participants that have accepted an invite to this challenge. Click on a user to see their goal definitions."
-                : "Participants of this challenge. Click on a user to see their goal completions."}
-            </p>
+            {challengeIsPending ? (
+              <div className="flex flex-col gap-y-2">
+                <p>
+                  All users participating in this challenge. Click on a user to
+                  see their goal definitions.
+                </p>
+                <p>
+                  Once you are content with your goal definitions click the
+                  Ready button. The owner can't start the challenge until all
+                  participants are ready.
+                </p>
+              </div>
+            ) : (
+              <p>
+                Participants of this challenge. Click on a user to see their
+                goal completions.
+              </p>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="divide-y">

@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -24,6 +25,12 @@ export default function InvitesCard({
     <Card>
       <CardHeader>
         <CardTitle>Invites</CardTitle>
+        <CardDescription>
+          <p>
+            List of users that have been invited to this challenge. Only the
+            challenge owner can invite users to the challenge.
+          </p>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {invites.length === 0 ? (

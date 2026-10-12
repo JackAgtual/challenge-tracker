@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -22,6 +23,9 @@ export default function GoalDefinitionsCard({
     <Card>
       <CardHeader>
         <CardTitle>Your goals</CardTitle>
+        <CardDescription>
+          <p>These are the goals you'll try to complete every day.</p>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {goalDefinitions.length === 0 ? (
