@@ -9,6 +9,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://dev-bwiy8c41xjixmzmy.us.auth0.com/
+  sql:
+    init:
+      mode: never
 
 auth0:
   audience: https://challenge-tracker-api

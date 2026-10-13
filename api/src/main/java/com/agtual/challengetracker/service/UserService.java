@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -12,6 +13,7 @@ import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
 import com.agtual.challengetracker.repo.UserRepo;
+import com.agtual.challengetracker.util.QueryUtil;
 
 @Service
 @lombok.RequiredArgsConstructor
@@ -54,5 +56,10 @@ public class UserService {
 
         user.setupAccount(accountSetupRequest);
         return userRepo.save(user);
+    }
+
+    public List<User> searchUser(String query) {
+        return userRepo.searchUser(QueryUtil.buildQuery(query)).stream()
+                .filter(user -> user.isAccountSetup()).toList();
     }
 }

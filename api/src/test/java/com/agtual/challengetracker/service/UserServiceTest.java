@@ -3,7 +3,12 @@ package com.agtual.challengetracker.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
@@ -31,7 +37,7 @@ public class UserServiceTest {
     static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com");
     static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com");
 
-    @Autowired
+    @MockitoSpyBean
     UserRepo userRepo;
 
     @Autowired
@@ -137,6 +143,23 @@ public class UserServiceTest {
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
+    }
+
+    @Test
+    void testSearchUserOnlyReturnsSetupUsers() {
+        User setupUser1 = mock(User.class);
+        User setupUser2 = mock(User.class);
+        User notSetupUser = mock(User.class);
+
+        when(setupUser1.isAccountSetup()).thenReturn(true);
+        when(setupUser2.isAccountSetup()).thenReturn(true);
+        when(notSetupUser.isAccountSetup()).thenReturn(false);
+
+        doReturn(List.of(setupUser1, setupUser2, notSetupUser)).when(userRepo).searchUser(anyString());
+
+        List<User> users = userService.searchUser("john doe");
+        assertEquals(2, users.size());
+        assertTrue(users.containsAll(List.of(setupUser1, setupUser2)));
     }
 
     private static void assertUserEquality(User expected, User actual) {
