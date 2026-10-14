@@ -1,14 +1,26 @@
 "use client";
 
 import { inviteUser } from "@/actions/invites";
+import { searchUsers } from "@/actions/user-search";
 import { Button } from "@/components/ui/button";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
+import { toastError } from "@/lib/toast-utils";
+import { components } from "@/types/api";
 import {
   inviteUserFormSchema,
   TInviteUserFormSchema,
 } from "@/types/form-types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type InviteUserProps = {
@@ -16,21 +28,44 @@ type InviteUserProps = {
 };
 
 export default function InviteUser({ challengeId }: InviteUserProps) {
-  const { control, handleSubmit, setError, formState } =
-    useForm<TInviteUserFormSchema>({
-      resolver: zodResolver(inviteUserFormSchema),
-      defaultValues: { username: "" },
-    });
+  const [query, setQuery] = useState("");
+  const [queryRes, setQueryRes] = useState<
+    components["schemas"]["UserResponse"][]
+  >([]);
+  const [comboKey, setComboKey] = useState(1); // Used to clear combobox input after submit
+
+  // TODO: use deboune hook
+
+  useEffect(() => {
+    async function getUsers() {
+      const { success, data: users, error } = await searchUsers(query);
+
+      if (!success) {
+        toastError(error.detail);
+        return;
+      }
+
+      setQueryRes(users);
+    }
+    getUsers();
+  }, [query]);
+
+  const { control, handleSubmit, setError } = useForm<TInviteUserFormSchema>({
+    resolver: zodResolver(inviteUserFormSchema),
+    defaultValues: { username: "" },
+  });
 
   async function onSubmit(formData: TInviteUserFormSchema) {
     const { success, error } = await inviteUser(challengeId, formData);
 
-    if (success) {
+    if (!success) {
+      setError("username", { message: error?.detail });
       return;
     }
 
-    console.log(error);
-    setError("username", { message: error?.detail });
+    setComboKey((prev) => prev + 1);
+    setQuery("");
+    setQueryRes([]);
   }
 
   return (
@@ -41,7 +76,30 @@ export default function InviteUser({ challengeId }: InviteUserProps) {
         render={({ field, fieldState }) => (
           <Field>
             <FieldLabel>Username</FieldLabel>
-            <Input {...field} id={field.name} />
+            <Combobox
+              key={comboKey}
+              filter={null}
+              items={queryRes}
+              itemToStringValue={getDisplayNameFromUser}
+              onValueChange={(val) => {
+                field.onChange(val);
+              }}
+              onInputValueChange={(text) => {
+                setQuery(text);
+              }}
+            >
+              <ComboboxInput id={field.name} placeholder="select user" />
+              <ComboboxContent>
+                <ComboboxEmpty>No users found</ComboboxEmpty>
+                <ComboboxList>
+                  {(user) => (
+                    <ComboboxItem key={user.username} value={user.username}>
+                      {getDisplayNameFromUser(user)}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
             {fieldState.error && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
