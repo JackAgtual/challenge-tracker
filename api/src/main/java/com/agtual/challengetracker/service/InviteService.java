@@ -33,7 +33,7 @@ public class InviteService {
             throw new NotFoundException(ResourceType.CHALLENGE, challengeId);
         }
 
-        return inviteRepo.findByChallengeIdAndStatusNot(challengeId, InviteStatus.ACCEPTED);
+        return inviteRepo.findByChallengeIdAndStatusNotOrderByInvitedAtAsc(challengeId, InviteStatus.ACCEPTED);
     }
 
     public Invite inviteToChallenge(User challengeOwner, Long challengeId, User userToInvite) {

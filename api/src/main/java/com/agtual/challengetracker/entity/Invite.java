@@ -1,5 +1,9 @@
 package com.agtual.challengetracker.entity;
 
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.agtual.challengetracker.enums.InviteStatus;
 
 import jakarta.persistence.Column;
@@ -41,4 +45,8 @@ public class Invite {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private InviteStatus status = InviteStatus.PENDING;
+
+    @CreationTimestamp
+    @Column(name = "invited_at", nullable = false, updatable = false)
+    private Instant invitedAt;
 }
