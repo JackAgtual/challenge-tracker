@@ -12,6 +12,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { useDebounce } from "@/hooks/use-debounce";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
 import { toastError } from "@/lib/toast-utils";
 import { components } from "@/types/api";
@@ -27,17 +28,20 @@ type InviteUserProps = {
   challengeId: number;
 };
 
-export default function InviteUser({ challengeId }: InviteUserProps) {
-  const [query, setQuery] = useState("");
+export default function InviteUserForm({ challengeId }: InviteUserProps) {
+  const [query, setQuery] = useDebounce("");
   const [queryRes, setQueryRes] = useState<
     components["schemas"]["UserResponse"][]
   >([]);
   const [comboKey, setComboKey] = useState(1); // Used to clear combobox input after submit
 
-  // TODO: use deboune hook
-
   useEffect(() => {
     async function getUsers() {
+      if (query.trim() === "") {
+        setQueryRes([]);
+        return;
+      }
+
       const { success, data: users, error } = await searchUsers(query);
 
       if (!success) {
@@ -64,7 +68,6 @@ export default function InviteUser({ challengeId }: InviteUserProps) {
     }
 
     setComboKey((prev) => prev + 1);
-    setQuery("");
     setQueryRes([]);
   }
 
