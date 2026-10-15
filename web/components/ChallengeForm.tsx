@@ -5,6 +5,7 @@ import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { getFormErrorMessage } from "@/lib/form-utils";
 import {
   challengeDataFormSchema,
   TChallengeDataFormSchema,
@@ -33,24 +34,24 @@ export default function ChallengeForm(props: ChallengeFormProps) {
     });
 
   const handleCreate = async (formData: TChallengeDataFormSchema) => {
-    const res = await createChallenge(formData);
-    if (res.success) {
-      redirect(`/challenges/${res.data?.id}`);
+    const { success, data, error } = await createChallenge(formData);
+    if (success) {
+      redirect(`/challenges/${data.id}`);
     }
 
-    setError("root", { message: res.error.detail });
+    setError("root", getFormErrorMessage(error));
   };
 
   const handleModify = async (
     formData: TChallengeDataFormSchema,
     challengeId: number
   ) => {
-    const res = await modifyChallenge(formData, challengeId);
-    if (res.success) {
+    const { success, error } = await modifyChallenge(formData, challengeId);
+    if (success) {
       redirect(`/challenges/${challengeId}`);
     }
 
-    setError("root", { message: res.error.detail });
+    setError("root", getFormErrorMessage(error));
   };
 
   const onSubmit = async (formData: TChallengeDataFormSchema) => {

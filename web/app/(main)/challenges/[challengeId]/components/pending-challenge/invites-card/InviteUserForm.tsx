@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { useDebounce } from "@/hooks/use-debounce";
+import { getFormErrorMessage } from "@/lib/form-utils";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
-import { toastError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { components } from "@/types/api";
 import {
   inviteUserFormSchema,
@@ -45,7 +46,7 @@ export default function InviteUserForm({ challengeId }: InviteUserProps) {
       const { success, data: users, error } = await searchUsers(query);
 
       if (!success) {
-        toastError(error.detail);
+        toastProblemDetail(error);
         return;
       }
 
@@ -63,7 +64,7 @@ export default function InviteUserForm({ challengeId }: InviteUserProps) {
     const { success, error } = await inviteUser(challengeId, formData);
 
     if (!success) {
-      setError("username", { message: error?.detail });
+      setError("username", getFormErrorMessage(error));
       return;
     }
 

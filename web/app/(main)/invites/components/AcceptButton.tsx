@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { acceptInvite } from "@/actions/invites";
+import { Button } from "@/components/ui/button";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { redirect } from "next/navigation";
-import { toastGenericError } from "@/lib/toast-utils";
 
 type AcceptButtonProps = {
   inviteId: number;
@@ -15,9 +15,9 @@ export default function AcceptButton({
   challengeId,
 }: AcceptButtonProps) {
   async function handleClick() {
-    const { success } = await acceptInvite(inviteId);
+    const { success, error } = await acceptInvite(inviteId);
     if (!success) {
-      toastGenericError();
+      toastProblemDetail(error);
       return;
     }
     redirect(`/challenges/${challengeId}`);

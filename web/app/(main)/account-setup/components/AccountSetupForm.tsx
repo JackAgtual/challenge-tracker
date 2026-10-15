@@ -4,6 +4,7 @@ import { accountSetup } from "@/actions/account-setup";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { getFormErrorMessage } from "@/lib/form-utils";
 import {
   TSetupAccountFormSchema,
   setupAccountFormSchema,
@@ -26,12 +27,12 @@ export default function AccountSetupForm({
     });
 
   const onSubmit = async (formData: TSetupAccountFormSchema) => {
-    const res = await accountSetup(formData);
+    const { success, error } = await accountSetup(formData);
 
-    if (res.success) {
+    if (success) {
       redirect("/dashboard");
     }
-    setError("root", { message: res.error.detail });
+    setError("root", getFormErrorMessage(error));
   };
 
   return (

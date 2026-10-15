@@ -1,15 +1,19 @@
 "use server";
 
 import { client } from "@/lib/api-client";
+import { ActionResponseWithData } from "@/types/action-types";
+import { components } from "@/types/api";
 
-export async function searchUsers(query: string) {
+export async function searchUsers(
+  query: string
+): Promise<ActionResponseWithData<components["schemas"]["UserResponse"][]>> {
   const { data, error } = await client.GET("/users", {
     params: { query: { query } },
   });
 
   if (error) {
-    return { success: false as const, data: undefined, error };
+    return { success: false, error };
   }
 
-  return { success: true as const, data, error: undefined };
+  return { success: true, data };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { handleGoalUncompletion } from "@/actions/goal-completion";
-import { toastGenericError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { CircleCheck } from "lucide-react";
 
 type GoalCompletionIconProps = {
@@ -22,14 +22,14 @@ export default function GoalCompletionIcon({
   }
 
   async function handleClick() {
-    const { success } = await handleGoalUncompletion({
+    const { success, error } = await handleGoalUncompletion({
       challengeId,
       goalCompletionId,
       goalDefinitionId,
     });
 
     if (!success) {
-      toastGenericError();
+      toastProblemDetail(error);
     }
   }
 
