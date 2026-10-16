@@ -78,7 +78,7 @@ export default async function PendingChallengePage({
     curParticipant.data.id === challengeOwnerParticipant.data.id;
 
   return (
-    <div>
+    <>
       <ChallengeOverviewCard
         challenge={challengeDetails.challenge}
         canEditAndStartChallenge={curUserIsChallengeOwner}
@@ -99,6 +99,6 @@ export default async function PendingChallengePage({
         challengeId={challenge.id}
         goalDefinitions={goalDefinitions.data}
       />
-    </div>
+    </>
   );
 }

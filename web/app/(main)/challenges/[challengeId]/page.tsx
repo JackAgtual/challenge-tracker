@@ -30,7 +30,7 @@ export default async function Page({
 
   const { challenge } = challengeDetail.data;
   return (
-    <>
+    <div className="grid grid-cols-1 gap-y-6">
       {challenge.status === "PENDING" ? (
         <PendingChallengePage
           challengeDetails={challengeDetail.data}
@@ -42,6 +42,6 @@ export default async function Page({
           curParticipantId={curParticipant.data.id}
         />
       )}
-    </>
+    </div>
   );
 }
