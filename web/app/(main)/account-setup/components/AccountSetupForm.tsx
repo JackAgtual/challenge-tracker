@@ -1,8 +1,21 @@
 "use client";
 
 import { accountSetup } from "@/actions/account-setup";
+import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { getFormErrorMessage } from "@/lib/form-utils";
 import {
@@ -36,51 +49,61 @@ export default function AccountSetupForm({
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
-              <Input {...field} id={field.name} placeholder="John" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
-              <Input {...field} id={field.name} placeholder="Smith" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />{" "}
-        <Controller
-          name="username"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Username</FieldLabel>
-              <Input {...field} id={field.name} placeholder="jsmith12" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-        {formState.errors.root && (
-          <>
-            <p className="text-red-600">
-              Something went wrong: {formState.errors.root?.message}
-            </p>
-            <p className="text-red-600">Try again</p>
-          </>
-        )}
-      </form>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Finish setting up your account</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} id="account-form">
+          <FieldGroup>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
+                  <Input {...field} id={field.name} placeholder="John" />
+                  {fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
+                  <Input {...field} id={field.name} placeholder="Smith" />
+                  {fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />{" "}
+            <Controller
+              name="username"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                  <Input {...field} id={field.name} placeholder="jsmith12" />
+                  {fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button type="submit" form="account-form">
+          Submit
+        </Button>
+        <FormRootError formState={formState} />
+      </CardFooter>
+    </Card>
   );
 }
