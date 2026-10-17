@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ChallengeService {
 
     private final ParticipantService participantService;
     private final ChallengeRepo challengeRepo;
+    private final Clock clock;
 
     @Transactional
     public Challenge createChallenge(User user, ChallengeDataRequest challengeRequest) {
@@ -124,5 +126,14 @@ public class ChallengeService {
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);
         challenge.setStartDate(LocalDate.now());
         return challengeRepo.save(challenge);
+    }
+
+    public void completeAllEligibleChallenges() {
+        challengeRepo.findByStatus(ChallengeStatus.IN_PROGRESS).stream()
+                .filter(c -> c.isReadyToComplete(clock))
+                .forEach(c -> {
+                    c.setStatus(ChallengeStatus.COMPLETE);
+                    challengeRepo.save(c);
+                });
     }
 }
