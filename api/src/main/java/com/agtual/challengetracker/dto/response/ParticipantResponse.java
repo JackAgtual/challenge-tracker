@@ -6,16 +6,15 @@ import java.time.ZoneId;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ParticipantResponse(@NotNull Long id, @NotBlank String username, @NotBlank String firstName,
-        @NotBlank String lastName, @NotNull boolean ready, @NotNull LocalDate joinedAt,
+public record ParticipantResponse(@NotNull Long id, @NotNull ValidUserResponse user, @NotNull boolean ready,
+        @NotNull LocalDate joinedAt,
         @NotNull boolean isChallengeOwner) {
     public static ParticipantResponse from(Participant participant) {
         User user = participant.getUser();
         boolean isChallengeOwner = participant.getChallenge().getOwner().getId() == user.getId();
-        return new ParticipantResponse(participant.getId(), user.getUsername(), user.getFirstName(), user.getLastName(),
+        return new ParticipantResponse(participant.getId(), ValidUserResponse.from(user),
                 participant.isReady(), LocalDate.ofInstant(participant.getJoinedAt(), ZoneId.systemDefault()),
                 isChallengeOwner);
     }

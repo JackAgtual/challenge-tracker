@@ -6,7 +6,9 @@ import { components } from "@/types/api";
 
 export async function searchUsers(
   query: string
-): Promise<ActionResponseWithData<components["schemas"]["UserResponse"][]>> {
+): Promise<
+  ActionResponseWithData<components["schemas"]["ValidUserResponse"][]>
+> {
   const { data, error } = await client.GET("/users", {
     params: { query: { query } },
   });

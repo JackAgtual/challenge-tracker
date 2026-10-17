@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import { getDisplayNameFromParticipant } from "@/lib/name-utils";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
 import Link from "next/link";
 
 export default async function Layout({
@@ -30,7 +30,7 @@ export default async function Layout({
       {error ? (
         <p>Something went wrong. Could not get participant info.</p>
       ) : (
-        <p>{`Goals for ${getDisplayNameFromParticipant(participant)}`}</p>
+        <p>{`Goals for ${getDisplayNameFromUser(participant.user)}`}</p>
       )}
       <div>{children}</div>
       <Button

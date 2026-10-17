@@ -426,6 +426,13 @@ export interface components {
             lastName: string;
             username: string;
         };
+        ValidUserResponse: {
+            /** Format: int64 */
+            id: number;
+            firstName: string;
+            lastName: string;
+            username: string;
+        };
         BooleanResponse: {
             value: boolean;
         };
@@ -447,9 +454,7 @@ export interface components {
         ParticipantResponse: {
             /** Format: int64 */
             id: number;
-            username: string;
-            firstName: string;
-            lastName: string;
+            user: components["schemas"]["ValidUserResponse"];
             ready: boolean;
             /** Format: date */
             joinedAt: string;
@@ -643,7 +648,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["UserResponse"][];
+                    "*/*": components["schemas"]["ValidUserResponse"][];
                 };
             };
             /** @description Forbidden Operation */

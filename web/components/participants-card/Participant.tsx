@@ -1,7 +1,8 @@
-import { getDisplayNameFromParticipant } from "@/lib/name-utils";
+import { getDisplayNameFromUser } from "@/lib/name-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
 import RemoveParticipantButton from "./RemoveParticipantButton";
+import User from "../User";
 
 type ParticipantProps = {
   participant: components["schemas"]["ParticipantResponse"];
@@ -22,7 +23,7 @@ export default function Participant({
         className="flex items-center"
         href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
       >
-        {getDisplayNameFromParticipant(participant)}
+        <User user={participant.user} />
       </Link>
       {challengeIsPending && (
         <div className="flex gap-x-2">

@@ -19,6 +19,7 @@ import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.UserResponse;
+import com.agtual.challengetracker.dto.response.ValidUserResponse;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.UserService;
 
@@ -65,8 +66,8 @@ public class UserController {
     }
 
     @GetMapping()
-    public List<UserResponse> searchUsers(@RequestParam String query) {
-        return userService.searchUser(query).stream().map(UserResponse::from).toList();
+    public List<ValidUserResponse> searchUsers(@RequestParam String query) {
+        return userService.searchUser(query).stream().map(ValidUserResponse::from).toList();
     }
 
 }
