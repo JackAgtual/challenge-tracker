@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: challenge-tracker
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-bwiy8c41xjixmzmy.us.auth0.com/
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  sql:
+    init:
+      mode: never
+
+auth0:
+  audience: https://challenge-tracker-api
