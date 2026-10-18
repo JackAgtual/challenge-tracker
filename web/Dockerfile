@@ -6,9 +6,6 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-RUN mkdir .next
-RUN chown node:node .next
-
 COPY --chown=node:node /.next/standalone ./
 COPY --chown=node:node /.next/static ./.next/static
 
