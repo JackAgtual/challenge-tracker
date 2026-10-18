@@ -98,8 +98,8 @@ jobs:
       - name: Containerize
         uses: ./.github/actions/containerize
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           actor: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           dhi_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dhi_token: ${{ secrets.DOCKERHUB_TOKEN }}
 
