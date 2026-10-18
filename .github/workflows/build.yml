@@ -100,6 +100,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           actor: ${{ github.actor }}
+          dhi_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dhi_token: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Upload Spring Boot log
         if: always()
         uses: actions/upload-artifact@v4

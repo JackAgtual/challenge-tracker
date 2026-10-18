@@ -8,6 +8,12 @@ inputs:
   actor:
     description: Username used to log in to GHCR
     required: true
+  dhi_username:
+    description: Username to log in to dhi.io
+    required: true
+  dhi_password:
+    description: Password to log in to dhi.io
+    required: true
 
 runs:
   using: composite
@@ -18,6 +24,13 @@ runs:
         registry: ghcr.io
         username: ${{ inputs.actor }}
         password: ${{ inputs.token }}
+
+    - name: Login to dhi.io
+      uses: docker/login-action@v4
+      with:
+        registry: dhi.io
+        username: ${{ inputs.dhi_username }}
+        password: ${{ inputs.dhi_password }}
 
     - name: Build and push api
       uses: docker/build-push-action@v7
