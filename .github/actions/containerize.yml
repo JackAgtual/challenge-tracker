@@ -1,0 +1,34 @@
+name: Containerize
+description: Build and push api and web images to GHCR
+
+inputs:
+  token:
+    description: Token used to log in to GHCR
+    required: true
+  actor:
+    description: Username used to log in to GHCR
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Login to GHCR
+      uses: docker/login-action@v4
+      with:
+        registry: ghcr.io
+        username: ${{ inputs.actor }}
+        password: ${{ inputs.token }}
+
+    - name: Build and push api
+      uses: docker/build-push-action@v7
+      with:
+        context: ./api
+        push: true
+        tags: ghcr.io/jackagtual/challenge-tracker-api:latest
+
+    - name: Build and push web
+      uses: docker/build-push-action@v7
+      with:
+        context: ./web
+        push: true
+        tags: ghcr.io/jackagtual/challenge-tracker-web:latest

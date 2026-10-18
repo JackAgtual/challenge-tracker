@@ -46,24 +46,6 @@ jobs:
         run: ./mvnw clean install
         working-directory: api
 
-      # STAT CONTAINERIZATION
-      # TODO: Only do on pushes to master
-      - name: Login to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push api
-        uses: docker/build-push-action@v7
-        with:
-          context: ./api
-          push: true
-          tags: ghcr.io/jackagtual/challenge-tracker-api:latest
-
-      ########### END CONTAINERIZATION
-
       - name: Start Spring Boot app
         run: nohup ./mvnw spring-boot:run -Pdev > ../spring-boot.log 2>&1 &
         working-directory: api
@@ -113,14 +95,11 @@ jobs:
         run: npm run build
         working-directory: web
 
-        # TODO: Only do on pushes to master
-      - name: Build and push web
-        uses: docker/build-push-action@v7
+      - name: Containerize
+        uses: ./github/actions/containerize
         with:
-          context: ./web
-          push: true
-          tags: ghcr.io/jackagtual/challenge-tracker-web:latest
-
+          token: ${{ secrets.GITHUB_TOKEN }}
+          actor: ${{ github.actor }}
       - name: Upload Spring Boot log
         if: always()
         uses: actions/upload-artifact@v4
