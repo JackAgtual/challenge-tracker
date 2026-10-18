@@ -55,12 +55,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push api
         uses: docker/build-push-action@v7
         with:
           context: ./api
           push: true
           tags: ghcr.io/jackagtual/challenge-tracker-api:latest
+
+      - name: Build and push web
+        uses: docker/build-push-action@v7
+        with:
+          context: ./web
+          push: true
+          tags: ghcr.io/jackagtual/challenge-tracker-web:latest
 
       ########### END CONTAINERIZATION
 
