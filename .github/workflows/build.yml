@@ -96,7 +96,7 @@ jobs:
         working-directory: web
 
       - name: Containerize
-        uses: ./github/actions/containerize
+        uses: ./.github/actions/containerize
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           actor: ${{ github.actor }}
