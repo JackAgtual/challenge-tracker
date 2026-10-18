@@ -62,13 +62,6 @@ jobs:
           push: true
           tags: ghcr.io/jackagtual/challenge-tracker-api:latest
 
-      - name: Build and push web
-        uses: docker/build-push-action@v7
-        with:
-          context: ./web
-          push: true
-          tags: ghcr.io/jackagtual/challenge-tracker-web:latest
-
       ########### END CONTAINERIZATION
 
       - name: Start Spring Boot app
@@ -119,6 +112,14 @@ jobs:
       - name: Build Next.js app
         run: npm run build
         working-directory: web
+
+        # TODO: Only do on pushes to master
+      - name: Build and push web
+        uses: docker/build-push-action@v7
+        with:
+          context: ./web
+          push: true
+          tags: ghcr.io/jackagtual/challenge-tracker-web:latest
 
       - name: Upload Spring Boot log
         if: always()
