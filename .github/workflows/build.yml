@@ -57,7 +57,7 @@ jobs:
         with:
           context: /api
           push: true
-          tags: ghcr.io/JackAgtual/challenge-tracker-api:latest
+          tags: ghcr.io/jackagtual/challenge-tracker-api:latest
 
       ########### END CONTAINERIZATION
 
