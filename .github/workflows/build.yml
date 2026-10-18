@@ -55,7 +55,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: /api
+          context: ./api
           push: true
           tags: ghcr.io/jackagtual/challenge-tracker-api:latest
 
