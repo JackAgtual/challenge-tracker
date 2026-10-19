@@ -8,8 +8,6 @@ services:
       POSTGRES_DB: db
     ports:
       - 5432:5432
-    networks:
-      - test-app
 
   adminer:
     image: adminer:6.0.1
@@ -18,38 +16,3 @@ services:
       - 8081:8080
     depends_on:
       - postgres
-    networks:
-      - test-app
-
-  # api:
-  #   image: challenge-tracker-api:latest
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db
-  #     SPRING_DATASOURCE_USERNAME: admin
-  #     SPRING_DATASOURCE_PASSWORD: password
-  #   depends_on:
-  #     - postgres
-
-  # web:
-  #   image: challenge-tracker-web:latest
-  #   restart: always
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     AUTH0_DOMAIN: dev-bwiy8c41xjixmzmy.us.auth0.com
-  #     AUTH0_CLIENT_ID: Ud3sEZ7Qxj2FAvt90Ta2uFxAKDTrXWNi
-  #     AUTH0_CLIENT_SECRET: EQoWBp7VN8rYWRqsH0whXRRTIABH1KC89hrN5gXARzgp5xrJAuRP-bTJaTJ_cUDm
-  #     APP_BASE_URL: http://localhost:3000
-  #     AUTH0_SECRET: 1d481bd0d795798440d8562b7b50d722cbe14664ec91cd4ccc1ed5507f057027
-  #     AUTH0_AUDIENCE: https://challenge-tracker-api
-  #     API_BASE_URL: http://api:8080
-  #   depends_on:
-  #     - api
-
-# Need to manually create this network
-networks:
-  test-app:
-    external: true
