@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     services:
       postgres:
@@ -91,6 +94,15 @@ jobs:
       - name: Build Next.js app
         run: npm run build
         working-directory: web
+
+      - name: Containerize
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ./.github/actions/containerize
+        with:
+          actor: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dhi_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dhi_token: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Upload Spring Boot log
         if: always()
