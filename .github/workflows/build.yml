@@ -96,6 +96,7 @@ jobs:
         working-directory: web
 
       - name: Containerize
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ./.github/actions/containerize
         with:
           actor: ${{ github.actor }}
