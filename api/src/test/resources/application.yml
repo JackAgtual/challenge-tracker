@@ -12,6 +12,8 @@ spring:
   sql:
     init:
       mode: never
+  flyway:
+    enabled: false
 
 auth0:
   audience: https://challenge-tracker-api
