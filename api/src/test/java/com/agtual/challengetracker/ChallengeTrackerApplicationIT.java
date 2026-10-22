@@ -15,7 +15,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 @SpringBootTest(properties = { "spring.flyway.enabled=true",
 		"spring.jpa.hibernate.ddl-auto=validate" })
 @Testcontainers
-class ChallengeTrackerApplicationTests {
+class ChallengeTrackerApplicationIT {
 
 	@Container
 	@ServiceConnection

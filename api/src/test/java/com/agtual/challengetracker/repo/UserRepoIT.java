@@ -9,7 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 
-public class UserRepoTest extends PostgresJpaBaseTest {
+public class UserRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     UserRepo repo;

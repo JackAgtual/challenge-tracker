@@ -12,7 +12,7 @@ import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-public class GoalDefinitionRepoTest extends PostgresJpaBaseTest {
+public class GoalDefinitionRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     GoalDefinitionRepo goalDefinitionRepo;

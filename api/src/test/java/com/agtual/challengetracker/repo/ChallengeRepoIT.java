@@ -11,7 +11,7 @@ import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-public class ChallengeRepoTest extends PostgresJpaBaseTest {
+public class ChallengeRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     ChallengeRepo repo;
