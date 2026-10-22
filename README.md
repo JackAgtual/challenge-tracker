@@ -3,7 +3,7 @@
 ## Containerization
 
 api and web containers are built and pushed to ghcr.io on every push to main.
-Only latest tag is pushed (no other versioning is in place).
+Containers are tagged with git commit hash and latest.
 
 ### api
 
@@ -30,7 +30,7 @@ Run the container with the following command:
 docker run -d \
 -p <port>:3000 \
 --network <network> \
--- name <desired-container-name>
+--name <desired-container-name>
 -e AUTH0_DOMAIN=<auth0-domain> \
 -e AUTH0_CLIENT_ID=<auth0-client-id> \
 -e AUTH0_CLIENT_SECRET=<auth0-client-secret> \

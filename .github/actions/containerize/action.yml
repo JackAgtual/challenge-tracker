@@ -32,16 +32,28 @@ runs:
         username: ${{ inputs.dhi_username }}
         password: ${{ inputs.dhi_token }}
 
+    - name: Compute variables for tagging images
+      shell: bash
+      id: vars
+      run: |
+        echo "sha_short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        echo "api_image=ghcr.io/jackagtual/challenge-tracker-api" >> "$GITHUB_OUTPUT"
+        echo "web_image=ghcr.io/jackagtual/challenge-tracker-web" >> "$GITHUB_OUTPUT"
+
     - name: Build and push api
       uses: docker/build-push-action@v7
       with:
         context: ./api
         push: true
-        tags: ghcr.io/jackagtual/challenge-tracker-api:latest
+        tags: |
+          ${{ steps.vars.outputs.api_image }}:latest
+          ${{ steps.vars.outputs.api_image }}:${{ steps.vars.outputs.sha_short }}
 
     - name: Build and push web
       uses: docker/build-push-action@v7
       with:
         context: ./web
         push: true
-        tags: ghcr.io/jackagtual/challenge-tracker-web:latest
+        tags: |
+          ${{ steps.vars.outputs.web_image }}:latest
+          ${{ steps.vars.outputs.web_image }}:${{ steps.vars.outputs.sha_short }}
