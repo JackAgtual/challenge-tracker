@@ -4,16 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
-import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-@DataJpaTest
-public class ParticipantRepoTest extends MockUserBaseTest {
+public class ParticipantRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     ChallengeRepo challengeRepo;
@@ -37,4 +35,23 @@ public class ParticipantRepoTest extends MockUserBaseTest {
                 sameParticipant));
     }
 
+    @Test
+    void testParticipantMustHaveUser() {
+        Challenge challenge = TestEntityFactory.validChallenge(savedUser, "my challenge");
+        challengeRepo.saveAndFlush(challenge);
+
+        Participant participant = new Participant();
+        participant.setChallenge(challenge);
+
+        assertThrows(DataIntegrityViolationException.class, () -> participantRepo.save(participant));
+    }
+
+    @Test
+    void testParticipantMustHaveChallenge() {
+
+        Participant participant = new Participant();
+        participant.setUser(savedUser);
+
+        assertThrows(DataIntegrityViolationException.class, () -> participantRepo.save(participant));
+    }
 }

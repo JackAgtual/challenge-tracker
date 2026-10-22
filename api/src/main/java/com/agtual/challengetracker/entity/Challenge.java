@@ -44,7 +44,7 @@ public class Challenge {
     private Integer durationDays;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "challenge_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private ChallengeStatus status = ChallengeStatus.PENDING;
 
     public Challenge(ChallengeDataRequest createChallengeRequest, User user) {

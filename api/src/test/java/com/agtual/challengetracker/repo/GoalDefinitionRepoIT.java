@@ -5,16 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.Participant;
-import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-@DataJpaTest
-public class GoalDefinitionRepoTest extends MockUserBaseTest {
+public class GoalDefinitionRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     GoalDefinitionRepo goalDefinitionRepo;
@@ -40,5 +39,24 @@ public class GoalDefinitionRepoTest extends MockUserBaseTest {
         assertEquals(2, goalDefinitionRepo.count());
         assertThrows(DataIntegrityViolationException.class,
                 () -> goalDefinitionRepo.saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName)));
+    }
+
+    @Test
+    void testGoalDefinitionMustHaveParticipant() {
+        GoalDefinition def = new GoalDefinition();
+        def.setName("drink water");
+        assertThrows(DataIntegrityViolationException.class, () -> goalDefinitionRepo.save(def));
+    }
+
+    @Test
+    void testGoalDefinitionMustHaveName() {
+        Challenge challenge = challengeRepo.saveAndFlush(TestEntityFactory.validChallenge(savedUser, "my challenge"));
+        Participant participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
+
+        GoalDefinition def = new GoalDefinition();
+        def.setParticipant(participant);
+
+        assertThrows(DataIntegrityViolationException.class, () -> goalDefinitionRepo.save(def));
     }
 }

@@ -4,13 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 
-@DataJpaTest
-public class UserRepoTest {
+public class UserRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     UserRepo repo;
@@ -23,6 +22,15 @@ public class UserRepoTest {
 
         repo.saveAndFlush(user1);
         assertThrows(DataIntegrityViolationException.class, () -> repo.saveAndFlush(user2));
+    }
+
+    @Test
+    void testCantHaveSameAuthSubject() {
+        String authSubject = "auth|1234";
+        User user1 = createValidUser(authSubject, "jack@gmail.com", "jj12");
+        User user2 = createValidUser(authSubject, "bob@gmail.com", "bob_123");
+        repo.save(user1);
+        assertThrows(DataIntegrityViolationException.class, () -> repo.save(user2));
     }
 
     @Test

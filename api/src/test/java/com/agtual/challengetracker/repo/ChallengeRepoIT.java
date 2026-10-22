@@ -5,15 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
-import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-@DataJpaTest
-public class ChallengeRepoTest extends MockUserBaseTest {
+public class ChallengeRepoIT extends PostgresJpaBaseTest {
 
     @Autowired
     ChallengeRepo repo;
