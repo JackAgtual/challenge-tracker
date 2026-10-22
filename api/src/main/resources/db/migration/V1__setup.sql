@@ -36,7 +36,7 @@ CREATE TABLE participants (
     user_id BIGINT REFERENCES users NOT NULL,
     challenge_id BIGINT REFERENCES challenges NOT NULL,
     ready BOOLEAN NOT NULL,
-    joined_at TIMESTAMP NOT NULL DEFAULT now(), -- Hibernate should manage timestamp but including default as a safety net
+    joined_at TIMESTAMP NOT NULL DEFAULT now() NOT NULL, -- Hibernate should manage timestamp but including default as a safety net
     CONSTRAINT uq_user_id_challenge_id UNIQUE (user_id, challenge_id)
 );
 
@@ -46,7 +46,8 @@ CREATE TABLE invites (
     invite_sender_id BIGINT REFERENCES users NOT NULL,
     invited_user_id BIGINT REFERENCES users NOT NULL,
     status TEXT NOT NULL DEFAULT 'PENDING' 
-        CHECK (status in ('PENDING', 'ACCEPTED', 'DECLINED')), -- Can't use custom type because it won't work with H2 db
+        CHECK (status in ('PENDING', 'ACCEPTED', 'DECLINED')) -- Can't use custom type because it won't work with H2 db
+        NOT NULL,
     CONSTRAINT uq_challenge_id_invited_user_id UNIQUE (challenge_id, invited_user_id)
 );
 

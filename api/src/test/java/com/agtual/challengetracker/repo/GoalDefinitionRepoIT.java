@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.agtual.challengetracker.entity.Challenge;
+import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
@@ -38,5 +39,24 @@ public class GoalDefinitionRepoIT extends PostgresJpaBaseTest {
         assertEquals(2, goalDefinitionRepo.count());
         assertThrows(DataIntegrityViolationException.class,
                 () -> goalDefinitionRepo.saveAndFlush(TestEntityFactory.validGoalDefinition(participant, goalName)));
+    }
+
+    @Test
+    void testGoalDefinitionMustHaveParticipant() {
+        GoalDefinition def = new GoalDefinition();
+        def.setName("drink water");
+        assertThrows(DataIntegrityViolationException.class, () -> goalDefinitionRepo.save(def));
+    }
+
+    @Test
+    void testGoalDefinitionMustHaveName() {
+        Challenge challenge = challengeRepo.saveAndFlush(TestEntityFactory.validChallenge(savedUser, "my challenge"));
+        Participant participant = participantRepo
+                .saveAndFlush(TestEntityFactory.validParticipant(savedUser, challenge));
+
+        GoalDefinition def = new GoalDefinition();
+        def.setParticipant(participant);
+
+        assertThrows(DataIntegrityViolationException.class, () -> goalDefinitionRepo.save(def));
     }
 }

@@ -35,4 +35,23 @@ public class ParticipantRepoIT extends PostgresJpaBaseTest {
                 sameParticipant));
     }
 
+    @Test
+    void testParticipantMustHaveUser() {
+        Challenge challenge = TestEntityFactory.validChallenge(savedUser, "my challenge");
+        challengeRepo.saveAndFlush(challenge);
+
+        Participant participant = new Participant();
+        participant.setChallenge(challenge);
+
+        assertThrows(DataIntegrityViolationException.class, () -> participantRepo.save(participant));
+    }
+
+    @Test
+    void testParticipantMustHaveChallenge() {
+
+        Participant participant = new Participant();
+        participant.setUser(savedUser);
+
+        assertThrows(DataIntegrityViolationException.class, () -> participantRepo.save(participant));
+    }
 }

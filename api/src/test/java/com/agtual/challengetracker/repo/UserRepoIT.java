@@ -25,6 +25,15 @@ public class UserRepoIT extends PostgresJpaBaseTest {
     }
 
     @Test
+    void testCantHaveSameAuthSubject() {
+        String authSubject = "auth|1234";
+        User user1 = createValidUser(authSubject, "jack@gmail.com", "jj12");
+        User user2 = createValidUser(authSubject, "bob@gmail.com", "bob_123");
+        repo.save(user1);
+        assertThrows(DataIntegrityViolationException.class, () -> repo.save(user2));
+    }
+
+    @Test
     void testCantSaveNullEmail() {
         User user = new User();
         user.setAuthSubject("auth|1234");
