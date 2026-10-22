@@ -13,30 +13,30 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @SpringBootTest(properties = { "spring.flyway.enabled=true",
-		"spring.jpa.hibernate.ddl-auto=validate" })
+        "spring.jpa.hibernate.ddl-auto=validate" })
 @Testcontainers
 class ChallengeTrackerApplicationIT {
 
-	@Container
-	@ServiceConnection
-	static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:18.6");
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:18.6");
 
-	@Autowired
-	JdbcTemplate jdbc;
+    @Autowired
+    JdbcTemplate jdbc;
 
-	@Test
-	void testContextLoads() {
-	}
+    @Test
+    void testContextLoads() {
+    }
 
-	@Test
-	void testFlywayRuns() {
-		Integer failed = jdbc.queryForObject(
-				"SELECT count(*) FROM flyway_schema_history WHERE success = false", Integer.class);
-		Integer applied = jdbc.queryForObject(
-				"SELECT count(*) FROM flyway_schema_history WHERE success = true", Integer.class);
+    @Test
+    void testFlywayRuns() {
+        Integer failed = jdbc.queryForObject(
+                "SELECT count(*) FROM flyway_schema_history WHERE success = false", Integer.class);
+        Integer applied = jdbc.queryForObject(
+                "SELECT count(*) FROM flyway_schema_history WHERE success = true", Integer.class);
 
-		assertEquals(0, failed);
-		assertTrue(applied > 0);
-	}
+        assertEquals(0, failed);
+        assertTrue(applied > 0);
+    }
 
 }
