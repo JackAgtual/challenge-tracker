@@ -5,16 +5,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Participant;
-import com.agtual.challengetracker.testutil.MockUserBaseTest;
+import com.agtual.challengetracker.testutil.PostgresJpaBaseTest;
 import com.agtual.challengetracker.testutil.TestEntityFactory;
 
-@DataJpaTest
-public class GoalDefinitionRepoTest extends MockUserBaseTest {
+@Testcontainers
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+public class GoalDefinitionRepoTest extends PostgresJpaBaseTest {
 
     @Autowired
     GoalDefinitionRepo goalDefinitionRepo;

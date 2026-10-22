@@ -12,7 +12,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
-@SpringBootTest(properties = "spring.flyway.enabled=true")
+@SpringBootTest(properties = { "spring.flyway.enabled=true",
+		"spring.jpa.hibernate.ddl-auto=validate" })
 @Testcontainers
 class ChallengeTrackerApplicationTests {
 

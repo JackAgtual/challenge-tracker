@@ -20,15 +20,14 @@ GENERATED ALWAYS AS (
 
 CREATE INDEX IF NOT EXISTS idx_users_search_vector ON users USING GIN (search_vector);
 
-CREATE TYPE challenge_status AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETE');
-
 CREATE TABLE challenges (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     owner_id BIGINT REFERENCES users NOT NULL,
     name TEXT NOT NULL,
     start_date DATE,
     duration_days INTEGER,
-    status challenge_status NOT NULL,
+    status TEXT NOT NULL DEFAULT 'PENDING' 
+        CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETE')), -- Can't use custom type because it won't work with H2 db
     CONSTRAINT uq_challenges_owner_name UNIQUE (owner_id, name)
 );
 
@@ -37,17 +36,17 @@ CREATE TABLE participants (
     user_id BIGINT REFERENCES users NOT NULL,
     challenge_id BIGINT REFERENCES challenges NOT NULL,
     ready BOOLEAN NOT NULL,
-    joined_at TIMESTAMP NOT NULL DEFAULT now() -- Hibernate should manage timestamp but including default as a safety net
+    joined_at TIMESTAMP NOT NULL DEFAULT now(), -- Hibernate should manage timestamp but including default as a safety net
+    CONSTRAINT uq_user_id_challenge_id UNIQUE (user_id, challenge_id)
 );
-
-CREATE TYPE invite_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 
 CREATE TABLE invites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     challenge_id BIGINT REFERENCES challenges NOT NULL,
     invite_sender_id BIGINT REFERENCES users NOT NULL,
     invited_user_id BIGINT REFERENCES users NOT NULL,
-    status invite_status NOT NULL DEFAULT 'PENDING', -- JPA entity has default state but including default as a safety net
+    status TEXT NOT NULL DEFAULT 'PENDING' 
+        CHECK (status in ('PENDING', 'ACCEPTED', 'DECLINED')), -- Can't use custom type because it won't work with H2 db
     CONSTRAINT uq_challenge_id_invited_user_id UNIQUE (challenge_id, invited_user_id)
 );
 
