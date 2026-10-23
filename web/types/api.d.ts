@@ -442,6 +442,7 @@ export interface components {
             firstName: string;
             lastName: string;
             username: string;
+            avatarSrc?: string;
         };
         ValidUserResponse: {
             /** Format: int64 */
@@ -461,7 +462,7 @@ export interface components {
             inviteSender: components["schemas"]["UserResponse"];
         };
         AvatarResponse: {
-            src?: string;
+            src: string;
         };
         GroupedChallengeResponse: {
             inProgress: components["schemas"]["ChallengeResponse"][];

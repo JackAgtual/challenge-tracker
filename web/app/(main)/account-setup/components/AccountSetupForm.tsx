@@ -2,6 +2,7 @@
 
 import { accountSetup } from "@/actions/account-setup";
 import FormRootError from "@/components/FormRootError";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +18,11 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getFormErrorMessage } from "@/lib/form-utils";
+import { cn } from "@/lib/utils";
+import { components } from "@/types/api";
 import {
   TSetupAccountFormSchema,
   setupAccountFormSchema,
@@ -28,10 +33,12 @@ import { Controller, useForm } from "react-hook-form";
 
 type AccountSetupFormProps = {
   defaultValues: TSetupAccountFormSchema;
+  availableAvatars: components["schemas"]["AvatarResponse"][];
 };
 
 export default function AccountSetupForm({
   defaultValues,
+  availableAvatars,
 }: AccountSetupFormProps) {
   const { control, handleSubmit, setError, formState } =
     useForm<TSetupAccountFormSchema>({
@@ -92,6 +99,46 @@ export default function AccountSetupForm({
                   {fieldState.error && (
                     <FieldError errors={[fieldState.error]} />
                   )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="avatar"
+              control={control}
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Profile icon</FieldLabel>
+                  <RadioGroup
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    onBlur={field.onBlur}
+                    className="flex flex-wrap"
+                  >
+                    {availableAvatars.map(({ src }) => {
+                      const isSelected = field.value === src;
+                      return (
+                        <div key={src}>
+                          <RadioGroupItem
+                            value={src}
+                            id={src}
+                            className="sr-only"
+                          />
+                          <Label htmlFor={src}>
+                            <Avatar
+                              className={cn(
+                                "size-14 border-4 border-transparent",
+                                isSelected
+                                  ? "border-black"
+                                  : "border-transparent"
+                              )}
+                            >
+                              <AvatarImage src={src} />
+                            </Avatar>
+                          </Label>
+                        </div>
+                      );
+                    })}
+                  </RadioGroup>
                 </Field>
               )}
             />
