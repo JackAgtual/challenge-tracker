@@ -6,10 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getDisplayNameFromParticipant } from "@/lib/name-utils";
 import { components } from "@/types/api";
-import Link from "next/link";
-import RemoveParticipantButton from "./RemoveParticipantButton";
+import Participant from "./Participant";
 import ToggleReady from "./ToggleReady";
 
 type BaseProps = {
@@ -38,6 +36,9 @@ export default function ParticipantsCard({
   curUserIsOwner,
   curUserReadyResponse,
 }: ParticipantsCardProps) {
+  const participantsReadyCount = participants.filter((p) => p.ready).length;
+  const totalParticipantsCount = participants.length;
+
   return (
     <div>
       <Card>
@@ -64,33 +65,21 @@ export default function ParticipantsCard({
             )}
           </CardDescription>
         </CardHeader>
-        <CardContent className="divide-y">
-          {participants.map((participant) => (
-            <div
-              key={participant.id}
-              className="flex justify-between py-2 my-0"
-            >
-              <Link
-                className="flex items-center"
-                href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
-              >
-                {getDisplayNameFromParticipant(participant)}
-              </Link>
-              {challengeIsPending && (
-                <div className="flex gap-x-2">
-                  <div className="flex items-center">
-                    {participant.ready ? "Ready" : "Not ready"}
-                  </div>
-                  {curUserIsOwner && !participant.isChallengeOwner && (
-                    <RemoveParticipantButton
-                      challengeId={challengeId}
-                      participantId={participant.id}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+        <CardContent>
+          {challengeIsPending && (
+            <p className="text-right">{`${participantsReadyCount} / ${totalParticipantsCount} participants ready`}</p>
+          )}
+          <div className="divide-y">
+            {participants.map((participant) => (
+              <Participant
+                key={participant.id}
+                participant={participant}
+                challengeId={challengeId}
+                challengeIsPending={challengeIsPending}
+                curUserIsOwner={curUserIsOwner}
+              />
+            ))}
+          </div>
         </CardContent>
         <CardFooter>
           {challengeIsPending && (

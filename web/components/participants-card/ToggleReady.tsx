@@ -2,12 +2,12 @@
 
 import { setReady } from "@/actions/participant-ready";
 import { Button } from "@/components/ui/button";
-import { toastGenericError } from "@/lib/toast-utils";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { toastProblemDetail } from "@/lib/toast-utils";
 
 type ToggleReadyProps = {
   isReady: boolean;
@@ -21,9 +21,9 @@ export default function ToggleReady({
   challengeId,
 }: ToggleReadyProps) {
   async function handleClick() {
-    const { success } = await setReady(!isReady, challengeId);
-    if (!success) {
-      toastGenericError();
+    const { error } = await setReady(!isReady, challengeId);
+    if (error) {
+      toastProblemDetail(error);
     }
   }
 

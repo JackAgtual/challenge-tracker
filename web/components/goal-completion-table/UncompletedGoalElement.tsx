@@ -1,7 +1,7 @@
 "use client";
 
 import { handleGoalCompletion } from "@/actions/goal-completion";
-import { toastGenericError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { Circle } from "lucide-react";
 
 type UncompletedGoalElementProps = {
@@ -22,14 +22,14 @@ export default function UncompletedGoalElement({
   }
 
   async function handleClick() {
-    const { success } = await handleGoalCompletion({
+    const { success, error } = await handleGoalCompletion({
       challengeId,
       goalDefinitionId,
       date,
     });
 
     if (!success) {
-      toastGenericError();
+      toastProblemDetail(error);
     }
   }
 

@@ -13,16 +13,16 @@ export default function ChallengeSection({
 }: ChallengeSectionProps) {
   return (
     <div>
-      <h2 className="text-lg">{title}</h2>
+      <h2 className="text-lg py-4">{title}:</h2>
       {data.length === 0 ? (
         <p>You don't have any {title.toLocaleLowerCase()} challenges</p>
       ) : (
-        <div className="grid grid-cols-1 gap-y-6">
+        <div className="flex flex-wrap gap-6 justify-center md:justify-start">
           {data.map((challenge) => (
             <Link
               key={challenge.id}
               href={`/challenges/${challenge.id}`}
-              className="max-w-2xs"
+              className="block w-full max-w-2xs"
             >
               <ChallengeOverviewCard
                 challenge={challenge}

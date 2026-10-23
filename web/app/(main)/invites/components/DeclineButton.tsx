@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { toastGenericError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 
 type DeclineButtonProps = {
   inviteId: number;
@@ -20,9 +20,9 @@ type DeclineButtonProps = {
 
 export default function DeclineButton({ inviteId }: DeclineButtonProps) {
   async function handleClick() {
-    const { success } = await declineInvite(inviteId);
+    const { success, error } = await declineInvite(inviteId);
     if (!success) {
-      toastGenericError();
+      toastProblemDetail(error);
     }
   }
 

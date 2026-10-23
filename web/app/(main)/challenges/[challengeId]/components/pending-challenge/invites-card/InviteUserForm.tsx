@@ -12,8 +12,11 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import User from "@/components/User";
+import { useDebounce } from "@/hooks/use-debounce";
+import { getFormErrorMessage } from "@/lib/form-utils";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
-import { toastError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { components } from "@/types/api";
 import {
   inviteUserFormSchema,
@@ -27,21 +30,27 @@ type InviteUserProps = {
   challengeId: number;
 };
 
-export default function InviteUser({ challengeId }: InviteUserProps) {
-  const [query, setQuery] = useState("");
+export default function InviteUserForm({ challengeId }: InviteUserProps) {
+  const [query, setQuery] = useDebounce("");
   const [queryRes, setQueryRes] = useState<
-    components["schemas"]["UserResponse"][]
+    components["schemas"]["ValidUserResponse"][]
   >([]);
+  // TOOD: Continue here. I added User card but it only accepts valid participant
+  // might need to adjust get users endpoint to only return users that are set up
+  // Remove console logs (idk where they are but i saw them in logs)
   const [comboKey, setComboKey] = useState(1); // Used to clear combobox input after submit
-
-  // TODO: use deboune hook
 
   useEffect(() => {
     async function getUsers() {
+      if (query.trim() === "") {
+        setQueryRes([]);
+        return;
+      }
+
       const { success, data: users, error } = await searchUsers(query);
 
       if (!success) {
-        toastError(error.detail);
+        toastProblemDetail(error);
         return;
       }
 
@@ -59,12 +68,11 @@ export default function InviteUser({ challengeId }: InviteUserProps) {
     const { success, error } = await inviteUser(challengeId, formData);
 
     if (!success) {
-      setError("username", { message: error?.detail });
+      setError("username", getFormErrorMessage(error));
       return;
     }
 
     setComboKey((prev) => prev + 1);
-    setQuery("");
     setQueryRes([]);
   }
 
@@ -94,7 +102,7 @@ export default function InviteUser({ challengeId }: InviteUserProps) {
                 <ComboboxList>
                   {(user) => (
                     <ComboboxItem key={user.username} value={user.username}>
-                      {getDisplayNameFromUser(user)}
+                      <User user={user} />
                     </ComboboxItem>
                   )}
                 </ComboboxList>

@@ -1,6 +1,8 @@
 package com.agtual.challengetracker.entity;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
@@ -60,6 +62,18 @@ public class Challenge {
 
     public boolean isReadyToStart() {
         return durationDays != null && name != null && status == ChallengeStatus.PENDING;
+    }
+
+    public boolean isReadyToComplete(Clock clock) {
+        if (status != ChallengeStatus.IN_PROGRESS) {
+            return false;
+        }
+
+        if (startDate == null || durationDays == null) {
+            return false;
+        }
+
+        return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock)) >= durationDays;
     }
 
     public boolean isConfigurable() {

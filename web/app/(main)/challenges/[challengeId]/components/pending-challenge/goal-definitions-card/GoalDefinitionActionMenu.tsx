@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toastGenericError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { MoreHorizontalIcon } from "lucide-react";
 
 type GoalDefinitionActionMenuProps = {
@@ -21,13 +21,13 @@ export default function GoalDefinitionActionMenu({
   goalDefinitionId,
 }: GoalDefinitionActionMenuProps) {
   async function handleDelete() {
-    const res = await deleteGoal(challengeId, goalDefinitionId);
+    const { success, error } = await deleteGoal(challengeId, goalDefinitionId);
 
-    if (res.success) {
+    if (success) {
       return;
     }
 
-    toastGenericError();
+    toastProblemDetail(error);
   }
 
   return (

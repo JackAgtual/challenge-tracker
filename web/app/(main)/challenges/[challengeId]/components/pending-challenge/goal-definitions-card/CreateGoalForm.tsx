@@ -3,8 +3,9 @@
 import { createGoal } from "@/actions/goal-definition";
 import FormRootError from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { getFormErrorMessage } from "@/lib/form-utils";
 import {
   createGoalFormSchema,
   TCreateGoalFormSchema,
@@ -26,14 +27,14 @@ export default function CreateGoalForm({ challengeId }: CreateGoalFormProps) {
     });
 
   const onSubmit = async (formData: TCreateGoalFormSchema) => {
-    const res = await createGoal(challengeId, formData);
+    const { success, error } = await createGoal(challengeId, formData);
 
-    if (res.success) {
+    if (success) {
       reset();
       return;
     }
 
-    setError("root", { message: res.error.detail });
+    setError("root", getFormErrorMessage(error));
   };
 
   return (

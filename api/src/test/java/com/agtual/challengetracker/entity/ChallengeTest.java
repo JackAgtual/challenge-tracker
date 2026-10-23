@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
@@ -12,31 +13,32 @@ import org.junit.jupiter.api.Test;
 import com.agtual.challengetracker.dto.request.ChallengeDataRequest;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.exception.ForbiddenException;
+import com.agtual.challengetracker.testutil.TestEntityFactory;
 
 public class ChallengeTest {
 
     @Test
     void testReadyToStart() {
-        Challenge challenge = createReadyChallenge();
+        Challenge challenge = createReadyToStartChallenge();
         assertTrue(challenge.isReadyToStart());
 
         challenge.setDurationDays(null);
         assertFalse(challenge.isReadyToStart());
 
-        challenge = createReadyChallenge();
+        challenge = createReadyToStartChallenge();
         challenge.setName(null);
         assertFalse(challenge.isReadyToStart());
 
-        challenge = createReadyChallenge();
+        challenge = createReadyToStartChallenge();
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);
         assertFalse(challenge.isReadyToStart());
 
-        challenge = createReadyChallenge();
+        challenge = createReadyToStartChallenge();
         challenge.setStatus(ChallengeStatus.COMPLETE);
         assertFalse(challenge.isReadyToStart());
 
         // test combination of invalid values
-        challenge = createReadyChallenge();
+        challenge = createReadyToStartChallenge();
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);
         challenge.setDurationDays(null);
         assertFalse(challenge.isReadyToStart());
@@ -99,11 +101,76 @@ public class ChallengeTest {
         assertThrows(ForbiddenException.class, () -> challenge.getMostRecentDate());
     }
 
-    private Challenge createReadyChallenge() {
+    @Test
+    void testIsReadyToComplete() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+        challenge.setDurationDays(10);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 11);
+
+        assertTrue(challenge.isReadyToComplete(clock));
+    }
+
+    @Test
+    void testIsReadyToCompleteLastDayOfChallenge() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+        challenge.setDurationDays(10);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 10);
+
+        assertFalse(challenge.isReadyToComplete(clock));
+    }
+
+    @Test
+    void testIsReadyToCompleteChallengeMustBeInProgress() {
+        Challenge pendingChallenge = new Challenge();
+        pendingChallenge.setStatus(ChallengeStatus.PENDING);
+        pendingChallenge.setStartDate(LocalDate.of(2026, 1, 1));
+        pendingChallenge.setDurationDays(10);
+
+        Challenge completeChallenge = new Challenge();
+        completeChallenge.setStatus(ChallengeStatus.COMPLETE);
+        completeChallenge.setStartDate(LocalDate.of(2026, 1, 1));
+        completeChallenge.setDurationDays(10);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 15);
+
+        assertFalse(pendingChallenge.isReadyToComplete(clock));
+        assertFalse(completeChallenge.isReadyToComplete(clock));
+    }
+
+    @Test
+    void testIsReadyToCOmpleteWorksWithNullStartDate() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setDurationDays(10);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 11);
+
+        assertFalse(challenge.isReadyToComplete(clock));
+    }
+
+    @Test
+    void testIsReadyToCOmpleteWorksWithNullDuration() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 11);
+
+        assertFalse(challenge.isReadyToComplete(clock));
+    }
+
+    private Challenge createReadyToStartChallenge() {
         Challenge challenge = new Challenge();
         challenge.setStatus(ChallengeStatus.PENDING);
         challenge.setName("c1");
         challenge.setDurationDays(30);
         return challenge;
     }
+
 }

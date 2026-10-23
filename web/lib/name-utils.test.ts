@@ -1,8 +1,5 @@
 import { components } from "@/types/api";
-import {
-  getDisplayNameFromParticipant,
-  getDisplayNameFromUser,
-} from "./name-utils";
+import { getDisplayNameFromUser } from "./name-utils";
 
 type User = components["schemas"]["UserResponse"];
 
@@ -11,24 +8,6 @@ const lastName = "Doe";
 const username = "jdoe12";
 
 const expectedDisplayName = "jdoe12 (John Doe)";
-
-describe("getDisplayNameFromParticipant", () => {
-  it("Returns valid display name", () => {
-    const participant: components["schemas"]["ParticipantResponse"] = {
-      id: 1,
-      firstName,
-      lastName,
-      username,
-      ready: false,
-      isChallengeOwner: false,
-      joinedAt: "2026-10-10",
-    };
-
-    expect(getDisplayNameFromParticipant(participant)).toEqual(
-      expectedDisplayName
-    );
-  });
-});
 
 describe("getDisplayNameFromUser", () => {
   it("Returns valid display name", () => {

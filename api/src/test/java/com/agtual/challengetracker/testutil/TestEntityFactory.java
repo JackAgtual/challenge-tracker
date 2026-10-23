@@ -1,6 +1,9 @@
 package com.agtual.challengetracker.testutil;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import com.agtual.challengetracker.entity.Challenge;
@@ -66,4 +69,10 @@ public class TestEntityFactory {
         invite.setStatus(status);
         return invite;
     }
+
+    public static Clock getFixedClock(int year, int month, int day) {
+        ZoneOffset zone = ZoneOffset.UTC;
+        return Clock.fixed(Instant.from(LocalDate.of(year, month, day).atStartOfDay().toInstant(zone)), zone);
+    }
+
 }

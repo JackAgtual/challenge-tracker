@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,9 @@ public class ChallengeServiceTest extends MockUserBaseTest {
 
     @MockitoBean
     ParticipantService participantService;
+
+    @MockitoBean
+    Clock clock;
 
     @Nested
     class CreateChallenge {
@@ -367,6 +371,72 @@ public class ChallengeServiceTest extends MockUserBaseTest {
                         notReadyChallengeRes);
                 assertThrows(ForbiddenException.class,
                         () -> challengeService.startChallenge(savedUser, savedChallenge.getId()));
+            }
+        }
+
+        /**
+         * CompleteAllEligibleChallenges
+         * 
+         * Will not mock Challenge and ChallengeRepo. Will assume
+         * {@link Challenge#isReadyToComplete(Clock)} is implemented correctly
+         */
+        @Nested
+        class CompleteAllEligibleChallenges {
+
+            ChallengeService challengeService;
+
+            @BeforeEach
+            void beforeEach() {
+                Clock clockToday = TestEntityFactory.getFixedClock(2026, 1, 15);
+                challengeService = new ChallengeService(participantService, challengeRepo, clockToday);
+            }
+
+            @Test
+            void testStopsAllChallengesPastDuration() {
+
+                Challenge c1 = TestEntityFactory.validChallenge(savedUser, "c1");
+                c1.setStatus(ChallengeStatus.IN_PROGRESS);
+                c1.setStartDate(LocalDate.of(2026, 1, 1));
+                c1.setDurationDays(10);
+                c1 = challengeRepo.save(c1);
+
+                Challenge c2 = TestEntityFactory.validChallenge(savedUser, "c2");
+                c2.setStatus(ChallengeStatus.IN_PROGRESS);
+                c2.setStartDate(LocalDate.of(2026, 1, 15));
+                c2.setDurationDays(30);
+                c2 = challengeRepo.save(c2);
+
+                Challenge c3 = TestEntityFactory.validChallenge(savedUser, "c3");
+                c3.setStatus(ChallengeStatus.IN_PROGRESS);
+                c3.setStartDate(LocalDate.of(2026, 1, 7));
+                c3.setDurationDays(5);
+                c3 = challengeRepo.save(c3);
+
+                Challenge c4 = TestEntityFactory.validChallenge(savedUser, "c4");
+                c4.setStatus(ChallengeStatus.IN_PROGRESS);
+                c4.setStartDate(LocalDate.of(2026, 1, 1));
+                c4.setDurationDays(30);
+                c4 = challengeRepo.save(c4);
+
+                challengeService.completeAllEligibleChallenges();
+
+                assertEquals(ChallengeStatus.COMPLETE, challengeRepo.findById(c1.getId()).get().getStatus());
+                assertEquals(ChallengeStatus.IN_PROGRESS, challengeRepo.findById(c2.getId()).get().getStatus());
+                assertEquals(ChallengeStatus.COMPLETE, challengeRepo.findById(c3.getId()).get().getStatus());
+                assertEquals(ChallengeStatus.IN_PROGRESS, challengeRepo.findById(c4.getId()).get().getStatus());
+            }
+
+            @Test
+            void testDoesNotAffectPendingChallenges() {
+                Challenge c1 = TestEntityFactory.validChallenge(savedUser, "c1");
+                c1.setStatus(ChallengeStatus.PENDING);
+                c1.setStartDate(LocalDate.of(2026, 1, 1));
+                c1.setDurationDays(10);
+                c1 = challengeRepo.save(c1);
+
+                challengeService.completeAllEligibleChallenges();
+
+                assertEquals(ChallengeStatus.PENDING, challengeRepo.findById(c1.getId()).get().getStatus());
             }
         }
     }

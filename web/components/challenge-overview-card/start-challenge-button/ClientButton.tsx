@@ -7,7 +7,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { toastGenericError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { components } from "@/types/api";
 
 type ClientButtonProps = {
@@ -20,9 +20,9 @@ export default function ClientButton({
   startEligibility,
 }: ClientButtonProps) {
   async function handleClick() {
-    const { success } = await startChallenge(challengeId);
-    if (!success) {
-      toastGenericError();
+    const { error } = await startChallenge(challengeId);
+    if (error) {
+      toastProblemDetail(error);
     }
   }
 

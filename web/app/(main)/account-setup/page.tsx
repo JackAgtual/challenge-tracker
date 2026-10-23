@@ -1,6 +1,7 @@
+import CenterContainer from "@/components/CenterContainer";
+import { client } from "@/lib/api-client";
 import { getValidFirstTimeSession } from "@/lib/auth-utils";
 import AccountSetupForm from "./components/AccountSetupForm";
-import { client } from "@/lib/api-client";
 
 export default async function Page() {
   await getValidFirstTimeSession();
@@ -18,9 +19,8 @@ export default async function Page() {
   };
 
   return (
-    <>
-      <h1>Finish setting up your account</h1>
+    <CenterContainer>
       <AccountSetupForm defaultValues={defaultValues} />
-    </>
+    </CenterContainer>
   );
 }

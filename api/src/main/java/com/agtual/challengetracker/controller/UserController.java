@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
@@ -18,13 +19,13 @@ import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 import com.agtual.challengetracker.dto.response.BooleanResponse;
 import com.agtual.challengetracker.dto.response.UserResponse;
+import com.agtual.challengetracker.dto.response.ValidUserResponse;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.service.UserService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/users")
@@ -65,8 +66,8 @@ public class UserController {
     }
 
     @GetMapping()
-    public List<UserResponse> searchUsers(@RequestParam String query) {
-        return userService.searchUser(query).stream().map(UserResponse::from).toList();
+    public List<ValidUserResponse> searchUsers(@RequestParam String query) {
+        return userService.searchUser(query).stream().map(ValidUserResponse::from).toList();
     }
 
 }

@@ -1,8 +1,7 @@
+import CenterContainer from "@/components/CenterContainer";
 import ChallengeForm from "@/components/ChallengeForm";
-import { Button } from "@/components/ui/button";
 import { client } from "@/lib/api-client";
 import { TChallengeDataFormSchema } from "@/types/form-types";
-import Link from "next/link";
 
 export default async function Page({
   params,
@@ -24,20 +23,12 @@ export default async function Page({
       };
 
   return (
-    <div>
-      <h1>Edit challenge</h1>
+    <CenterContainer>
       <ChallengeForm
         action="EDIT"
         challengeId={challengeId}
         defaultValues={defaultVals}
       />
-      <Button
-        variant="outline"
-        render={<Link href={`/challenges/${challengeId}`} />}
-        nativeButton={false}
-      >
-        Cancel
-      </Button>
-    </div>
+    </CenterContainer>
   );
 }

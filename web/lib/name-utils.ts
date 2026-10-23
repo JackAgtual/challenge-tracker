@@ -1,15 +1,5 @@
 import { components } from "@/types/api";
 
-export function getDisplayNameFromParticipant(
-  participant: components["schemas"]["ParticipantResponse"]
-) {
-  return getDisplayName(
-    participant.username,
-    participant.firstName,
-    participant.lastName
-  );
-}
-
 export function getDisplayNameFromUser(
   user: components["schemas"]["UserResponse"]
 ) {

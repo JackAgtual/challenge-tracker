@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { toastError } from "@/lib/toast-utils";
+import { toastProblemDetail } from "@/lib/toast-utils";
 import { useState } from "react";
 
 type RemoveParticipantButtonProps = {
@@ -28,11 +28,11 @@ export default function RemoveParticipantButton({
   const [open, setOpen] = useState(false);
 
   async function handleRemove() {
-    const res = await removeParticipant(challengeId, participantId);
+    const { error } = await removeParticipant(challengeId, participantId);
 
-    if (res.error) {
+    if (error) {
       setOpen(false);
-      toastError(res.error.detail);
+      toastProblemDetail(error);
     }
   }
 
