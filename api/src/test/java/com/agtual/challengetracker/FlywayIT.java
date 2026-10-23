@@ -12,21 +12,21 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
+import com.agtual.challengetracker.repo.AvatarRepo;
+
 @SpringBootTest(properties = { "spring.flyway.enabled=true",
         "spring.jpa.hibernate.ddl-auto=validate" })
 @Testcontainers
-class ChallengeTrackerApplicationIT {
+public class FlywayIT {
+    @Autowired
+    JdbcTemplate jdbc;
+
+    @Autowired
+    AvatarRepo avatarRepo;
 
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:18.6");
-
-    @Autowired
-    JdbcTemplate jdbc;
-
-    @Test
-    void testContextLoads() {
-    }
 
     @Test
     void testFlywayRuns() {
@@ -39,4 +39,8 @@ class ChallengeTrackerApplicationIT {
         assertTrue(applied > 0);
     }
 
+    @Test
+    void testFlywayInsertsAvatars() {
+        assertTrue(avatarRepo.count() > 0);
+    }
 }

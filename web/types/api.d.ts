@@ -212,6 +212,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/icons/avatars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllAvatars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/challenges/{challengeId}/start-eligibility": {
         parameters: {
             query?: never;
@@ -441,6 +457,9 @@ export interface components {
             id: number;
             challenge: components["schemas"]["ChallengeResponse"];
             inviteSender: components["schemas"]["UserResponse"];
+        };
+        AvatarResponse: {
+            src?: string;
         };
         GroupedChallengeResponse: {
             inProgress: components["schemas"]["ChallengeResponse"][];
@@ -1527,6 +1546,62 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ReceivedInviteResponse"][];
+                };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    getAllAvatars: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AvatarResponse"][];
                 };
             };
             /** @description Forbidden Operation */

@@ -1,6 +1,7 @@
 package com.agtual.challengetracker.dev;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import com.agtual.challengetracker.entity.Avatar;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.GoalCompletion;
 import com.agtual.challengetracker.entity.GoalDefinition;
@@ -16,6 +18,7 @@ import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
+import com.agtual.challengetracker.repo.AvatarRepo;
 import com.agtual.challengetracker.repo.ChallengeRepo;
 import com.agtual.challengetracker.repo.GoalCompletionRepo;
 import com.agtual.challengetracker.repo.GoalDefinitionRepo;
@@ -33,7 +36,7 @@ import com.agtual.challengetracker.repo.UserRepo;
 @lombok.RequiredArgsConstructor
 public class DevDataSeeder implements CommandLineRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(DevDataSeeder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DevDataSeeder.class);
 
     private final UserRepo userRepository;
     private final ChallengeRepo challengeRepository;
@@ -41,6 +44,7 @@ public class DevDataSeeder implements CommandLineRunner {
     private final GoalDefinitionRepo goalDefinitionRepository;
     private final GoalCompletionRepo goalCompletionRepository;
     private final InviteRepo inviteRepository;
+    private final AvatarRepo avatarRepo;
 
     public void dropDbs() {
         goalCompletionRepository.deleteAll();
@@ -54,11 +58,29 @@ public class DevDataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
-            log.info("Dev data already present, skipping seed.");
+            LOGGER.info("Dev data already present, skipping seed.");
             return;
         }
 
-        log.info("Seeding dev data...");
+        LOGGER.info("Seeding dev data...");
+
+        // ---------- Avatars ----------
+        avatarRepo.saveAll(List.of(
+                "/avatars/rabbit.png",
+                "/avatars/astronaut.png",
+                "/avatars/panda.png",
+                "/avatars/girl.png",
+                "/avatars/penguin.png",
+                "/avatars/man.png",
+                "/avatars/robot.png",
+                "/avatars/profile.png",
+                "/avatars/fox.png",
+                "/avatars/hacker.png")
+                .stream().map(src -> {
+                    Avatar avatar = new Avatar();
+                    avatar.setSrc(src);
+                    return avatar;
+                }).toList());
 
         // ---------- Users ----------
         User bob = new User();
@@ -182,8 +204,8 @@ public class DevDataSeeder implements CommandLineRunner {
         declinedInvite.setStatus(InviteStatus.DECLINED);
         inviteRepository.save(declinedInvite);
 
-        log.info("Dev data seeding complete: {} users, {} challenges, {} participants, {} invites",
-                userRepository.count(), challengeRepository.count(),
+        LOGGER.info("Dev data seeding complete: {} avatars, {} users, {} challenges, {} participants, {} invites",
+                avatarRepo.count(), userRepository.count(), challengeRepository.count(),
                 participantRepository.count(), inviteRepository.count());
     }
 
