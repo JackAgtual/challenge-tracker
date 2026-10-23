@@ -56,7 +56,7 @@ public class UserService {
             throw new AlreadyExistsException(ResourceType.USER, accountSetupRequest.username());
         }
 
-        if (!avatarRepo.existsById(accountSetupRequest.avatarSrc())) {
+        if (accountSetupRequest.avatarSrc() != null && !avatarRepo.existsById(accountSetupRequest.avatarSrc())) {
             throw new NotFoundException(ResourceType.AVATAR, accountSetupRequest.avatarSrc());
         }
 

@@ -1,6 +1,7 @@
 package com.agtual.challengetracker.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -121,6 +122,28 @@ public class UserServiceTest {
         assertEquals(firstName, userFromRepo.getFirstName());
         assertEquals(lastName, userFromRepo.getLastName());
         assertEquals(username, userFromRepo.getUsername());
+        assertEquals(validAvatarSrc, userFromRepo.getAvatarSrc());
+
+        // make sure existing fields weren't modified
+        assertEquals(existingUser.getAuthSubject(), userFromRepo.getAuthSubject());
+        assertEquals(existingUser.getEmail(), userFromRepo.getEmail());
+    }
+
+    @Test
+    void testFinishAccountSetupWorksWithNullAvatarSrc() {
+        String firstName = "Bob";
+        String lastName = "Smith";
+        String username = "bsmith12";
+        UserAccountSetupRequest accountSetup = new UserAccountSetupRequest(firstName, lastName, username, null);
+        userService.finishAccountSetup(existingUser, accountSetup);
+
+        User userFromRepo = userRepo.findByAuthSubject(existingUser.getAuthSubject()).get();
+
+        // check account setup fields
+        assertEquals(firstName, userFromRepo.getFirstName());
+        assertEquals(lastName, userFromRepo.getLastName());
+        assertEquals(username, userFromRepo.getUsername());
+        assertNull(userFromRepo.getAvatarSrc());
 
         // make sure existing fields weren't modified
         assertEquals(existingUser.getAuthSubject(), userFromRepo.getAuthSubject());
@@ -161,7 +184,6 @@ public class UserServiceTest {
         UserAccountSetupRequest setup = new UserAccountSetupRequest("bob", "stone", "bob_stone_123",
                 "invalid avatar src");
         assertThrows(NotFoundException.class, () -> userService.finishAccountSetup(existingUser, setup));
-
     }
 
     @Test
