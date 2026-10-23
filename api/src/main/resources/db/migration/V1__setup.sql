@@ -48,6 +48,7 @@ CREATE TABLE invites (
     status TEXT NOT NULL DEFAULT 'PENDING' 
         CHECK (status in ('PENDING', 'ACCEPTED', 'DECLINED')) -- Can't use custom type because it won't work with H2 db
         NOT NULL,
+    invited_at TIMESTAMP WITH TIME ZONE NOT NULL,
     CONSTRAINT uq_challenge_id_invited_user_id UNIQUE (challenge_id, invited_user_id)
 );
 
