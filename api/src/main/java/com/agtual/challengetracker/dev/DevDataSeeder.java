@@ -65,7 +65,7 @@ public class DevDataSeeder implements CommandLineRunner {
         LOGGER.info("Seeding dev data...");
 
         // ---------- Avatars ----------
-        List<Avatar> avatars = avatarRepo.saveAll(List.of(
+        List<String> avatarSrcs = List.of(
                 "/avatars/rabbit.png",
                 "/avatars/astronaut.png",
                 "/avatars/panda.png",
@@ -75,7 +75,8 @@ public class DevDataSeeder implements CommandLineRunner {
                 "/avatars/robot.png",
                 "/avatars/profile.png",
                 "/avatars/fox.png",
-                "/avatars/hacker.png")
+                "/avatars/hacker.png");
+        avatarRepo.saveAll(avatarSrcs
                 .stream().map(src -> {
                     Avatar avatar = new Avatar();
                     avatar.setSrc(src);
@@ -89,7 +90,7 @@ public class DevDataSeeder implements CommandLineRunner {
         bob.setFirstName("Bob");
         bob.setLastName("Smith");
         bob.setUsername("iAmDev1");
-        bob.setAvatar(avatars.get(0));
+        bob.setAvatarSrc(avatarSrcs.get(0));
         userRepository.save(bob);
 
         User andy = new User();

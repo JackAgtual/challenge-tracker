@@ -5,12 +5,9 @@ import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,10 +36,10 @@ public class User {
     @Column(name = "username", unique = true)
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "avatar_id")
-    @lombok.Getter(lombok.AccessLevel.NONE)
-    private Avatar avatar;
+    // This is a foreign key, but User only needs the id (src)
+    // Foreign key relationship managed in sql
+    @Column(name = "avatar_id")
+    private String avatarSrc;
 
     public User(String subject, CreateUserRequest userRequest) {
         this.authSubject = subject;
@@ -59,9 +56,6 @@ public class User {
         username = setupRequest.username();
         firstName = setupRequest.firstName();
         lastName = setupRequest.lastName();
-    }
-
-    public String getAvatarSrc() {
-        return avatar == null ? null : avatar.getSrc();
+        avatarSrc = setupRequest.avatarSrc();
     }
 }

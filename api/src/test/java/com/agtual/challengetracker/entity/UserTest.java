@@ -2,7 +2,6 @@ package com.agtual.challengetracker.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -42,32 +41,15 @@ public class UserTest {
         String firstName = "Bob";
         String lastName = "Smith";
         String usernamne = "bsmith2";
+        String avatarSrc = "/avatars/pic.png";
 
         User user = new User();
-        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, usernamne);
+        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, usernamne, avatarSrc);
         user.setupAccount(setup);
 
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
         assertEquals(usernamne, user.getUsername());
-
-    }
-
-    @Test
-    void testGetAvatarSrcNull() {
-        User user = new User();
-        assertNull(user.getAvatarSrc());
-    }
-
-    @Test
-    void testGetAvatarSrcValid() {
-        String src = "/avatars/pic.png";
-
-        Avatar avatar = new Avatar();
-        avatar.setSrc(src);
-        User user = new User();
-        user.setAvatar(avatar);
-
-        assertEquals(src, user.getAvatarSrc());
+        assertEquals(avatarSrc, user.getAvatarSrc());
     }
 }

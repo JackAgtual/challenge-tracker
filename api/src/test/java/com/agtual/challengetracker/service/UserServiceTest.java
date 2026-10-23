@@ -21,9 +21,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.agtual.challengetracker.dto.request.CreateUserRequest;
 import com.agtual.challengetracker.dto.request.UserAccountSetupRequest;
+import com.agtual.challengetracker.entity.Avatar;
 import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
+import com.agtual.challengetracker.repo.AvatarRepo;
 import com.agtual.challengetracker.repo.UserRepo;
 
 @DataJpaTest
@@ -36,12 +38,16 @@ public class UserServiceTest {
     static Jwt newJwt = buildJwt(NEW_SUBJECT);
     static CreateUserRequest existingUserRequest = new CreateUserRequest("alicesmith@gmail.com");
     static CreateUserRequest newUserRequest = new CreateUserRequest("johndoe@gmail.com");
+    static String validAvatarSrc = "/avatars/pic.png";
 
     @MockitoSpyBean
     UserRepo userRepo;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AvatarRepo avatarRepo;
 
     User existingUser;
     User userToCreate;
@@ -51,6 +57,10 @@ public class UserServiceTest {
         User existingUserNotSaved = new User(EXISTING_SUBJECT, existingUserRequest);
         userToCreate = new User(NEW_SUBJECT, newUserRequest);
         existingUser = userRepo.save(existingUserNotSaved);
+
+        Avatar avatar = new Avatar();
+        avatar.setSrc(validAvatarSrc);
+        avatarRepo.save(avatar);
     }
 
     @Test
@@ -101,7 +111,8 @@ public class UserServiceTest {
         String firstName = "Bob";
         String lastName = "Smith";
         String username = "bsmith12";
-        UserAccountSetupRequest accountSetup = new UserAccountSetupRequest(firstName, lastName, username);
+        UserAccountSetupRequest accountSetup = new UserAccountSetupRequest(firstName, lastName, username,
+                validAvatarSrc);
         userService.finishAccountSetup(existingUser, accountSetup);
 
         User userFromRepo = userRepo.findByAuthSubject(existingUser.getAuthSubject()).get();
@@ -123,7 +134,7 @@ public class UserServiceTest {
         userRepo.save(existingUser);
 
         User savedNewUser = userRepo.save(userToCreate);
-        UserAccountSetupRequest setup = new UserAccountSetupRequest("jack", "a", username);
+        UserAccountSetupRequest setup = new UserAccountSetupRequest("jack", "a", username, validAvatarSrc);
         assertThrows(AlreadyExistsException.class, () -> userService.finishAccountSetup(savedNewUser, setup));
     }
 
@@ -136,7 +147,7 @@ public class UserServiceTest {
         existingUser.setUsername(username);
         userRepo.save(existingUser);
 
-        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, username);
+        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, username, validAvatarSrc);
         userService.finishAccountSetup(existingUser, setup);
 
         User updatedUser = userRepo.findByAuthSubject(existingUser.getAuthSubject()).get();

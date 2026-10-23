@@ -10,3 +10,7 @@ GENERATED ALWAYS AS (
 ) STORED;
 
 CREATE INDEX IF NOT EXISTS idx_users_search_vector ON users USING GIN (search_vector);
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_users_avatar
+    FOREIGN KEY (avatar_id) REFERENCES avatars (src);
