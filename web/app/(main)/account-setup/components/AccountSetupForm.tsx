@@ -103,7 +103,7 @@ export default function AccountSetupForm({
               )}
             />
             <Controller
-              name="avatar"
+              name="avatarSrc"
               control={control}
               render={({ field }) => (
                 <Field>
