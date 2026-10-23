@@ -4,9 +4,9 @@ import com.agtual.challengetracker.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 
 public record UserResponse(@NotEmpty Long id, String firstName, String lastName,
-        String username) {
+        String username, String avatarSrc) {
     public static UserResponse from(User user) {
         return new UserResponse(user.getId(), user.getFirstName(),
-                user.getLastName(), user.getUsername());
+                user.getLastName(), user.getUsername(), user.getAvatarSrc());
     }
 }

@@ -41,6 +41,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avatar_id")
+    @lombok.Getter(lombok.AccessLevel.NONE)
     private Avatar avatar;
 
     public User(String subject, CreateUserRequest userRequest) {
@@ -58,5 +59,9 @@ public class User {
         username = setupRequest.username();
         firstName = setupRequest.firstName();
         lastName = setupRequest.lastName();
+    }
+
+    public String getAvatarSrc() {
+        return avatar == null ? null : avatar.getSrc();
     }
 }

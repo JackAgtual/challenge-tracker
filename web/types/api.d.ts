@@ -415,6 +415,7 @@ export interface components {
             firstName?: string;
             lastName?: string;
             username?: string;
+            avatarSrc?: string;
         };
         CreateUserRequest: {
             /** Format: email */
@@ -448,6 +449,7 @@ export interface components {
             firstName: string;
             lastName: string;
             username: string;
+            avatarSrc?: string;
         };
         BooleanResponse: {
             value: boolean;
