@@ -2,6 +2,19 @@ CREATE TABLE avatars (
     src TEXT PRIMARY KEY 
 );
 
+INSERT INTO avatars (src)
+VALUES
+('/avatars/rabbit.png'),
+('/avatars/astronaut.png'),
+('/avatars/panda.png'),
+('/avatars/girl.png'),
+('/avatars/penguin.png'),
+('/avatars/man.png'),
+('/avatars/robot.png'),
+('/avatars/profile.png'),
+('/avatars/fox.png'),
+('/avatars/hacker.png');
+
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     auth_subject TEXT NOT NULL UNIQUE,
