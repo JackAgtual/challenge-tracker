@@ -157,6 +157,14 @@ public class UserServiceTest {
     }
 
     @Test
+    void testFinishAccountSetupRequiresValidAvatar() {
+        UserAccountSetupRequest setup = new UserAccountSetupRequest("bob", "stone", "bob_stone_123",
+                "invalid avatar src");
+        assertThrows(NotFoundException.class, () -> userService.finishAccountSetup(existingUser, setup));
+
+    }
+
+    @Test
     void testSearchUserOnlyReturnsSetupUsers() {
         User setupUser1 = mock(User.class);
         User setupUser2 = mock(User.class);

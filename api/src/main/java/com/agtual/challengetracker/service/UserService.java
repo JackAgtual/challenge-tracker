@@ -12,6 +12,7 @@ import com.agtual.challengetracker.entity.User;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.AlreadyExistsException;
 import com.agtual.challengetracker.exception.NotFoundException;
+import com.agtual.challengetracker.repo.AvatarRepo;
 import com.agtual.challengetracker.repo.UserRepo;
 import com.agtual.challengetracker.util.QueryUtil;
 
@@ -20,6 +21,7 @@ import com.agtual.challengetracker.util.QueryUtil;
 public class UserService {
 
     private final UserRepo userRepo;
+    private final AvatarRepo avatarRepo;
 
     public Optional<User> getUser(Jwt jwt) {
         return userRepo.findByAuthSubject(jwt.getSubject());
@@ -52,6 +54,10 @@ public class UserService {
     public User finishAccountSetup(User user, UserAccountSetupRequest accountSetupRequest) {
         if (userRepo.existsByUsernameAndAuthSubjectNot(accountSetupRequest.username(), user.getAuthSubject())) {
             throw new AlreadyExistsException(ResourceType.USER, accountSetupRequest.username());
+        }
+
+        if (!avatarRepo.existsById(accountSetupRequest.avatarSrc())) {
+            throw new NotFoundException(ResourceType.AVATAR, accountSetupRequest.avatarSrc());
         }
 
         user.setupAccount(accountSetupRequest);
