@@ -1,10 +1,15 @@
+CREATE TABLE avatars (
+    src TEXT PRIMARY KEY 
+);
+
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     auth_subject TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     first_name TEXT,
     last_name TEXT,
-    username TEXT UNIQUE
+    username TEXT UNIQUE,
+    avatar_id TEXT REFERENCES avatars
 );
 
 ALTER TABLE users
