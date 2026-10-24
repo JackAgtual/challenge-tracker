@@ -1,5 +1,5 @@
 import { components } from "@/types/api";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 type UserProps = {
   user: components["schemas"]["UserResponse"];
@@ -15,6 +15,7 @@ export default function User({ user }: UserProps) {
   return (
     <div className="flex gap-x-2 items-center">
       <Avatar>
+        <AvatarImage src={user.avatarSrc} />
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       <div>

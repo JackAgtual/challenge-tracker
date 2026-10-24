@@ -36,6 +36,11 @@ public class User {
     @Column(name = "username", unique = true)
     private String username;
 
+    // This is a foreign key, but User only needs the id (src)
+    // Foreign key relationship managed in sql
+    @Column(name = "avatar_id")
+    private String avatarSrc;
+
     public User(String subject, CreateUserRequest userRequest) {
         this.authSubject = subject;
         this.email = userRequest.email();
@@ -51,5 +56,6 @@ public class User {
         username = setupRequest.username();
         firstName = setupRequest.firstName();
         lastName = setupRequest.lastName();
+        avatarSrc = setupRequest.avatarSrc();
     }
 }

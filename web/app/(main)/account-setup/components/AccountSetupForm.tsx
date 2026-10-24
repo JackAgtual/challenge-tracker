@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { getFormErrorMessage } from "@/lib/form-utils";
+import { components } from "@/types/api";
 import {
   TSetupAccountFormSchema,
   setupAccountFormSchema,
@@ -25,13 +26,16 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import AvatarSelection from "./AvatarSelection";
 
 type AccountSetupFormProps = {
   defaultValues: TSetupAccountFormSchema;
+  availableAvatars: components["schemas"]["AvatarResponse"][];
 };
 
 export default function AccountSetupForm({
   defaultValues,
+  availableAvatars,
 }: AccountSetupFormProps) {
   const { control, handleSubmit, setError, formState } =
     useForm<TSetupAccountFormSchema>({
@@ -41,11 +45,12 @@ export default function AccountSetupForm({
 
   const onSubmit = async (formData: TSetupAccountFormSchema) => {
     const { success, error } = await accountSetup(formData);
-
     if (success) {
       redirect("/dashboard");
+    } else {
+      // Need to use else statement so tests pass
+      setError("root", getFormErrorMessage(error));
     }
-    setError("root", getFormErrorMessage(error));
   };
 
   return (
@@ -94,6 +99,11 @@ export default function AccountSetupForm({
                   )}
                 </Field>
               )}
+            />
+            <AvatarSelection
+              control={control}
+              availableAvatars={availableAvatars}
+              defaultAvatar={defaultValues.avatarSrc}
             />
           </FieldGroup>
         </form>

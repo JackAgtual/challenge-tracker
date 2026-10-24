@@ -41,14 +41,15 @@ public class UserTest {
         String firstName = "Bob";
         String lastName = "Smith";
         String usernamne = "bsmith2";
+        String avatarSrc = "/avatars/pic.png";
 
         User user = new User();
-        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, usernamne);
+        UserAccountSetupRequest setup = new UserAccountSetupRequest(firstName, lastName, usernamne, avatarSrc);
         user.setupAccount(setup);
 
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
         assertEquals(usernamne, user.getUsername());
-
+        assertEquals(avatarSrc, user.getAvatarSrc());
     }
 }
