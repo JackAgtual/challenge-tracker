@@ -35,9 +35,6 @@ export default function InviteUserForm({ challengeId }: InviteUserProps) {
   const [queryRes, setQueryRes] = useState<
     components["schemas"]["ValidUserResponse"][]
   >([]);
-  // TOOD: Continue here. I added User card but it only accepts valid participant
-  // might need to adjust get users endpoint to only return users that are set up
-  // Remove console logs (idk where they are but i saw them in logs)
   const [comboKey, setComboKey] = useState(1); // Used to clear combobox input after submit
 
   useEffect(() => {
