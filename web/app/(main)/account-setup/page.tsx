@@ -1,6 +1,7 @@
 import CenterContainer from "@/components/CenterContainer";
 import { client } from "@/lib/api-client";
 import { getValidFirstTimeSession } from "@/lib/auth-utils";
+import { TSetupAccountFormSchema } from "@/types/form-types";
 import AccountSetupForm from "./components/AccountSetupForm";
 
 export default async function Page() {
@@ -19,11 +20,11 @@ export default async function Page() {
     throw new Error("Failed ot load available avatars");
   }
 
-  const defaultValues = {
+  const defaultValues: TSetupAccountFormSchema = {
     firstName: curUser.data.firstName || "",
     lastName: curUser.data.lastName || "",
     username: curUser.data.username || "",
-    avatar: curUser.data.avatarSrc,
+    avatarSrc: curUser.data.avatarSrc,
   };
 
   return (
