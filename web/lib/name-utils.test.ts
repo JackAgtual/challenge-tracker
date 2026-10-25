@@ -1,15 +1,19 @@
 import { components } from "@/types/api";
-import { getDisplayNameFromUser } from "./name-utils";
+import {
+  getChallengeNameAndDuration,
+  getDisplayNameFromUser,
+} from "./name-utils";
 
 type User = components["schemas"]["UserResponse"];
-
-const firstName = "John";
-const lastName = "Doe";
-const username = "jdoe12";
-
-const expectedDisplayName = "jdoe12 (John Doe)";
+type Challenge = components["schemas"]["ChallengeResponse"];
 
 describe("getDisplayNameFromUser", () => {
+  const firstName = "John";
+  const lastName = "Doe";
+  const username = "jdoe12";
+
+  const expectedDisplayName = "jdoe12 (John Doe)";
+
   it("Returns valid display name", () => {
     const user: User = {
       id: 1,
@@ -37,5 +41,33 @@ describe("getDisplayNameFromUser", () => {
     };
 
     expect(getDisplayNameFromUser(user)).toEqual("jdoe12 (John UNK)");
+  });
+});
+
+describe("getChallengeNameAndDuration", () => {
+  it("get correct text", () => {
+    const challenge: Challenge = {
+      id: 1,
+      durationDays: 30,
+      name: "75 hard",
+      owner: { id: 2 },
+      status: "PENDING",
+    };
+
+    expect(getChallengeNameAndDuration(challenge)).toEqual("75 hard - 30 days");
+  });
+
+  it("accounts for singular/plural days", () => {
+    const challenge: Challenge = {
+      id: 1,
+      durationDays: 1,
+      name: "one day wonder",
+      owner: { id: 2 },
+      status: "PENDING",
+    };
+
+    expect(getChallengeNameAndDuration(challenge)).toEqual(
+      "one day wonder - 1 day"
+    );
   });
 });

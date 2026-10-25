@@ -5,8 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import User from "@/components/User";
+import { getChallengeNameAndDuration } from "@/lib/name-utils";
 import { components } from "@/types/api";
+import { InvitedBy } from "../InvitedBy";
 import { AcceptButton } from "./AcceptButton";
 import { DeclineButton } from "./DeclineButton";
 
@@ -20,13 +21,10 @@ export function RespondableInvite({ invite }: RespondableInviteProps) {
   return (
     <Card key={id}>
       <CardHeader>
-        <CardTitle>
-          {challenge.name} - {challenge.durationDays} days
-        </CardTitle>
+        <CardTitle>{getChallengeNameAndDuration(challenge)}</CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center gap-x-2">
-        <p>Invited by:</p>
-        <User user={inviteSender} />
+      <CardContent>
+        <InvitedBy user={inviteSender} />
       </CardContent>
       <CardFooter className="grid grid-cols-2 w-fit gap-x-2">
         <AcceptButton inviteId={id} challengeId={challenge.id} />

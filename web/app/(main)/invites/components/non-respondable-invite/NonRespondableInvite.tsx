@@ -5,8 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import User from "@/components/User";
+import { getChallengeNameAndDuration } from "@/lib/name-utils";
 import { components } from "@/types/api";
+import { InvitedBy } from "../InvitedBy";
 import { DeleteButton } from "./DeleteButton";
 
 type NonRespondableInviteProps = {
@@ -18,18 +19,13 @@ export function NonRespondableInvite({ invite }: NonRespondableInviteProps) {
   return (
     <Card key={id}>
       <CardHeader>
-        <CardTitle>
-          {challenge.name} - {challenge.durationDays} days
-        </CardTitle>
+        <CardTitle>{getChallengeNameAndDuration(challenge)}</CardTitle>
         <CardAction>
           <DeleteButton inviteId={id} />
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-y-2">
-        <div className="flex items-center gap-x-2">
-          <p>Invited by:</p>
-          <User user={inviteSender} />
-        </div>
+        <InvitedBy user={inviteSender} />
         <p>Challenge started: {challenge.starDate ?? "Unknown"}</p>
       </CardContent>
     </Card>
