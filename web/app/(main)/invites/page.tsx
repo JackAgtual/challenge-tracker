@@ -1,7 +1,6 @@
 import { client } from "@/lib/api-client";
 import { components } from "@/types/api";
-import { NonRespondableInvite } from "./components/non-respondable-invite";
-import { RespondableInvite } from "./components/respondable-invite";
+import { Invite } from "./components/Invite";
 
 type Invite = components["schemas"]["ReceivedInviteResponse"];
 
@@ -25,9 +24,9 @@ export default async function Page() {
     <div>
       <div>
         <h1>Your invites</h1>
-        <div>
+        <div className="flex gap-2 flex-wrap">
           {respondableInvites.map((invite) => (
-            <RespondableInvite key={invite.id} invite={invite} />
+            <Invite key={invite.id} invite={invite} />
           ))}
         </div>
       </div>
@@ -35,7 +34,7 @@ export default async function Page() {
         <h1>Invites you can no longer respond to</h1>
         <p>These challenges have already been started</p>
         {nonRespondableInvites.map((invite) => (
-          <NonRespondableInvite key={invite.id} invite={invite} />
+          <Invite key={invite.id} invite={invite} />
         ))}
       </div>
     </div>
