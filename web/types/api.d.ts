@@ -476,7 +476,7 @@ export interface components {
             id: number;
             canRespond: boolean;
             challenge: components["schemas"]["ChallengeResponse"];
-            inviteSender: components["schemas"]["UserResponse"];
+            inviteSender: components["schemas"]["ValidUserResponse"];
         };
         AvatarResponse: {
             src: string;

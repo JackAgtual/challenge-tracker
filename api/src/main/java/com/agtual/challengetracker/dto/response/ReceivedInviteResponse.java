@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record ReceivedInviteResponse(@NotNull Long id, @NotNull boolean canRespond,
         @NotNull ChallengeResponse challenge,
-        @NotNull UserResponse inviteSender) {
+        @NotNull ValidUserResponse inviteSender) {
     public static ReceivedInviteResponse from(Invite invite) {
         return new ReceivedInviteResponse(
                 invite.getId(), invite.recipientCanRespond(), ChallengeResponse.from(invite.getChallenge()),
-                UserResponse.from(invite.getInviteSender()));
+                ValidUserResponse.from(invite.getInviteSender()));
     }
 }

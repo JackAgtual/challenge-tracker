@@ -1,14 +1,9 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { client } from "@/lib/api-client";
-import AcceptButton from "./components/AcceptButton";
-import DeclineButton from "./components/DeclineButton";
-import { getDisplayNameFromUser } from "@/lib/name-utils";
+import NonRespondableInvite from "./components/NonRespondableInvite";
+import RespondableInvite from "./components/RespondableInvite";
+import { components } from "@/types/api";
+
+type Invite = components["schemas"]["ReceivedInviteResponse"];
 
 export default async function Page() {
   const { error, data } = await client.GET("/invites");
@@ -17,23 +12,30 @@ export default async function Page() {
     throw new Error("Could not get your invites");
   }
 
+  const respondableInvites: Invite[] = [];
+  const nonRespondableInvites: Invite[] = [];
+
+  data.forEach((invite) => {
+    (invite.canRespond ? respondableInvites : nonRespondableInvites).push(
+      invite
+    );
+  });
+
   return (
     <div>
-      <h1>Your invites</h1>
       <div>
-        {data.map(({ id, challenge, inviteSender }) => (
-          <Card key={id}>
-            <CardHeader>
-              <CardTitle>{challenge.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Invited by {getDisplayNameFromUser(inviteSender)}</p>
-            </CardContent>
-            <CardFooter className="grid grid-cols-2 w-fit gap-x-2">
-              <AcceptButton inviteId={id} challengeId={challenge.id} />
-              <DeclineButton inviteId={id} />
-            </CardFooter>
-          </Card>
+        <h1>Your invites</h1>
+        <div>
+          {respondableInvites.map((invite) => (
+            <RespondableInvite key={invite.id} invite={invite} />
+          ))}
+        </div>
+      </div>
+      <div>
+        <h1>Invites you can no longer respond to</h1>
+        <p>These challenges have already been started</p>
+        {nonRespondableInvites.map((invite) => (
+          <NonRespondableInvite key={invite.id} invite={invite} />
         ))}
       </div>
     </div>
