@@ -7,14 +7,14 @@ import {
 } from "@/components/ui/card";
 import User from "@/components/User";
 import { components } from "@/types/api";
-import AcceptButton from "./AcceptButton";
-import DeclineButton from "./DeclineButton";
+import { AcceptButton } from "./AcceptButton";
+import { DeclineButton } from "./DeclineButton";
 
 type RespondableInviteProps = {
   invite: components["schemas"]["ReceivedInviteResponse"];
 };
 
-export default function RespondableInvite({ invite }: RespondableInviteProps) {
+export function RespondableInvite({ invite }: RespondableInviteProps) {
   const { id, challenge, inviteSender } = invite;
 
   return (

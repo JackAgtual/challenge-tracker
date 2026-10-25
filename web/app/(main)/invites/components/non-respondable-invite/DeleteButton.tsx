@@ -9,7 +9,7 @@ type DeleteButtonProps = {
   inviteId: number;
 };
 
-export default function DeleteButton({ inviteId }: DeleteButtonProps) {
+export function DeleteButton({ inviteId }: DeleteButtonProps) {
   const handleClick = async () => {
     const { error } = await deleteInvite(inviteId);
 

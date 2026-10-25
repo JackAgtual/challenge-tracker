@@ -1,7 +1,7 @@
 import { client } from "@/lib/api-client";
-import NonRespondableInvite from "./components/NonRespondableInvite";
-import RespondableInvite from "./components/RespondableInvite";
 import { components } from "@/types/api";
+import { NonRespondableInvite } from "./components/non-respondable-invite";
+import { RespondableInvite } from "./components/respondable-invite";
 
 type Invite = components["schemas"]["ReceivedInviteResponse"];
 

@@ -10,10 +10,7 @@ type AcceptButtonProps = {
   challengeId: number;
 };
 
-export default function AcceptButton({
-  inviteId,
-  challengeId,
-}: AcceptButtonProps) {
+export function AcceptButton({ inviteId, challengeId }: AcceptButtonProps) {
   async function handleClick() {
     const { success, error } = await acceptInvite(inviteId);
     if (!success) {

@@ -7,15 +7,13 @@ import {
 } from "@/components/ui/card";
 import User from "@/components/User";
 import { components } from "@/types/api";
-import DeleteButton from "./DeleteButton";
+import { DeleteButton } from "./DeleteButton";
 
 type NonRespondableInviteProps = {
   invite: components["schemas"]["ReceivedInviteResponse"];
 };
 
-export default function NonRespondableInvite({
-  invite,
-}: NonRespondableInviteProps) {
+export function NonRespondableInvite({ invite }: NonRespondableInviteProps) {
   const { id, challenge, inviteSender } = invite;
   return (
     <Card key={id}>
