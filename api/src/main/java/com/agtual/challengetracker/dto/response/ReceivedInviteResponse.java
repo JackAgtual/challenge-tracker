@@ -4,11 +4,12 @@ import com.agtual.challengetracker.entity.Invite;
 
 import jakarta.validation.constraints.NotNull;
 
-public record ReceivedInviteResponse(@NotNull Long id, @NotNull ChallengeResponse challenge,
+public record ReceivedInviteResponse(@NotNull Long id, @NotNull boolean canRespond,
+        @NotNull ChallengeResponse challenge,
         @NotNull UserResponse inviteSender) {
     public static ReceivedInviteResponse from(Invite invite) {
         return new ReceivedInviteResponse(
-                invite.getId(), ChallengeResponse.from(invite.getChallenge()),
+                invite.getId(), invite.recipientCanRespond(), ChallengeResponse.from(invite.getChallenge()),
                 UserResponse.from(invite.getInviteSender()));
     }
 }

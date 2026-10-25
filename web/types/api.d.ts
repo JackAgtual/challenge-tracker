@@ -458,6 +458,7 @@ export interface components {
         ReceivedInviteResponse: {
             /** Format: int64 */
             id: number;
+            canRespond: boolean;
             challenge: components["schemas"]["ChallengeResponse"];
             inviteSender: components["schemas"]["UserResponse"];
         };
