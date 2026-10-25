@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
 
 import jakarta.persistence.Column;
@@ -49,4 +50,8 @@ public class Invite {
     @CreationTimestamp
     @Column(name = "invited_at", nullable = false, updatable = false)
     private Instant invitedAt;
+
+    public boolean recipientCanRespond() {
+        return challenge.getStatus() == ChallengeStatus.PENDING;
+    }
 }
