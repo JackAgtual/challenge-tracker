@@ -1,3 +1,9 @@
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { client } from "@/lib/api-client";
 import { components } from "@/types/api";
 import { Invite } from "./components/Invite";
@@ -21,17 +27,37 @@ export default async function Page() {
     );
   });
 
+  if (respondableInvites.length === 0 && nonRespondableInvites.length === 0) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>No invites yet</EmptyTitle>
+          <EmptyDescription>
+            This page is where you would see invites from another user inviting
+            you to join a challenge.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
   return (
-    <div>
-      <div>
-        <h1>Your invites</h1>
-        <InviteList invites={respondableInvites} />
-      </div>
-      <div>
-        <h1>Invites you can no longer respond to</h1>
-        <p>These challenges have already been started</p>
-        <InviteList invites={nonRespondableInvites} />
-      </div>
+    <div className="divide-y ">
+      {respondableInvites.length > 0 && (
+        <div className="py-4">
+          <h1 className="mb-4">Invites you have received</h1>
+          <InviteList invites={respondableInvites} />
+        </div>
+      )}
+      {nonRespondableInvites.length > 0 && (
+        <div className="py-4">
+          <div className="mb-4">
+            <h1>Invites you can no longer respond to</h1>
+            <p>These challenges have already been started</p>
+          </div>
+          <InviteList invites={nonRespondableInvites} />
+        </div>
+      )}
     </div>
   );
 }
