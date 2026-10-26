@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { redirect } from "next/navigation";
 
-type AcceptButtonProps = {
+type Props = {
   inviteId: number;
   challengeId: number;
 };
 
-export function AcceptButton({ inviteId, challengeId }: AcceptButtonProps) {
+export function AcceptButton({ inviteId, challengeId }: Props) {
   async function handleClick() {
     const { success, error } = await acceptInvite(inviteId);
     if (!success) {

@@ -11,7 +11,7 @@ type GoalCompletionIconProps = {
   canModifyGoalCompletions: boolean;
 };
 
-export default function GoalCompletionIcon({
+export function GoalCompletionIcon({
   challengeId,
   goalDefinitionId,
   goalCompletionId,

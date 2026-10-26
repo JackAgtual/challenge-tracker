@@ -1,7 +1,7 @@
 "use client";
 
 import { accountSetup } from "@/actions/account-setup";
-import FormRootError from "@/components/FormRootError";
+import { FormRootError } from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,17 +26,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import AvatarSelection from "./AvatarSelection";
+import { AvatarSelection } from "./AvatarSelection";
 
-type AccountSetupFormProps = {
+type Props = {
   defaultValues: TSetupAccountFormSchema;
   availableAvatars: components["schemas"]["AvatarResponse"][];
 };
 
-export default function AccountSetupForm({
-  defaultValues,
-  availableAvatars,
-}: AccountSetupFormProps) {
+export function AccountSetupForm({ defaultValues, availableAvatars }: Props) {
   const { control, handleSubmit, setError, formState } =
     useForm<TSetupAccountFormSchema>({
       resolver: zodResolver(setupAccountFormSchema),

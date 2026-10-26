@@ -21,7 +21,7 @@ type RemoveParticipantButtonProps = {
   participantId: number;
 };
 
-export default function RemoveParticipantButton({
+export function RemoveParticipantButton({
   challengeId,
   participantId,
 }: RemoveParticipantButtonProps) {

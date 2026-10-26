@@ -15,7 +15,7 @@ type ClientButtonProps = {
   startEligibility: components["schemas"]["ChallengeReadyResponse"];
 };
 
-export default function ClientButton({
+export function ClientButton({
   challengeId,
   startEligibility,
 }: ClientButtonProps) {

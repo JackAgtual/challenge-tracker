@@ -14,11 +14,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { toastProblemDetail } from "@/lib/toast-utils";
 
-type DeclineButtonProps = {
+type Props = {
   inviteId: number;
 };
 
-export function DeclineButton({ inviteId }: DeclineButtonProps) {
+export function DeclineButton({ inviteId }: Props) {
   async function handleClick() {
     const { success, error } = await declineInvite(inviteId);
     if (!success) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { createGoal } from "@/actions/goal-definition";
-import FormRootError from "@/components/FormRootError";
+import { FormRootError } from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -13,11 +13,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
-type CreateGoalFormProps = {
+type Props = {
   challengeId: number;
 };
 
-export default function CreateGoalForm({ challengeId }: CreateGoalFormProps) {
+export function CreateGoalForm({ challengeId }: Props) {
   const { control, handleSubmit, reset, setError, formState } =
     useForm<TCreateGoalFormSchema>({
       resolver: zodResolver(createGoalFormSchema),

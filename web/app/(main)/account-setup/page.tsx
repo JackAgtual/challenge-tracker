@@ -1,8 +1,8 @@
-import CenterContainer from "@/components/CenterContainer";
+import { CenterContainer } from "@/components/CenterContainer";
 import { client } from "@/lib/api-client";
 import { getValidFirstTimeSession } from "@/lib/auth-utils";
 import { TSetupAccountFormSchema } from "@/types/form-types";
-import AccountSetupForm from "./components/AccountSetupForm";
+import { AccountSetupForm } from "./components/AccountSetupForm";
 
 export default async function Page() {
   await getValidFirstTimeSession();

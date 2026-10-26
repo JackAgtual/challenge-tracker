@@ -6,13 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GoalDefinitionsProps } from ".";
-import GoalDefinitionActionMenu from "./GoalDefinitionActionMenu";
+import { Props } from ".";
+import { GoalDefinitionActionMenu } from "./GoalDefinitionActionMenu";
 
-export default function GoalDefinitionsTable({
-  challengeId,
-  goalDefinitions,
-}: GoalDefinitionsProps) {
+export function GoalDefinitionsTable({ challengeId, goalDefinitions }: Props) {
   return (
     <Table>
       <TableHeader>

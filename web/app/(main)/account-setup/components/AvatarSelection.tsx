@@ -10,16 +10,16 @@ import { cn } from "cn";
 import { useState } from "react";
 import { Control, Controller } from "react-hook-form";
 
-type AvatarSelectionProps = {
+type Props = {
   control: Control<TSetupAccountFormSchema>;
   availableAvatars: components["schemas"]["AvatarResponse"][];
   defaultAvatar: string | undefined;
 };
-export default function AvatarSelection({
+export function AvatarSelection({
   control,
   availableAvatars,
   defaultAvatar,
-}: AvatarSelectionProps) {
+}: Props) {
   const [selectionMade, setSelectionMade] = useState(false);
 
   return (

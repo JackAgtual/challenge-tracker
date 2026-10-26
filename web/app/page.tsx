@@ -1,4 +1,4 @@
-import LoginButton from "@/components/LoginButton";
+import { LoginButton } from "@/components/LoginButton";
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
 

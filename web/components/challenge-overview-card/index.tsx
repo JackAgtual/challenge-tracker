@@ -6,11 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { components } from "@/types/api";
-import EditChallengeButton from "./EditChallengeButton";
+import { EditChallengeButton } from "./EditChallengeButton";
 import StartChallengeButton from "./start-challenge-button";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
 
-type ChallengeOverviewCardProps = {
+type Props = {
   challenge: components["schemas"]["ChallengeResponse"];
   canEditAndStartChallenge: boolean;
 };
@@ -18,7 +18,7 @@ type ChallengeOverviewCardProps = {
 export default function ChallengeOverviewCard({
   challenge,
   canEditAndStartChallenge,
-}: ChallengeOverviewCardProps) {
+}: Props) {
   return (
     <Card>
       <CardHeader>

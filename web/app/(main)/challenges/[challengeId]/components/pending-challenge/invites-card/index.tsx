@@ -7,10 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { components } from "@/types/api";
-import InviteUserForm from "./InviteUserForm";
-import InvitesTable from "./InvitesTable";
+import { InviteUserForm } from "./InviteUserForm";
+import { InvitesTable } from "./InvitesTable";
 
-type InvitesCardProps = {
+type Props = {
   invites: components["schemas"]["NonAcceptedInvitesForChallengeResponse"][];
   challengeId: number;
   curUserIsChallengeOwner: boolean;
@@ -20,7 +20,7 @@ export default function InvitesCard({
   invites,
   challengeId,
   curUserIsChallengeOwner,
-}: InvitesCardProps) {
+}: Props) {
   return (
     <Card>
       <CardHeader>

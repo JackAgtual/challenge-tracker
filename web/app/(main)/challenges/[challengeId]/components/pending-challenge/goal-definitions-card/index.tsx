@@ -7,10 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { components } from "@/types/api";
-import GoalDefinitionsTable from "./GoalDefinitionsTable";
-import CreateGoalForm from "./CreateGoalForm";
+import { GoalDefinitionsTable } from "./GoalDefinitionsTable";
+import { CreateGoalForm } from "./CreateGoalForm";
 
-export type GoalDefinitionsProps = {
+export type Props = {
   challengeId: number;
   goalDefinitions: components["schemas"]["GoalDefinitionResponse"][];
 };
@@ -18,7 +18,7 @@ export type GoalDefinitionsProps = {
 export default function GoalDefinitionsCard({
   challengeId,
   goalDefinitions,
-}: GoalDefinitionsProps) {
+}: Props) {
   return (
     <Card>
       <CardHeader>

@@ -1,22 +1,21 @@
-import { getDisplayNameFromUser } from "@/lib/name-utils";
 import { components } from "@/types/api";
 import Link from "next/link";
-import RemoveParticipantButton from "./RemoveParticipantButton";
-import User from "../User";
+import { User } from "../User";
+import { RemoveParticipantButton } from "./RemoveParticipantButton";
 
-type ParticipantProps = {
+type Props = {
   participant: components["schemas"]["ParticipantResponse"];
   challengeId: number;
   challengeIsPending: boolean;
   curUserIsOwner?: boolean;
 };
 
-export default function Participant({
+export function Participant({
   participant,
   challengeId,
   challengeIsPending,
   curUserIsOwner,
-}: ParticipantProps) {
+}: Props) {
   return (
     <div className="flex justify-between py-2 my-0">
       <Link

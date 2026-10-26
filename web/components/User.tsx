@@ -5,7 +5,7 @@ type UserProps = {
   user: components["schemas"]["UserResponse"];
 };
 
-export default function User({ user }: UserProps) {
+export function User({ user }: UserProps) {
   const { firstName, lastName, username } = user;
 
   const firstInitial = !!firstName ? firstName.charAt(0).toUpperCase() : "";

@@ -1,6 +1,6 @@
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import ChallengeSection from "./components/ChallengeSection";
+import { ChallengeSection } from "./components/ChallengeSection";
 
 export default async function Page() {
   await getValidSession();

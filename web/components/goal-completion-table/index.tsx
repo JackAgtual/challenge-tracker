@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/table";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import CompletedGoalElement from "./CompletedGoalElement";
-import UncompletedGoalElement from "./UncompletedGoalElement";
+import { CompletedGoalElement } from "./CompletedGoalElement";
+import { UncompletedGoalElement } from "./UncompletedGoalElement";
 
 type GoalCompletionTableProps = {
   challengeId: number;

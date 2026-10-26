@@ -7,8 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { components } from "@/types/api";
-import Participant from "./Participant";
-import ToggleReady from "./ToggleReady";
+import { Participant } from "./Participant";
+import { ToggleReady } from "./ToggleReady";
 
 type BaseProps = {
   participants: components["schemas"]["ParticipantResponse"][];

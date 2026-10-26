@@ -4,7 +4,7 @@ type FormRootErrorProps<TFieldValues extends FieldValues> = {
   formState: FormState<TFieldValues>;
 };
 
-export default function FormRootError<TFieldValues extends FieldValues>({
+export function FormRootError<TFieldValues extends FieldValues>({
   formState,
 }: FormRootErrorProps<TFieldValues>) {
   return (

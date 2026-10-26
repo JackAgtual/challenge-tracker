@@ -1,7 +1,7 @@
 "use client";
 
 import { createChallenge, modifyChallenge } from "@/actions/challenge-actions";
-import FormRootError from "@/components/FormRootError";
+import { FormRootError } from "@/components/FormRootError";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -27,7 +27,7 @@ import {
   CardTitle,
 } from "./ui/card";
 
-type ChallengeFormProps =
+type Props =
   | {
       action: "EDIT";
       defaultValues: TChallengeDataFormSchema;
@@ -39,7 +39,7 @@ type ChallengeFormProps =
       challengeId?: never;
     };
 
-export default function ChallengeForm(props: ChallengeFormProps) {
+export function ChallengeForm(props: Props) {
   const { control, handleSubmit, setError, formState } =
     useForm<TChallengeDataFormSchema>({
       resolver: zodResolver(challengeDataFormSchema),

@@ -6,14 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import User from "@/components/User";
+import { User } from "@/components/User";
 import { components } from "@/types/api";
 
-type InvitesTableProps = {
+type Props = {
   invites: components["schemas"]["NonAcceptedInvitesForChallengeResponse"][];
 };
 
-export default function InvitesTable({ invites }: InvitesTableProps) {
+export function InvitesTable({ invites }: Props) {
   return (
     <Table>
       <TableHeader>

@@ -1,5 +1,5 @@
 import { client } from "@/lib/api-client";
-import ClientButton from "./ClientButton";
+import { ClientButton } from "./ClientButton";
 import { getValidSession } from "@/lib/auth-utils";
 
 type StartChallengeButtonProps = {

@@ -11,7 +11,7 @@ type UncompletedGoalElementProps = {
   canModifyGoalCompletions: boolean;
 };
 
-export default function UncompletedGoalElement({
+export function UncompletedGoalElement({
   challengeId,
   goalDefinitionId,
   date,

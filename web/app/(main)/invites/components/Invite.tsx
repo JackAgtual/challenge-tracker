@@ -1,4 +1,4 @@
-import User from "@/components/User";
+import { User } from "@/components/User";
 import { components } from "@/types/api";
 import {
   Card,

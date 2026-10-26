@@ -3,7 +3,7 @@ import GoalCompletionTable from "@/components/goal-completion-table";
 import ParticipantsCard from "@/components/participants-card";
 import { components } from "@/types/api";
 
-type NonPendingChallengeProps = {
+type Props = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
   curParticipantId: number;
 };
@@ -11,7 +11,7 @@ type NonPendingChallengeProps = {
 export default function NonPendingChallenge({
   challengeDetails,
   curParticipantId,
-}: NonPendingChallengeProps) {
+}: Props) {
   return (
     <>
       <ChallengeOverviewCard

@@ -2,15 +2,12 @@ import ChallengeOverviewCard from "@/components/challenge-overview-card";
 import { components } from "@/types/api";
 import Link from "next/link";
 
-type ChallengeSectionProps = {
+type Props = {
   title: string;
   data: components["schemas"]["ChallengeResponse"][];
 };
 
-export default function ChallengeSection({
-  title,
-  data,
-}: ChallengeSectionProps) {
+export function ChallengeSection({ title, data }: Props) {
   return (
     <div>
       <h2 className="text-lg py-4">{title}:</h2>

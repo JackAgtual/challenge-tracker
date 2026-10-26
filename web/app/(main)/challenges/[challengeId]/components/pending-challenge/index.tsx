@@ -6,7 +6,7 @@ import GoalDefinitionsCard from "./goal-definitions-card";
 import InvitesCard from "./invites-card";
 import ChallengeOverviewCard from "@/components/challenge-overview-card";
 
-type PendingChallengePageProps = {
+type Props = {
   challengeDetails: components["schemas"]["ChallengeDetailResponse"];
   curParticipantId: number;
 };
@@ -14,7 +14,7 @@ type PendingChallengePageProps = {
 export default async function PendingChallengePage({
   challengeDetails,
   curParticipantId,
-}: PendingChallengePageProps) {
+}: Props) {
   await getValidSession();
 
   const { challenge, participants } = challengeDetails;

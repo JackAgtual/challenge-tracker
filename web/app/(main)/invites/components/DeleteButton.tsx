@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { Trash } from "lucide-react";
 
-type DeleteButtonProps = {
+type Props = {
   inviteId: number;
 };
 
-export function DeleteButton({ inviteId }: DeleteButtonProps) {
+export function DeleteButton({ inviteId }: Props) {
   const handleClick = async () => {
     const { error } = await deleteInvite(inviteId);
 

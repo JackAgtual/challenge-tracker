@@ -1,5 +1,5 @@
-import CenterContainer from "@/components/CenterContainer";
-import ChallengeForm from "@/components/ChallengeForm";
+import { CenterContainer } from "@/components/CenterContainer";
+import { ChallengeForm } from "@/components/ChallengeForm";
 import { client } from "@/lib/api-client";
 import { TChallengeDataFormSchema } from "@/types/form-types";
 

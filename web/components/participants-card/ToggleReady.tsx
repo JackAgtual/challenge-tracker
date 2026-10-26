@@ -9,17 +9,17 @@ import {
 } from "@/components/ui/hover-card";
 import { toastProblemDetail } from "@/lib/toast-utils";
 
-type ToggleReadyProps = {
+type Props = {
   isReady: boolean;
   eligibleToSetReady: boolean;
   challengeId: number;
 };
 
-export default function ToggleReady({
+export function ToggleReady({
   isReady,
   eligibleToSetReady,
   challengeId,
-}: ToggleReadyProps) {
+}: Props) {
   async function handleClick() {
     const { error } = await setReady(!isReady, challengeId);
     if (error) {

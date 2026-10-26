@@ -11,15 +11,15 @@ import {
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { MoreHorizontalIcon } from "lucide-react";
 
-type GoalDefinitionActionMenuProps = {
+type Props = {
   challengeId: number;
   goalDefinitionId: number;
 };
 
-export default function GoalDefinitionActionMenu({
+export function GoalDefinitionActionMenu({
   challengeId,
   goalDefinitionId,
-}: GoalDefinitionActionMenuProps) {
+}: Props) {
   async function handleDelete() {
     const { success, error } = await deleteGoal(challengeId, goalDefinitionId);
 

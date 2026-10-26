@@ -12,7 +12,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import User from "@/components/User";
+import { User } from "@/components/User";
 import { useDebounce } from "@/hooks/use-debounce";
 import { getFormErrorMessage } from "@/lib/form-utils";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
@@ -26,11 +26,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-type InviteUserProps = {
+type Props = {
   challengeId: number;
 };
 
-export default function InviteUserForm({ challengeId }: InviteUserProps) {
+export function InviteUserForm({ challengeId }: Props) {
   const [query, setQuery] = useDebounce("");
   const [queryRes, setQueryRes] = useState<
     components["schemas"]["ValidUserResponse"][]
