@@ -2,10 +2,13 @@ package com.agtual.challengetracker.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agtual.challengetracker.controller.resolver.CurrentUser;
@@ -36,5 +39,11 @@ public class InviteResponseController {
     @PostMapping("/{inviteId}/decline")
     public void declineInvite(@CurrentUser User user, @PathVariable Long inviteId) {
         inviteService.declineInvite(user, inviteId);
+    }
+
+    @DeleteMapping("/{inviteId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteInvite(@CurrentUser User user, @PathVariable Long inviteId) {
+        inviteService.deleteInvite(user, inviteId);
     }
 }

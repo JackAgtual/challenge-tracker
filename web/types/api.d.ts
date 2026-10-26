@@ -340,6 +340,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/invites/{inviteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteInvite"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/challenges/{challengeId}/leave": {
         parameters: {
             query?: never;
@@ -458,8 +474,9 @@ export interface components {
         ReceivedInviteResponse: {
             /** Format: int64 */
             id: number;
+            canRespond: boolean;
             challenge: components["schemas"]["ChallengeResponse"];
-            inviteSender: components["schemas"]["UserResponse"];
+            inviteSender: components["schemas"]["ValidUserResponse"];
         };
         AvatarResponse: {
             src: string;
@@ -2073,6 +2090,62 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ParticipantResponse"];
                 };
+            };
+            /** @description Forbidden Operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Conflict — resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
+        };
+    };
+    deleteInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inviteId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Forbidden Operation */
             403: {

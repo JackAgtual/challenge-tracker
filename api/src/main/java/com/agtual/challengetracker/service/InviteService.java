@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.agtual.challengetracker.entity.Challenge;
 import com.agtual.challengetracker.entity.Invite;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
 import com.agtual.challengetracker.enums.ResourceType;
 import com.agtual.challengetracker.exception.ForbiddenException;
@@ -63,7 +64,7 @@ public class InviteService {
 
     @Transactional
     public void acceptInvite(User invitedUser, Long inviteId) {
-        Invite invite = getValidInviteForUser(inviteId, invitedUser);
+        Invite invite = getValidInviteForUserAndConfigurableChallenge(inviteId, invitedUser);
         invite.setStatus(InviteStatus.ACCEPTED);
 
         participantService.addUserToChallenge(invitedUser, invite.getChallenge());
@@ -71,20 +72,40 @@ public class InviteService {
     }
 
     public void declineInvite(User invitedUser, Long inviteId) {
-        Invite invite = getValidInviteForUser(inviteId, invitedUser);
+        Invite invite = getValidInviteForUserAndConfigurableChallenge(inviteId, invitedUser);
 
         invite.setStatus(InviteStatus.DECLINED);
         inviteRepo.save(invite);
     }
 
-    private Invite getValidInviteForUser(Long inviteId, User invitedUser) {
-        Invite invite = inviteRepo.findByIdAndInvitedUser(inviteId, invitedUser)
-                .orElseThrow(() -> new NotFoundException(ResourceType.INVITE, inviteId));
+    public void deleteInvite(User invitedUser, Long inviteId) {
+        Invite invite = getValidInviteForUser(inviteId, invitedUser);
+
+        if (invite.getStatus() != InviteStatus.PENDING) {
+            throw new ForbiddenException(ResourceType.INVITE, invite.getId(), "Can only delete pending invite");
+        }
+
+        if (invite.getChallenge().getStatus() == ChallengeStatus.PENDING) {
+            throw new ForbiddenException(ResourceType.INVITE, invite.getId(),
+                    "Can only delete invite for in progress or complete challenges");
+        }
+
+        inviteRepo.delete(invite);
+    }
+
+    private Invite getValidInviteForUserAndConfigurableChallenge(Long inviteId, User invitedUser) {
+        Invite invite = getValidInviteForUser(inviteId, invitedUser);
 
         if (!invite.getChallenge().isConfigurable()) {
             throw new ForbiddenException(ResourceType.INVITE, inviteId,
                     "Can't respond to invite because challenge has already started or completed");
         }
+
         return invite;
+    }
+
+    private Invite getValidInviteForUser(Long inviteId, User invitedUser) {
+        return inviteRepo.findByIdAndInvitedUser(inviteId, invitedUser)
+                .orElseThrow(() -> new NotFoundException(ResourceType.INVITE, inviteId));
     }
 }

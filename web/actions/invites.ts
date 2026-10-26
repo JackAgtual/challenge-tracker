@@ -44,3 +44,16 @@ export async function inviteUser(
   revalidatePath(`/challenges/${challengeId}`);
   return { success: true };
 }
+
+export async function deleteInvite(inviteId: number): Promise<ActionResponse> {
+  const { error } = await client.DELETE("/invites/{inviteId}", {
+    params: { path: { inviteId } },
+  });
+
+  if (error) {
+    return { success: false, error };
+  }
+
+  revalidatePath("/invites");
+  return { success: true };
+}

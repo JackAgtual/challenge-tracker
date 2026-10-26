@@ -1,14 +1,15 @@
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { client } from "@/lib/api-client";
-import AcceptButton from "./components/AcceptButton";
-import DeclineButton from "./components/DeclineButton";
-import { getDisplayNameFromUser } from "@/lib/name-utils";
+import { components } from "@/types/api";
+import { Invite } from "./components/Invite";
+import { InviteList } from "./components/InviteList";
+
+type Invite = components["schemas"]["ReceivedInviteResponse"];
 
 export default async function Page() {
   const { error, data } = await client.GET("/invites");
@@ -17,25 +18,46 @@ export default async function Page() {
     throw new Error("Could not get your invites");
   }
 
+  const respondableInvites: Invite[] = [];
+  const nonRespondableInvites: Invite[] = [];
+
+  data.forEach((invite) => {
+    (invite.canRespond ? respondableInvites : nonRespondableInvites).push(
+      invite
+    );
+  });
+
+  if (respondableInvites.length === 0 && nonRespondableInvites.length === 0) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>No invites yet</EmptyTitle>
+          <EmptyDescription>
+            This page is where you would see invites from another user inviting
+            you to join a challenge.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
   return (
-    <div>
-      <h1>Your invites</h1>
-      <div>
-        {data.map(({ id, challenge, inviteSender }) => (
-          <Card key={id}>
-            <CardHeader>
-              <CardTitle>{challenge.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Invited by {getDisplayNameFromUser(inviteSender)}</p>
-            </CardContent>
-            <CardFooter className="grid grid-cols-2 w-fit gap-x-2">
-              <AcceptButton inviteId={id} challengeId={challenge.id} />
-              <DeclineButton inviteId={id} />
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+    <div className="divide-y ">
+      {respondableInvites.length > 0 && (
+        <div className="py-4">
+          <h1 className="mb-4">Invites you have received</h1>
+          <InviteList invites={respondableInvites} />
+        </div>
+      )}
+      {nonRespondableInvites.length > 0 && (
+        <div className="py-4">
+          <div className="mb-4">
+            <h1>Invites you can no longer respond to</h1>
+            <p>These challenges have already been started</p>
+          </div>
+          <InviteList invites={nonRespondableInvites} />
+        </div>
+      )}
     </div>
   );
 }

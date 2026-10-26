@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -50,7 +51,7 @@ public class InviteServiceTest extends MockUserBaseTest {
 
     @BeforeEach
     void beforeEach() {
-        challenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "75 hard"));
+        challenge = challengeRepo.save(TestEntityFactory.validChallenge(savedUser, "75 hard", ChallengeStatus.PENDING));
         when(challengeService.getChallengeFromOwner(challenge.getId(), savedUser)).thenReturn(challenge);
         when(participantService.isParticipant(savedUser, challenge)).thenReturn(false);
         when(participantService.isParticipant(savedUser, challenge.getId())).thenReturn(false);
@@ -269,4 +270,68 @@ public class InviteServiceTest extends MockUserBaseTest {
         assertThrows(NotFoundException.class,
                 () -> inviteService.getNonAcceptedInvitesForChallenge(pendingUser1, challenge.getId()));
     }
+
+    @Nested
+    class DeleteInvite {
+
+        User recipient;
+
+        @BeforeEach
+        void beforeEach() {
+            recipient = saveRandomUser();
+        }
+
+        @Test
+        void testDeleteInviteForInProgressChallenge() {
+            Invite invite = saveInvite(recipient, ChallengeStatus.IN_PROGRESS, InviteStatus.PENDING);
+
+            inviteService.deleteInvite(recipient, invite.getId());
+
+            assertFalse(inviteRepo.existsById(invite.getId()));
+        }
+
+        @Test
+        void testDeleteInviteForCompletedChallenge() {
+            Invite invite = saveInvite(recipient, ChallengeStatus.COMPLETE, InviteStatus.PENDING);
+
+            inviteService.deleteInvite(recipient, invite.getId());
+
+            assertFalse(inviteRepo.existsById(invite.getId()));
+        }
+
+        @Test
+        void testDeleteInviteCantBeDoneForPendingChallenge() {
+            Invite invite = saveInvite(recipient, ChallengeStatus.PENDING, InviteStatus.PENDING);
+            assertThrows(ForbiddenException.class, () -> inviteService.deleteInvite(recipient, invite.getId()));
+        }
+
+        @Test
+        void testCantDeleteAcceptedInvite() {
+            Invite invite = saveInvite(recipient, ChallengeStatus.IN_PROGRESS, InviteStatus.ACCEPTED);
+            assertThrows(ForbiddenException.class, () -> inviteService.deleteInvite(recipient, invite.getId()));
+        }
+
+        @Test
+        void testCantDeleteDeclinedInvite() {
+            Invite invite = saveInvite(recipient, ChallengeStatus.IN_PROGRESS, InviteStatus.DECLINED);
+            assertThrows(ForbiddenException.class, () -> inviteService.deleteInvite(recipient, invite.getId()));
+        }
+
+        @Test
+        void testCanOnlyDeleteAnInviteSentToYou() {
+            User otherUser = saveRandomUser();
+            Invite invite = saveInvite(recipient, ChallengeStatus.IN_PROGRESS, InviteStatus.DECLINED);
+            assertThrows(NotFoundException.class, () -> inviteService.deleteInvite(otherUser, invite.getId()));
+        }
+
+        private Invite saveInvite(User recipient, ChallengeStatus challengeStatus, InviteStatus inviteStatus) {
+            Challenge challenge = challengeRepo
+                    .save(TestEntityFactory.validChallenge(savedUser, "my challenge", challengeStatus));
+            Invite invite = inviteRepo
+                    .save(TestEntityFactory.validInvite(challenge, savedUser, recipient, inviteStatus));
+            assertTrue(inviteRepo.existsById(invite.getId()));
+            return invite;
+        }
+    }
+
 }

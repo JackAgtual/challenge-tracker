@@ -12,6 +12,7 @@ import com.agtual.challengetracker.entity.GoalDefinition;
 import com.agtual.challengetracker.entity.Invite;
 import com.agtual.challengetracker.entity.Participant;
 import com.agtual.challengetracker.entity.User;
+import com.agtual.challengetracker.enums.ChallengeStatus;
 import com.agtual.challengetracker.enums.InviteStatus;
 
 public class TestEntityFactory {
@@ -29,6 +30,12 @@ public class TestEntityFactory {
         Challenge challenge = new Challenge();
         challenge.setOwner(user);
         challenge.setName(name);
+        return challenge;
+    }
+
+    public static Challenge validChallenge(User user, String name, ChallengeStatus status) {
+        Challenge challenge = validChallenge(user, name);
+        challenge.setStatus(status);
         return challenge;
     }
 

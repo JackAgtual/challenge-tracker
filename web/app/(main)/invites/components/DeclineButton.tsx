@@ -18,7 +18,7 @@ type DeclineButtonProps = {
   inviteId: number;
 };
 
-export default function DeclineButton({ inviteId }: DeclineButtonProps) {
+export function DeclineButton({ inviteId }: DeclineButtonProps) {
   async function handleClick() {
     const { success, error } = await declineInvite(inviteId);
     if (!success) {

@@ -14,3 +14,9 @@ export function getDisplayNameFromUser(
 function getDisplayName(username: string, firstName: string, lastName: string) {
   return `${username} (${firstName} ${lastName})`;
 }
+
+export function getChallengeNameAndDuration(
+  challenge: components["schemas"]["ChallengeResponse"]
+) {
+  return `${challenge.name} - ${challenge.durationDays} ${challenge.durationDays === 1 ? "day" : "days"}`;
+}
