@@ -1,7 +1,7 @@
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import NonPendingChallenge from "./components/non-pending-challenge";
-import PendingChallengePage from "./components/pending-challenge";
+import { NonPendingChallenge } from "./components/non-pending-challenge";
+import { PendingChallengePage } from "./components/pending-challenge";
 
 export default async function Page({
   params,

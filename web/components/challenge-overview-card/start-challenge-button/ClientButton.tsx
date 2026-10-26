@@ -10,15 +10,12 @@ import {
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { components } from "@/types/api";
 
-type ClientButtonProps = {
+type Props = {
   challengeId: number;
   startEligibility: components["schemas"]["ChallengeReadyResponse"];
 };
 
-export function ClientButton({
-  challengeId,
-  startEligibility,
-}: ClientButtonProps) {
+export function ClientButton({ challengeId, startEligibility }: Props) {
   async function handleClick() {
     const { error } = await startChallenge(challengeId);
     if (error) {

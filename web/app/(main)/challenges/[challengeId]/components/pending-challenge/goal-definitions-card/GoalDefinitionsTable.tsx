@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Props } from ".";
+import { Props } from "./GoalDefinitionsCard";
 import { GoalDefinitionActionMenu } from "./GoalDefinitionActionMenu";
 
 export function GoalDefinitionsTable({ challengeId, goalDefinitions }: Props) {

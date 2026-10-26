@@ -1,11 +1,11 @@
 import { components } from "@/types/api";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-type UserProps = {
+type Props = {
   user: components["schemas"]["UserResponse"];
 };
 
-export function User({ user }: UserProps) {
+export function User({ user }: Props) {
   const { firstName, lastName, username } = user;
 
   const firstInitial = !!firstName ? firstName.charAt(0).toUpperCase() : "";

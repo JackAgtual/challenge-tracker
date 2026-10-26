@@ -16,15 +16,12 @@ import { Button } from "@/components/ui/button";
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { useState } from "react";
 
-type RemoveParticipantButtonProps = {
+type Props = {
   challengeId: number;
   participantId: number;
 };
 
-export function RemoveParticipantButton({
-  challengeId,
-  participantId,
-}: RemoveParticipantButtonProps) {
+export function RemoveParticipantButton({ challengeId, participantId }: Props) {
   const [open, setOpen] = useState(false);
 
   async function handleRemove() {

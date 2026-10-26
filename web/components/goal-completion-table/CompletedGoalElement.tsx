@@ -4,19 +4,19 @@ import { handleGoalUncompletion } from "@/actions/goal-completion";
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { CircleCheck } from "lucide-react";
 
-type GoalCompletionIconProps = {
+type Props = {
   challengeId: number;
   goalDefinitionId: number;
   goalCompletionId: number;
   canModifyGoalCompletions: boolean;
 };
 
-export function GoalCompletionIcon({
+export function CompletedGoalElement({
   challengeId,
   goalDefinitionId,
   goalCompletionId,
   canModifyGoalCompletions,
-}: GoalCompletionIconProps) {
+}: Props) {
   if (!canModifyGoalCompletions) {
     return <CircleCheck />;
   }

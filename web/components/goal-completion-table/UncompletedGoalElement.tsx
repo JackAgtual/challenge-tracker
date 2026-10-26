@@ -4,7 +4,7 @@ import { handleGoalCompletion } from "@/actions/goal-completion";
 import { toastProblemDetail } from "@/lib/toast-utils";
 import { Circle } from "lucide-react";
 
-type UncompletedGoalElementProps = {
+type Props = {
   challengeId: number;
   goalDefinitionId: number;
   date: string;
@@ -16,7 +16,7 @@ export function UncompletedGoalElement({
   goalDefinitionId,
   date,
   canModifyGoalCompletions,
-}: UncompletedGoalElementProps) {
+}: Props) {
   if (!canModifyGoalCompletions) {
     return <Circle />;
   }

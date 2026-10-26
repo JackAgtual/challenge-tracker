@@ -1,12 +1,12 @@
 import { FieldValues, FormState } from "react-hook-form";
 
-type FormRootErrorProps<TFieldValues extends FieldValues> = {
+type Props<TFieldValues extends FieldValues> = {
   formState: FormState<TFieldValues>;
 };
 
 export function FormRootError<TFieldValues extends FieldValues>({
   formState,
-}: FormRootErrorProps<TFieldValues>) {
+}: Props<TFieldValues>) {
   return (
     <div>
       {formState.errors.root && (

@@ -1,4 +1,4 @@
-import ChallengeOverviewCard from "@/components/challenge-overview-card";
+import { ChallengeOverviewCard } from "@/components/challenge-overview-card";
 import { components } from "@/types/api";
 import Link from "next/link";
 
