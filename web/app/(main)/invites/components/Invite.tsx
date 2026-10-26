@@ -22,7 +22,7 @@ export function Invite({ invite }: Props) {
   const { id, challenge, inviteSender, canRespond } = invite;
 
   return (
-    <Card key={id} className="w-fit">
+    <Card key={id} className="w-full sm:w-fit">
       <CardHeader>
         <CardTitle>{getChallengeNameAndDuration(challenge)}</CardTitle>
         {!canRespond && (
@@ -34,7 +34,9 @@ export function Invite({ invite }: Props) {
       <CardContent>
         <InvitedBy user={inviteSender} />
         {!canRespond && (
-          <p>Challenge started: {challenge.starDate ?? "Unknown"}</p>
+          <p className="mt-2">
+            Challenge started: {challenge.starDate ?? "Unknown"}
+          </p>
         )}
       </CardContent>
       {canRespond && (

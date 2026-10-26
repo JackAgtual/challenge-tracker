@@ -1,6 +1,7 @@
 import { client } from "@/lib/api-client";
 import { components } from "@/types/api";
 import { Invite } from "./components/Invite";
+import { InviteList } from "./components/InviteList";
 
 type Invite = components["schemas"]["ReceivedInviteResponse"];
 
@@ -24,18 +25,12 @@ export default async function Page() {
     <div>
       <div>
         <h1>Your invites</h1>
-        <div className="flex gap-2 flex-wrap">
-          {respondableInvites.map((invite) => (
-            <Invite key={invite.id} invite={invite} />
-          ))}
-        </div>
+        <InviteList invites={respondableInvites} />
       </div>
       <div>
         <h1>Invites you can no longer respond to</h1>
         <p>These challenges have already been started</p>
-        {nonRespondableInvites.map((invite) => (
-          <Invite key={invite.id} invite={invite} />
-        ))}
+        <InviteList invites={nonRespondableInvites} />
       </div>
     </div>
   );
