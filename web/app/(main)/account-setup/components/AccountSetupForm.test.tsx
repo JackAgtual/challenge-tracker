@@ -1,11 +1,11 @@
+import { accountSetup } from "@/actions/account-setup";
 import { components } from "@/types/api";
 import { TSetupAccountFormSchema } from "@/types/form-types";
 import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import AccountSetupForm from "./AccountSetupForm";
-import { accountSetup } from "@/actions/account-setup";
 import { redirect } from "next/navigation";
+import { AccountSetupForm } from "./AccountSetupForm";
 
 jest.mock("@/actions/account-setup", () => ({
   accountSetup: jest.fn(),

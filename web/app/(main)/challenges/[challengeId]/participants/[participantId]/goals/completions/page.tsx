@@ -1,4 +1,4 @@
-import GoalCompletionTable from "@/components/goal-completion-table";
+import { GoalCompletionTable } from "@/components/goal-completion-table";
 import { getValidSession } from "@/lib/auth-utils";
 
 export default async function Page({
