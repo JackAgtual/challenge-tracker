@@ -24,9 +24,9 @@ export function GoalDefinitionsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your goals</CardTitle>
+        <CardTitle>Goal definitions</CardTitle>
         <CardDescription>
-          <p>These are the goals you'll try to complete every day.</p>
+          <p>These are the goals that will be completed each day.</p>
         </CardDescription>
       </CardHeader>
       <CardContent>
