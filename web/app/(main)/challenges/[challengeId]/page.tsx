@@ -5,10 +5,19 @@ import { PendingChallengePage } from "./components/pending-challenge";
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ challengeId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   await getValidSession();
+
+  const { participant: participantQueryParam } = await searchParams;
+  const selectedParticipant =
+    participantQueryParam === undefined
+      ? undefined
+      : Number(participantQueryParam);
+
   const { challengeId: challengeIdStr } = await params;
   const challengeId = Number(challengeIdStr);
 
@@ -35,11 +44,13 @@ export default async function Page({
         <PendingChallengePage
           challengeDetails={challengeDetail.data}
           curParticipantId={curParticipant.data.id}
+          selectedParticipant={selectedParticipant}
         />
       ) : (
         <NonPendingChallenge
           challengeDetails={challengeDetail.data}
           curParticipantId={curParticipant.data.id}
+          selectedParticipant={selectedParticipant}
         />
       )}
     </div>

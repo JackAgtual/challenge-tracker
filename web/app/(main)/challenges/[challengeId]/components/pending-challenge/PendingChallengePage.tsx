@@ -2,18 +2,14 @@ import { ChallengeOverviewCard } from "@/components/challenge-overview-card";
 import { ParticipantsCard } from "@/components/participants-card";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import { components } from "@/types/api";
+import { Props } from "../types";
 import { GoalDefinitionsCard } from "./goal-definitions-card";
 import { InvitesCard } from "./invites-card";
-
-type Props = {
-  challengeDetails: components["schemas"]["ChallengeDetailResponse"];
-  curParticipantId: number;
-};
 
 export async function PendingChallengePage({
   challengeDetails,
   curParticipantId,
+  selectedParticipant,
 }: Props) {
   await getValidSession();
 
