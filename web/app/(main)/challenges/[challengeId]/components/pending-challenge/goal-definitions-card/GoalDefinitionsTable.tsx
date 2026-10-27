@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Props } from "./GoalDefinitionsCard";
-import { GoalDefinitionActionMenu } from "./GoalDefinitionActionMenu";
+import { DeleteGoalDefinition } from "./DeleteGoalDefinition";
 
 export function GoalDefinitionsTable({ challengeId, goalDefinitions }: Props) {
   return (
@@ -23,7 +23,7 @@ export function GoalDefinitionsTable({ challengeId, goalDefinitions }: Props) {
           <TableRow key={goal.id}>
             <TableCell>{goal.name}</TableCell>
             <TableCell className="flex justify-end">
-              <GoalDefinitionActionMenu
+              <DeleteGoalDefinition
                 challengeId={challengeId}
                 goalDefinitionId={goal.id}
               />
