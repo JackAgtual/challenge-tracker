@@ -38,7 +38,7 @@ export function CreateGoalForm({ challengeId }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} aria-label="Create goal definition">
       <Controller
         name="name"
         control={control}

@@ -26,7 +26,7 @@ export async function PendingChallengePage({
       params: {
         path: {
           challengeId: challenge.id,
-          participantId: curParticipantId,
+          participantId: selectedParticipant ?? curParticipantId,
         },
       },
     }),
@@ -94,6 +94,7 @@ export async function PendingChallengePage({
       <GoalDefinitionsCard
         challengeId={challenge.id}
         goalDefinitions={goalDefinitions.data}
+        viewOnly={selectedParticipant !== curParticipantId}
       />
     </>
   );

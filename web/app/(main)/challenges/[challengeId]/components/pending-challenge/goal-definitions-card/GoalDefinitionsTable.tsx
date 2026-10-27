@@ -9,25 +9,31 @@ import {
 import { Props } from "./GoalDefinitionsCard";
 import { DeleteGoalDefinition } from "./DeleteGoalDefinition";
 
-export function GoalDefinitionsTable({ challengeId, goalDefinitions }: Props) {
+export function GoalDefinitionsTable({
+  challengeId,
+  goalDefinitions,
+  viewOnly,
+}: Props) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Goal</TableHead>
-          <TableHead className="text-right">Action</TableHead>
+          {!viewOnly && <TableHead className="text-right">Action</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
         {goalDefinitions.map((goal) => (
           <TableRow key={goal.id}>
             <TableCell>{goal.name}</TableCell>
-            <TableCell className="flex justify-end">
-              <DeleteGoalDefinition
-                challengeId={challengeId}
-                goalDefinitionId={goal.id}
-              />
-            </TableCell>
+            {!viewOnly && (
+              <TableCell className="flex justify-end">
+                <DeleteGoalDefinition
+                  challengeId={challengeId}
+                  goalDefinitionId={goal.id}
+                />
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>
