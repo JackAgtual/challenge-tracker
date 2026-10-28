@@ -86,6 +86,7 @@ export async function PendingChallengePage({
         curUserIsOwner={curUserIsChallengeOwner}
         curUserReadyResponse={readyResponse.data}
         selectedParticipantId={selectedParticipantId}
+        curParticipantId={curParticipant.data.id}
       />
       <InvitesCard
         invites={invites.data}

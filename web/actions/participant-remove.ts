@@ -2,6 +2,7 @@
 
 import { client } from "@/lib/api-client";
 import { ActionResponse } from "@/types/action-types";
+import { revalidatePath } from "next/cache";
 
 export async function removeParticipant(
   challengeId: number,
@@ -16,5 +17,6 @@ export async function removeParticipant(
     return { success: false, error };
   }
 
+  revalidatePath(`/challenges/${challengeId}`);
   return { success: true };
 }

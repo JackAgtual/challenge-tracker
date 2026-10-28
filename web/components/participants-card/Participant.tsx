@@ -1,45 +1,37 @@
+import { cn } from "@/lib/utils";
 import { components } from "@/types/api";
 import Link from "next/link";
 import { User } from "../User";
-import { RemoveParticipantButton } from "./RemoveParticipantButton";
+import { Badge } from "../ui/badge";
 
 type Props = {
   participant: components["schemas"]["ParticipantResponse"];
-  challengeId: number;
   challengeIsPending: boolean;
-  curUserIsOwner?: boolean;
   selected: boolean;
 };
 
 export function Participant({
   participant,
-  challengeId,
   challengeIsPending,
-  curUserIsOwner,
   selected,
 }: Props) {
   return (
-    <div className="flex justify-between py-2 my-0">
-      <Link
-        className="flex items-center"
-        href={`?participant=${participant.id}`}
-      >
-        <User user={participant.user} />
-      </Link>
-      {selected && <p>Selected (TODO: REFACTOR)</p>}
-      {challengeIsPending && (
-        <div className="flex gap-x-2">
-          <div className="flex items-center">
-            {participant.ready ? "Ready" : "Not ready"}
-          </div>
-          {curUserIsOwner && !participant.isChallengeOwner && (
-            <RemoveParticipantButton
-              challengeId={challengeId}
-              participantId={participant.id}
-            />
-          )}
-        </div>
+    <Link
+      className={cn(
+        "flex gap-x-4 w-fit items-center border-2 rounded-xl p-2",
+        selected ? "border-black" : "border-transparent"
       )}
-    </div>
+      href={`?participant=${participant.id}`}
+    >
+      <User user={participant.user} />
+      {challengeIsPending &&
+        (participant.ready ? (
+          <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
+            Ready
+          </Badge>
+        ) : (
+          <Badge variant="outline">Not ready</Badge>
+        ))}
+    </Link>
   );
 }

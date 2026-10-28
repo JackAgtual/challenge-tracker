@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { components } from "@/types/api";
 import { Participant } from "./Participant";
+import { RemoveParticipantButton } from "./RemoveParticipantButton";
 import { ToggleReady } from "./ToggleReady";
 
 type BaseProps = {
@@ -18,12 +19,14 @@ type BaseProps = {
 
 type PendingProps = BaseProps & {
   challengeIsPending: true;
+  curParticipantId: number;
   curUserIsOwner: boolean;
   curUserReadyResponse: components["schemas"]["ReadyResponse"];
 };
 
 type NonPendingProps = BaseProps & {
   challengeIsPending: false;
+  curParticipantId?: never;
   curUserIsOwner?: never;
   curUserReadyResponse?: never;
 };
@@ -34,6 +37,7 @@ export function ParticipantsCard({
   participants,
   challengeId,
   challengeIsPending,
+  curParticipantId,
   curUserIsOwner,
   curUserReadyResponse,
   selectedParticipantId,
@@ -71,26 +75,33 @@ export function ParticipantsCard({
           {challengeIsPending && (
             <p className="text-right">{`${participantsReadyCount} / ${totalParticipantsCount} participants ready`}</p>
           )}
-          <div className="divide-y">
+          <div className="grid grid-flow-col auto-cols-fr gap-x-4 w-fit">
             {participants.map((participant) => (
               <Participant
                 key={participant.id}
                 participant={participant}
-                challengeId={challengeId}
                 challengeIsPending={challengeIsPending}
-                curUserIsOwner={curUserIsOwner}
                 selected={participant.id === selectedParticipantId}
               />
             ))}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex gap-x-2">
           {challengeIsPending && (
-            <ToggleReady
-              challengeId={challengeId}
-              isReady={curUserReadyResponse.ready}
-              eligibleToSetReady={curUserReadyResponse.eligibleToSetReady}
-            />
+            <>
+              <ToggleReady
+                challengeId={challengeId}
+                isReady={curUserReadyResponse.ready}
+                eligibleToSetReady={curUserReadyResponse.eligibleToSetReady}
+              />
+              {curUserIsOwner && (
+                <RemoveParticipantButton
+                  challengeId={challengeId}
+                  participantId={selectedParticipantId}
+                  disabled={curParticipantId === selectedParticipantId}
+                />
+              )}
+            </>
           )}
         </CardFooter>
       </Card>
