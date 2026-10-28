@@ -9,7 +9,7 @@ import { InvitesCard } from "./invites-card";
 export async function PendingChallengePage({
   challengeDetails,
   curParticipantId,
-  selectedParticipant,
+  selectedParticipantId,
 }: Props) {
   await getValidSession();
 
@@ -26,7 +26,7 @@ export async function PendingChallengePage({
       params: {
         path: {
           challengeId: challenge.id,
-          participantId: selectedParticipant ?? curParticipantId,
+          participantId: selectedParticipantId,
         },
       },
     }),
@@ -85,6 +85,7 @@ export async function PendingChallengePage({
         challengeIsPending={true}
         curUserIsOwner={curUserIsChallengeOwner}
         curUserReadyResponse={readyResponse.data}
+        selectedParticipantId={selectedParticipantId}
       />
       <InvitesCard
         invites={invites.data}
@@ -94,7 +95,7 @@ export async function PendingChallengePage({
       <GoalDefinitionsCard
         challengeId={challenge.id}
         goalDefinitions={goalDefinitions.data}
-        viewOnly={selectedParticipant !== curParticipantId}
+        viewOnly={selectedParticipantId !== curParticipantId}
       />
     </>
   );

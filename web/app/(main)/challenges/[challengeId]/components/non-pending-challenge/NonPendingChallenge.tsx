@@ -6,7 +6,7 @@ import { Props } from "../types";
 export function NonPendingChallenge({
   challengeDetails,
   curParticipantId,
-  selectedParticipant,
+  selectedParticipantId,
 }: Props) {
   return (
     <>
@@ -18,13 +18,15 @@ export function NonPendingChallenge({
         challengeId={challengeDetails.challenge.id}
         participants={challengeDetails.participants}
         challengeIsPending={false}
+        selectedParticipantId={selectedParticipantId}
       />
       <GoalCompletionTable
         challengeId={challengeDetails.challenge.id}
         canModifyGoalCompletions={
-          challengeDetails.challenge.status === "IN_PROGRESS"
+          challengeDetails.challenge.status === "IN_PROGRESS" &&
+          curParticipantId === selectedParticipantId
         }
-        curParticipantId={curParticipantId}
+        participantId={selectedParticipantId}
       />
     </>
   );

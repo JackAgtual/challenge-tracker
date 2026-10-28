@@ -16,7 +16,7 @@ export default async function Page({
   return (
     <GoalCompletionTable
       challengeId={challengeId}
-      curParticipantId={participantId}
+      participantId={participantId}
       canModifyGoalCompletions={false}
     />
   );

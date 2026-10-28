@@ -8,6 +8,7 @@ type Props = {
   challengeId: number;
   challengeIsPending: boolean;
   curUserIsOwner?: boolean;
+  selected: boolean;
 };
 
 export function Participant({
@@ -15,15 +16,17 @@ export function Participant({
   challengeId,
   challengeIsPending,
   curUserIsOwner,
+  selected,
 }: Props) {
   return (
     <div className="flex justify-between py-2 my-0">
       <Link
         className="flex items-center"
-        href={`/challenges/${challengeId}/participants/${participant.id}/goals/${challengeIsPending ? "" : "/completions"}`}
+        href={`?participant=${participant.id}`}
       >
         <User user={participant.user} />
       </Link>
+      {selected && <p>Selected (TODO: REFACTOR)</p>}
       {challengeIsPending && (
         <div className="flex gap-x-2">
           <div className="flex items-center">

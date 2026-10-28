@@ -13,10 +13,6 @@ export default async function Page({
   await getValidSession();
 
   const { participant: participantQueryParam } = await searchParams;
-  const selectedParticipant =
-    participantQueryParam === undefined
-      ? undefined
-      : Number(participantQueryParam);
 
   const { challengeId: challengeIdStr } = await params;
   const challengeId = Number(challengeIdStr);
@@ -38,19 +34,24 @@ export default async function Page({
   }
 
   const { challenge } = challengeDetail.data;
+  const selectedParticipant =
+    participantQueryParam === undefined
+      ? curParticipant.data.id
+      : Number(participantQueryParam);
+
   return (
     <div className="grid grid-cols-1 gap-y-6">
       {challenge.status === "PENDING" ? (
         <PendingChallengePage
           challengeDetails={challengeDetail.data}
           curParticipantId={curParticipant.data.id}
-          selectedParticipant={selectedParticipant}
+          selectedParticipantId={selectedParticipant}
         />
       ) : (
         <NonPendingChallenge
           challengeDetails={challengeDetail.data}
           curParticipantId={curParticipant.data.id}
-          selectedParticipant={selectedParticipant}
+          selectedParticipantId={selectedParticipant}
         />
       )}
     </div>

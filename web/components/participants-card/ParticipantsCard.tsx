@@ -13,6 +13,7 @@ import { ToggleReady } from "./ToggleReady";
 type BaseProps = {
   participants: components["schemas"]["ParticipantResponse"][];
   challengeId: number;
+  selectedParticipantId: number;
 };
 
 type PendingProps = BaseProps & {
@@ -35,6 +36,7 @@ export function ParticipantsCard({
   challengeIsPending,
   curUserIsOwner,
   curUserReadyResponse,
+  selectedParticipantId,
 }: Props) {
   const participantsReadyCount = participants.filter((p) => p.ready).length;
   const totalParticipantsCount = participants.length;
@@ -77,6 +79,7 @@ export function ParticipantsCard({
                 challengeId={challengeId}
                 challengeIsPending={challengeIsPending}
                 curUserIsOwner={curUserIsOwner}
+                selected={participant.id === selectedParticipantId}
               />
             ))}
           </div>
