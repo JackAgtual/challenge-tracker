@@ -2,18 +2,14 @@ import { ChallengeOverviewCard } from "@/components/challenge-overview-card";
 import { ParticipantsCard } from "@/components/participants-card";
 import { client } from "@/lib/api-client";
 import { getValidSession } from "@/lib/auth-utils";
-import { components } from "@/types/api";
+import { Props } from "../types";
 import { GoalDefinitionsCard } from "./goal-definitions-card";
 import { InvitesCard } from "./invites-card";
-
-type Props = {
-  challengeDetails: components["schemas"]["ChallengeDetailResponse"];
-  curParticipantId: number;
-};
 
 export async function PendingChallengePage({
   challengeDetails,
   curParticipantId,
+  selectedParticipantId,
 }: Props) {
   await getValidSession();
 
@@ -30,7 +26,7 @@ export async function PendingChallengePage({
       params: {
         path: {
           challengeId: challenge.id,
-          participantId: curParticipantId,
+          participantId: selectedParticipantId,
         },
       },
     }),
@@ -89,6 +85,8 @@ export async function PendingChallengePage({
         challengeIsPending={true}
         curUserIsOwner={curUserIsChallengeOwner}
         curUserReadyResponse={readyResponse.data}
+        selectedParticipantId={selectedParticipantId}
+        curParticipantId={curParticipant.data.id}
       />
       <InvitesCard
         invites={invites.data}
@@ -98,6 +96,7 @@ export async function PendingChallengePage({
       <GoalDefinitionsCard
         challengeId={challenge.id}
         goalDefinitions={goalDefinitions.data}
+        viewOnly={selectedParticipantId !== curParticipantId}
       />
     </>
   );

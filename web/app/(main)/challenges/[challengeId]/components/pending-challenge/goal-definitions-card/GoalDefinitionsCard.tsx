@@ -13,15 +13,20 @@ import { CreateGoalForm } from "./CreateGoalForm";
 export type Props = {
   challengeId: number;
   goalDefinitions: components["schemas"]["GoalDefinitionResponse"][];
+  viewOnly: boolean;
 };
 
-export function GoalDefinitionsCard({ challengeId, goalDefinitions }: Props) {
+export function GoalDefinitionsCard({
+  challengeId,
+  goalDefinitions,
+  viewOnly,
+}: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your goals</CardTitle>
+        <CardTitle>Goal definitions</CardTitle>
         <CardDescription>
-          <p>These are the goals you'll try to complete every day.</p>
+          <p>These are the goals that will be completed each day.</p>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -31,12 +36,15 @@ export function GoalDefinitionsCard({ challengeId, goalDefinitions }: Props) {
           <GoalDefinitionsTable
             challengeId={challengeId}
             goalDefinitions={goalDefinitions}
+            viewOnly={viewOnly}
           />
         )}
       </CardContent>
-      <CardFooter>
-        <CreateGoalForm challengeId={challengeId} />
-      </CardFooter>
+      {!viewOnly && (
+        <CardFooter>
+          <CreateGoalForm challengeId={challengeId} />
+        </CardFooter>
+      )}
     </Card>
   );
 }
