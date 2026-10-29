@@ -23,7 +23,7 @@ describe("GoalDefinitionTable", () => {
   });
 
   describe("view only", () => {
-    it("Does not display Action column", () => {
+    it("does not display Action column", () => {
       render(
         <GoalDefinitionsTable
           challengeId={challengeId}
@@ -37,7 +37,7 @@ describe("GoalDefinitionTable", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("Renders all goal definitions", async () => {
+    it("renders all goal definitions", async () => {
       render(
         <GoalDefinitionsTable
           challengeId={challengeId}
@@ -52,7 +52,7 @@ describe("GoalDefinitionTable", () => {
   });
 
   describe("not view only", () => {
-    it("Displays Action column", () => {
+    it("displays Action column", () => {
       render(
         <GoalDefinitionsTable
           challengeId={challengeId}
@@ -66,7 +66,7 @@ describe("GoalDefinitionTable", () => {
       ).toBeInTheDocument();
     });
 
-    it("Renders all goal definitions and delete", async () => {
+    it("renders all goal definitions and delete", async () => {
       render(
         <GoalDefinitionsTable
           challengeId={challengeId}
