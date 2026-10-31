@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { links } from "@/lib/links";
 import Link from "next/link";
 
 type MenuLink = {
@@ -30,21 +31,14 @@ export function AppSidebar() {
     }
   }
 
-  const links: MenuLink[] = [
+  const menuLinks: MenuLink[] = [
     {
       groupLabel: "Challenges",
-      menuItems: [
-        { href: "/dashboard", name: "Dashboard" },
-        { href: "/challenges/create", name: "Create" },
-        { href: "/invites", name: "Invites" },
-      ],
+      menuItems: [links.dashboard, links.createChallenge, links.invites],
     },
     {
       groupLabel: "Account",
-      menuItems: [
-        { href: "/account-setup", name: "Edit" },
-        { href: "/auth/logout", name: "Logout", anchorTag: true },
-      ],
+      menuItems: [links.editAccount, { ...links.logout, anchorTag: true }],
     },
   ];
 
@@ -52,7 +46,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>Challenge Tracker</SidebarHeader>
       <SidebarContent>
-        {links.map(({ groupLabel, menuItems }) => (
+        {menuLinks.map(({ groupLabel, menuItems }) => (
           <SidebarGroup key={groupLabel}>
             <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
             <SidebarMenu>
