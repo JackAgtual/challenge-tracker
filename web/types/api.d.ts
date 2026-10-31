@@ -423,6 +423,8 @@ export interface components {
             durationDays: number;
             /** @enum {string} */
             status: "PENDING" | "IN_PROGRESS" | "COMPLETE";
+            /** Format: double */
+            completionPercentage: number;
             owner: components["schemas"]["UserResponse"];
         };
         UserResponse: {
