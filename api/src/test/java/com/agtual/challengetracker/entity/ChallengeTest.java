@@ -165,6 +165,72 @@ public class ChallengeTest {
         assertFalse(challenge.isReadyToComplete(clock));
     }
 
+    @Test
+    void testGetCompletionPercentagePendingChallenge() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.PENDING);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 11);
+
+        double completion = challenge.getCompletionPercentage(clock);
+
+        assertEquals(0, completion);
+    }
+
+    @Test
+    void testGetCompletionPercentageCompleteChallenge() {
+        Challenge challenge = new Challenge();
+        challenge.setStatus(ChallengeStatus.COMPLETE);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 11);
+
+        double completion = challenge.getCompletionPercentage(clock);
+
+        assertEquals(1, completion);
+    }
+
+    @Test
+    void testGetCompletionPercentageFirstDay() {
+        Challenge challenge = new Challenge();
+        challenge.setDurationDays(10);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 1);
+
+        double completion = challenge.getCompletionPercentage(clock);
+
+        assertEquals(0, completion);
+    }
+
+    @Test
+    void testGetCompletionPercentageLastDay() {
+        Challenge challenge = new Challenge();
+        challenge.setDurationDays(10);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 10);
+
+        double completion = challenge.getCompletionPercentage(clock);
+
+        assertEquals(0.9, completion);
+    }
+
+    @Test
+    void testGetCompletionPercentage() {
+        Challenge challenge = new Challenge();
+        challenge.setDurationDays(10);
+        challenge.setStartDate(LocalDate.of(2026, 1, 1));
+        challenge.setStatus(ChallengeStatus.IN_PROGRESS);
+
+        Clock clock = TestEntityFactory.getFixedClock(2026, 1, 4);
+
+        double completion = challenge.getCompletionPercentage(clock);
+
+        assertEquals(0.3, completion);
+    }
+
     private Challenge createReadyToStartChallenge() {
         Challenge challenge = new Challenge();
         challenge.setStatus(ChallengeStatus.PENDING);
