@@ -58,6 +58,7 @@ describe("name-utils", () => {
         name: "75 hard",
         owner: { id: 2 },
         status: "PENDING",
+        completionPercentage: 0.4,
       };
 
       expect(getChallengeNameAndDuration(challenge)).toEqual(
@@ -72,6 +73,7 @@ describe("name-utils", () => {
         name: "one day wonder",
         owner: { id: 2 },
         status: "PENDING",
+        completionPercentage: 0.4,
       };
 
       expect(getChallengeNameAndDuration(challenge)).toEqual(
