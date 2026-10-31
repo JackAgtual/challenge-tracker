@@ -73,7 +73,7 @@ public class Challenge {
             return false;
         }
 
-        return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock)) >= durationDays;
+        return getDaysSinceStartDate(clock) >= durationDays;
     }
 
     public boolean isConfigurable() {
@@ -88,5 +88,22 @@ public class Challenge {
         }
 
         throw new ForbiddenException("Can't calculate most recent date. Invalid challenge state: " + status);
+    }
+
+    public double getCompletionPercentage(Clock clock) {
+        if (status == ChallengeStatus.PENDING) {
+            return 0;
+        }
+        if (status == ChallengeStatus.COMPLETE) {
+            return 1;
+        }
+
+        long daysSinceStart = getDaysSinceStartDate(clock);
+
+        return daysSinceStart / (double) durationDays;
+    }
+
+    private long getDaysSinceStartDate(Clock clock) {
+        return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock));
     }
 }
