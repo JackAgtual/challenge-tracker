@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.controller;
 
+import java.time.Clock;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,13 @@ import com.agtual.challengetracker.service.InviteService;
 public class InviteResponseController {
 
     private final InviteService inviteService;
+    private final Clock clock;
 
     @GetMapping
     public List<ReceivedInviteResponse> getAllPendingInvitesForUser(@CurrentUser User user) {
         return inviteService.getPendingInvites(user)
                 .stream()
-                .map(ReceivedInviteResponse::from)
+                .map(invite -> ReceivedInviteResponse.from(invite, clock))
                 .toList();
     }
 
