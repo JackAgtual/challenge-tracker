@@ -20,3 +20,11 @@ export function getChallengeNameAndDuration(
 ) {
   return `${challenge.name} - ${challenge.durationDays} ${challenge.durationDays === 1 ? "day" : "days"}`;
 }
+
+export function getInitials(user: components["schemas"]["UserResponse"]) {
+  const { firstName, lastName } = user;
+  const firstInitial = !!firstName ? firstName.charAt(0).toUpperCase() : "";
+  const lastInitial = !!lastName ? lastName.charAt(0).toUpperCase() : "";
+
+  return firstInitial || lastInitial ? firstInitial + lastInitial : "?";
+}
