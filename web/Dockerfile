@@ -8,6 +8,7 @@ ENV HOSTNAME="0.0.0.0"
 
 COPY --chown=node:node /.next/standalone ./
 COPY --chown=node:node /.next/static ./.next/static
+COPY --chown=node:node /public ./public
 
 USER node
 
