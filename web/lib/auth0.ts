@@ -28,7 +28,7 @@ export const auth0 = new Auth0Client({
       },
     };
 
-    client.POST("/users", {
+    await client.POST("/users", {
       body: {
         email: session.user.email || "",
       },

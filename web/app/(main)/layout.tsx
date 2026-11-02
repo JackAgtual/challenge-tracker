@@ -9,7 +9,7 @@ import {
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toast";
 import { client } from "@/lib/api-client";
-import { getValidSession } from "@/lib/auth-utils";
+import { getValidFirstTimeSession } from "@/lib/auth-utils";
 import { links } from "@/lib/links";
 import { getInitials } from "@/lib/name-utils";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  await getValidSession();
+  await getValidFirstTimeSession();
 
   const { data, error } = await client.GET("/users/me");
 
