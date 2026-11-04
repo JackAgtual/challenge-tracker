@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth0 } from "./auth0";
 import { client } from "./api-client";
+import { links } from "./links";
 
 // Will check for valid session and account is set up
 export async function getValidSession() {
@@ -19,7 +20,7 @@ export async function getValidFirstTimeSession() {
   const session = await auth0.getSession();
 
   if (!session) {
-    redirect("/auth/login");
+    redirect(links.login.href);
   }
 
   return session;

@@ -8,5 +8,6 @@ export const links = {
   createChallenge: { href: "/challenges/create", name: "Create" },
   invites: { href: "/invites", name: "Invites" },
   editAccount: { href: "/account-setup", name: "Edit" },
-  logout: { href: "/auth/logout", name: "Logout" },
+  logout: { href: "/challenge-tracker/auth/logout", name: "Logout" },
+  login: { href: "/challenge-tracker/auth/login", name: "Login" },
 } satisfies Record<string, Link>;

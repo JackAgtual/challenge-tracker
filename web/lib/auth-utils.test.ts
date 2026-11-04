@@ -24,7 +24,7 @@ describe("getValidSession", () => {
 
     await expect(getValidSession()).rejects.toThrow("NEXT_REDIRECT");
 
-    expect(redirect).toHaveBeenCalledWith("/auth/login");
+    expect(redirect).toHaveBeenCalledWith("/challenge-tracker/auth/login");
   });
 
   it("redirects to account setup if user's account isn't set up", async () => {
@@ -59,7 +59,7 @@ describe("getValidFirstTimeSession", () => {
 
     await expect(getValidFirstTimeSession()).rejects.toThrow("NEXT_REDIRECT");
 
-    expect(redirect).toHaveBeenCalledWith("/auth/login");
+    expect(redirect).toHaveBeenCalledWith("/challenge-tracker/auth/login");
   });
 
   it("returns valid session if session is valid and account is set up", async () => {
