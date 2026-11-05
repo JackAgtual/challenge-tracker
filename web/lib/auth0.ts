@@ -52,9 +52,7 @@ export const auth0 = new Auth0Client({
 
     if (!userIsSetUp.data?.value) {
       // Need to finish setting up user account
-      return NextResponse.redirect(
-        new URL("/account-setup", process.env.APP_BASE_URL)
-      );
+      return redirect("/account-setup");
     }
 
     return redirect(context.returnTo);
