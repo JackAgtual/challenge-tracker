@@ -66,16 +66,16 @@ public class DevDataSeeder implements CommandLineRunner {
 
         // ---------- Avatars ----------
         List<String> avatarSrcs = List.of(
-                "/avatars/rabbit.png",
-                "/avatars/astronaut.png",
-                "/avatars/panda.png",
-                "/avatars/girl.png",
-                "/avatars/penguin.png",
-                "/avatars/man.png",
-                "/avatars/robot.png",
-                "/avatars/profile.png",
-                "/avatars/fox.png",
-                "/avatars/hacker.png");
+                "/challenge-tracker/avatars/rabbit.png",
+                "/challenge-tracker/avatars/astronaut.png",
+                "/challenge-tracker/avatars/panda.png",
+                "/challenge-tracker/avatars/girl.png",
+                "/challenge-tracker/avatars/penguin.png",
+                "/challenge-tracker/avatars/man.png",
+                "/challenge-tracker/avatars/robot.png",
+                "/challenge-tracker/avatars/profile.png",
+                "/challenge-tracker/avatars/fox.png",
+                "/challenge-tracker/avatars/hacker.png");
         avatarRepo.saveAll(avatarSrcs
                 .stream().map(src -> {
                     Avatar avatar = new Avatar();
