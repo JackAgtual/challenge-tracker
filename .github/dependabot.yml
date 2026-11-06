@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "maven"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/web" # web dockerfile
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/api" # api dockerfile
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/" # compose file
+    schedule:
+      interval: "weekly"
