@@ -1,4 +1,4 @@
-FROM dhi.io/amazoncorretto:26.0.2.11.1-debian13
+FROM dhi.io/amazoncorretto:27.0.1.0.11-debian13
 
 WORKDIR /app
 
