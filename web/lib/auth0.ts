@@ -1,19 +1,7 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { NextResponse } from "next/server";
 import { client } from "./api-client";
-
-function applicationUrl(path = "") {
-  const appBaseUrl = process.env.APP_BASE_URL;
-
-  if (!appBaseUrl) {
-    throw new Error("APP_BASE_URl must be configured");
-  }
-
-  const baseUrl = new URL(appBaseUrl);
-  baseUrl.pathname = baseUrl.pathname.replace(/\/+$/, "") + "/";
-
-  return new URL(path.replace(/^\/+/, ""), baseUrl);
-}
+import { applicationUrl } from "./links";
 
 function redirect(path: string | undefined) {
   return NextResponse.redirect(applicationUrl(path));

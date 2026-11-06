@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
+import { basePath } from "@/lib/links";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  basePath: "/challenge-tracker",
+  basePath,
 };
 
 export default nextConfig;
