@@ -1,26 +1,37 @@
 version: 2
+registries:
+  dhi:
+    type: docker-registry
+    url: https://dhi.io
+    username: ${{ secrets.DOCKERHUB_USERNAME }}
+    password: ${{ secrets.DOCKERHUB_TOKEN }}
+
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "npm"
-    directory: "/web"
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /web
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven"
-    directory: "/api"
+      interval: weekly
+  - package-ecosystem: maven
+    directory: /api
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker"
-    directory: "/web" # web dockerfile
+      interval: weekly
+  - package-ecosystem: docker
+    directory: /web
+    registries:
+      - dhi
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker"
-    directory: "/api" # api dockerfile
+      interval: weekly
+  - package-ecosystem: docker
+    directory: /api
+    registries:
+      - dhi
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker"
-    directory: "/" # compose file
+      interval: weekly
+  - package-ecosystem: docker-compose
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
