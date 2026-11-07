@@ -9,6 +9,8 @@ import { components } from "@/types/api";
 import { EditChallengeButton } from "./EditChallengeButton";
 import { StartChallengeButton } from "./start-challenge-button";
 import { getDisplayNameFromUser } from "@/lib/name-utils";
+import { Progress, ProgressLabel, ProgressValue } from "../ui/progress";
+import { User } from "../User";
 
 type Props = {
   challenge: components["schemas"]["ChallengeResponse"];
@@ -20,12 +22,12 @@ export function ChallengeOverviewCard({
   canEditAndStartChallenge,
 }: Props) {
   return (
-    <Card>
+    <Card className="@container">
       <CardHeader>
         <CardTitle>{challenge.name}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2">
+      <CardContent className="@7xl:grid @7xl:grid-cols-2">
+        <div className="grid grid-cols-2 gap-y-0.5">
           <p>Status</p>
           <p>{challenge.status}</p>
           <p>Duration (days)</p>
@@ -33,8 +35,15 @@ export function ChallengeOverviewCard({
           <p>Start date</p>
           <p>{challenge.starDate || "Not set"}</p>
           <p>Owner</p>
-          <p>{getDisplayNameFromUser(challenge.owner)}</p>
+          <User user={challenge.owner} />
         </div>
+        <Progress
+          value={challenge.completionPercentage * 100}
+          className="h-fit my-auto"
+        >
+          <ProgressLabel>Challenge completion</ProgressLabel>
+          <ProgressValue />
+        </Progress>
       </CardContent>
       {canEditAndStartChallenge && (
         <CardFooter>

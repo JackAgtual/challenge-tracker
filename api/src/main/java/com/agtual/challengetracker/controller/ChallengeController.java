@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.controller;
 
+import java.time.Clock;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class ChallengeController {
     private final ChallengeService challengeService;
     private final ParticipantService participantService;
     private final UserService userService;
+    private final Clock clock;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,7 +59,7 @@ public class ChallengeController {
     public GroupedChallengeResponse getAllChallengeParticipationsForUser(@CurrentUser User user) {
         List<Participant> participations = participantService.getAllChallengeParticipationsForUser(user);
         return GroupedChallengeResponse.from(
-                participations.stream().map(p -> p.getChallenge()).toList());
+                participations.stream().map(p -> p.getChallenge()).toList(), clock);
     }
 
     @GetMapping("/{challengeId}")
@@ -65,7 +67,7 @@ public class ChallengeController {
         Challenge challenge = challengeService.getChallenge(user, challengeId);
         List<Participant> participants = participantService.getAllParticipantsInChallenge(user, challengeId);
 
-        ChallengeResponse challengeRes = ChallengeResponse.from(challenge);
+        ChallengeResponse challengeRes = ChallengeResponse.from(challenge, clock);
         List<ParticipantResponse> participantsRes = participants.stream().map(ParticipantResponse::from).toList();
         return new ChallengeDetailResponse(challengeRes, participantsRes);
     }
@@ -101,7 +103,7 @@ public class ChallengeController {
     public ChallengeResponse modifyChallenge(@CurrentUser User user, @PathVariable Long challengeId,
             @Valid @RequestBody ChallengeDataRequest modifications) {
         Challenge challenge = challengeService.modifyChallenge(user, challengeId, modifications);
-        return ChallengeResponse.from(challenge);
+        return ChallengeResponse.from(challenge, clock);
     }
 
     @PostMapping("/{challengeId}/ready")

@@ -1,5 +1,6 @@
 package com.agtual.challengetracker.dto.response;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,20 +13,20 @@ public record GroupedChallengeResponse(@NotNull List<ChallengeResponse> inProgre
         @NotNull List<ChallengeResponse> pending,
         @NotNull List<ChallengeResponse> complete) {
 
-    public static GroupedChallengeResponse from(List<Challenge> challenges) {
+    public static GroupedChallengeResponse from(List<Challenge> challenges, Clock clock) {
         List<ChallengeResponse> inProgresss = new ArrayList<>();
         List<ChallengeResponse> pending = new ArrayList<>();
         List<ChallengeResponse> complete = new ArrayList<>();
         challenges.forEach(challenge -> {
             switch (challenge.getStatus()) {
                 case ChallengeStatus.IN_PROGRESS:
-                    inProgresss.add(ChallengeResponse.from(challenge));
+                    inProgresss.add(ChallengeResponse.from(challenge, clock));
                     break;
                 case ChallengeStatus.PENDING:
-                    pending.add(ChallengeResponse.from(challenge));
+                    pending.add(ChallengeResponse.from(challenge, clock));
                     break;
                 case ChallengeStatus.COMPLETE:
-                    complete.add(ChallengeResponse.from(challenge));
+                    complete.add(ChallengeResponse.from(challenge, clock));
                     break;
             }
         });
