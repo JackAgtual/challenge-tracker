@@ -18,6 +18,9 @@ jest.mock("next/navigation", () => ({
 const mockAccountSetup = jest.mocked(accountSetup);
 const mockRedirect = jest.mocked(redirect);
 
+const clearSelectionButtonText = "Clear selection";
+const submitButtonText = "Submit";
+
 describe("AccountSetupForm", () => {
   const availableAvatars: components["schemas"]["AvatarResponse"][] = [
     { src: "/avatars/panda.png" },
@@ -50,7 +53,7 @@ describe("AccountSetupForm", () => {
     await user.type(screen.getByLabelText("Last Name"), "Doe");
     await user.type(screen.getByLabelText("Username"), "john_doe_12");
 
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     await waitFor(() => {
       expect(mockAccountSetup).toHaveBeenCalledTimes(1);
@@ -78,7 +81,7 @@ describe("AccountSetupForm", () => {
       />
     );
 
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     await waitFor(() => {
       expect(mockAccountSetup).toHaveBeenCalledTimes(1);
@@ -107,7 +110,7 @@ describe("AccountSetupForm", () => {
       />
     );
 
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     await waitFor(() => {
       expect(mockAccountSetup).toHaveBeenCalledTimes(1);
@@ -137,7 +140,7 @@ describe("AccountSetupForm", () => {
     );
 
     await user.click(screen.getByTestId(availableAvatars.at(1)?.src ?? ""));
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     await waitFor(() => {
       expect(mockAccountSetup).toHaveBeenCalledTimes(1);
@@ -149,6 +152,155 @@ describe("AccountSetupForm", () => {
       username: "bbsmith99",
       avatarSrc: availableAvatars.at(1)?.src,
     });
+  });
+
+  it("sends the newly selected avatar when user already has an avatar", async () => {
+    const defaultValues: TSetupAccountFormSchema = {
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+      avatarSrc: availableAvatars.at(0)?.src,
+    };
+
+    render(
+      <AccountSetupForm
+        availableAvatars={availableAvatars}
+        defaultValues={defaultValues}
+      />
+    );
+
+    await user.click(screen.getByTestId(availableAvatars.at(1)?.src ?? ""));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
+
+    await waitFor(() => {
+      expect(mockAccountSetup).toHaveBeenCalledTimes(1);
+    });
+    expect(mockAccountSetup).toHaveBeenCalledWith({
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+      avatarSrc: availableAvatars.at(1)?.src,
+    });
+  });
+
+  it("sends a cleared avatar when user with an existing avatar clears selection", async () => {
+    const defaultValues: TSetupAccountFormSchema = {
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+      avatarSrc: availableAvatars.at(0)?.src,
+    };
+
+    render(
+      <AccountSetupForm
+        availableAvatars={availableAvatars}
+        defaultValues={defaultValues}
+      />
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: clearSelectionButtonText })
+    );
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
+
+    await waitFor(() => {
+      expect(mockAccountSetup).toHaveBeenCalledTimes(1);
+    });
+    expect(mockAccountSetup).toHaveBeenCalledWith({
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+      avatarSrc: null,
+    });
+  });
+
+  describe("clear selection button visibility", () => {
+    const baseValues = {
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+    };
+
+    it("is hidden when there is no default or selected avatar", async () => {
+      render(
+        <AccountSetupForm
+          availableAvatars={availableAvatars}
+          defaultValues={{ ...baseValues, avatarSrc: undefined }}
+        />
+      );
+
+      expect(
+        screen.queryByRole("button", { name: clearSelectionButtonText })
+      ).toHaveClass("invisible");
+    });
+
+    it("is shown when there is a default avatar", async () => {
+      const defaultAvatar = availableAvatars.at(0)?.src;
+
+      render(
+        <AccountSetupForm
+          availableAvatars={availableAvatars}
+          defaultValues={{ ...baseValues, avatarSrc: defaultAvatar }}
+        />
+      );
+
+      expect(
+        screen.getByRole("button", { name: clearSelectionButtonText })
+      ).toBeInTheDocument();
+    });
+
+    it("appears after selecting an avatar and disappears after clearing", async () => {
+      const selectedAvatar = availableAvatars.at(1)?.src;
+
+      render(
+        <AccountSetupForm
+          availableAvatars={availableAvatars}
+          defaultValues={{ ...baseValues, avatarSrc: undefined }}
+        />
+      );
+
+      expect(
+        screen.queryByRole("button", { name: clearSelectionButtonText })
+      ).toHaveClass("invisible");
+
+      await user.click(screen.getByTestId(selectedAvatar ?? ""));
+      expect(
+        screen.getByRole("button", { name: clearSelectionButtonText })
+      ).not.toHaveClass("invisible");
+
+      await user.click(
+        screen.getByRole("button", { name: clearSelectionButtonText })
+      );
+      expect(
+        screen.queryByRole("button", { name: clearSelectionButtonText })
+      ).toHaveClass("invisible");
+    });
+  });
+
+  it("shows border-transparent on all avatars after clearing selection", async () => {
+    const defaultValues: TSetupAccountFormSchema = {
+      firstName: "Bob",
+      lastName: "Smith",
+      username: "bbsmith99",
+      avatarSrc: availableAvatars.at(2)?.src,
+    };
+
+    render(
+      <AccountSetupForm
+        availableAvatars={availableAvatars}
+        defaultValues={defaultValues}
+      />
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: clearSelectionButtonText })
+    );
+
+    for (const { src } of availableAvatars) {
+      const avatar = screen.getByTestId(src);
+      expect(avatar).toHaveClass("border-transparent");
+      expect(avatar).not.toHaveClass("border-black");
+    }
   });
 
   it("puts border only on default avatar", async () => {
@@ -166,16 +318,17 @@ describe("AccountSetupForm", () => {
       />
     );
 
-    expect(screen.getByTestId(availableAvatars.at(0)?.src ?? "")).toHaveClass(
-      "border-transparent"
-    );
-    expect(screen.getByTestId(availableAvatars.at(1)?.src ?? "")).toHaveClass(
-      "border-transparent"
-    );
+    const avatar0 = screen.getByTestId(availableAvatars.at(0)?.src ?? "");
+    expect(avatar0).toHaveClass("border-transparent");
+    expect(avatar0).not.toHaveClass("border-black");
 
-    expect(screen.getByTestId(availableAvatars.at(2)?.src ?? "")).toHaveClass(
-      "border-black"
-    );
+    const avatar1 = screen.getByTestId(availableAvatars.at(1)?.src ?? "");
+    expect(avatar1).toHaveClass("border-transparent");
+    expect(avatar1).not.toHaveClass("border-black");
+
+    const avatar2 = screen.getByTestId(availableAvatars.at(2)?.src ?? "");
+    expect(avatar2).toHaveClass("border-black");
+    expect(avatar2).not.toHaveClass("border-transparent");
   });
 
   it("puts border on selected avatar (starting without default avatar)", async () => {
@@ -251,7 +404,7 @@ describe("AccountSetupForm", () => {
       />
     );
 
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
   });
@@ -277,7 +430,7 @@ describe("AccountSetupForm", () => {
       />
     );
 
-    await user.click(screen.getByRole("button", { name: "Submit" }));
+    await user.click(screen.getByRole("button", { name: submitButtonText }));
 
     expect(mockRedirect).not.toHaveBeenCalled();
     expect(

@@ -6,7 +6,7 @@ export const setupAccountFormSchema = z.object({
   firstName: z.string().nonempty(),
   lastName: z.string().nonempty(),
   username: z.string().nonempty(),
-  avatarSrc: z.string().optional(),
+  avatarSrc: z.string().nullish(),
 });
 
 export type TSetupAccountFormSchema = z.infer<typeof setupAccountFormSchema>;

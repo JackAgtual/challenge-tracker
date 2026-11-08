@@ -1,7 +1,8 @@
 "use client";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { components } from "@/types/api";
@@ -13,7 +14,7 @@ import { Control, Controller } from "react-hook-form";
 type Props = {
   control: Control<TSetupAccountFormSchema>;
   availableAvatars: components["schemas"]["AvatarResponse"][];
-  defaultAvatar: string | undefined;
+  defaultAvatar: string | undefined | null;
 };
 export function AvatarSelection({
   control,
@@ -26,7 +27,7 @@ export function AvatarSelection({
     <Controller
       name="avatarSrc"
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <Field>
           <FieldLabel htmlFor={field.name}>Profile icon</FieldLabel>
           <RadioGroup
@@ -61,6 +62,20 @@ export function AvatarSelection({
               );
             })}
           </RadioGroup>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(!field.value && "invisible")}
+            onClick={() => {
+              setSelectionMade(true);
+              field.onChange(null);
+            }}
+          >
+            Clear selection
+          </Button>
+          {fieldState.error && <FieldError errors={[fieldState.error]} />}
         </Field>
       )}
     />

@@ -460,7 +460,7 @@ export interface components {
             firstName: string;
             lastName: string;
             username: string;
-            avatarSrc?: string;
+            avatarSrc?: string | null;
         };
         ValidUserResponse: {
             /** Format: int64 */
