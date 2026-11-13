@@ -10,7 +10,7 @@ services:
       - 5432:5432
 
   adminer:
-    image: adminer:6.2.0
+    image: adminer:6.3.0
     restart: always
     ports:
       - 8081:8080
