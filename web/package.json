@@ -47,7 +47,7 @@
     "openapi-typescript": "^7.13.0",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "allowScripts": {
     "@auth0/nextjs-auth0@4.28.0": true
